@@ -14,7 +14,18 @@ RUN Rscript -e 'remotes::install_version("spelling",upgrade="never", version = "
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.1")'
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.18")'
 RUN Rscript -e 'remotes::install_version("BiocManager",upgrade="never", version = "1.30.16")'
-RUN Rscript -e 'remotes::install_github("RinteRface/bs4Dash@47cf5ce565e0744ca332d0ca20acc121731aeca9")'
+RUN Rscript -e 'remotes::install_github("RinteRface/bs4Dash")'
+RUN Rscript -e 'remotes::install_bioc("mixOmics")'
+
+
+
+#RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install();' \
+#&& Rscript -e 'requireNamespace("BiocManager"); BiocManager::install("mixOmics")' 
+#RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install("mixOmics", update=FALSE, version = "6.16", ask = F)'
+
+
+
+
 RUN mkdir /build_zone
 ADD . /build_zone
 WORKDIR /build_zone
@@ -22,6 +33,3 @@ RUN R -e 'remotes::install_local(upgrade="never")'
 RUN rm -rf /build_zone
 EXPOSE 80
 CMD R -e "options('shiny.port'=80,shiny.host='0.0.0.0');Holomics::run_app()"
-
-
-#https://github.com/ThinkR-open/golem/issues/282 -> golem+renv need custom .dockerignore
