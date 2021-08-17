@@ -55,7 +55,7 @@ app_ui <- function(request) {
                                   includeMarkdown("README.md")) # create and change to app/www/home.md
                          )),
         bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
-        bs4Dash::tabItem(tabName = "visualisation", mod_mixMC_PCA_ui("mixMC_PCA_ui_1"))
+        bs4Dash::tabItem(tabName = "visualisation", mod_PCA_ui("PCA_ui_1"))
       )
       
       )

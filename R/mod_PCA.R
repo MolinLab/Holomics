@@ -1,4 +1,4 @@
-#' mixMC-PCA UI Function
+#' PCA UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_mixMC_PCA_ui <- function(id){
+mod_PCA_ui <- function(id){
   ns <- NS(id)
   tagList(
      fluidRow(
@@ -77,10 +77,10 @@ mod_mixMC_PCA_ui <- function(id){
   )
 }
     
-#' mixMC-PCA Server Functions
+#' PCA Server Functions
 #'
 #' @noRd 
-mod_mixMC_PCA_server <- function(id){
+mod_PCA_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
