@@ -10,12 +10,12 @@ Description: Shiny app for the integration of plant metagenomic, metabolomic and
 License: What license is it under?
 Imports: 
     attempt,
-    BiocManager,
     bs4Dash (>= 2.0.2),
     config (>= 0.3.1),
     DT,
     glue,
     golem (>= 0.3.1),
+    mixOmics (>= 6.16.3),
     htmltools,
     pkgload,
     processx,
@@ -29,7 +29,7 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Language: en-US
-Remotes: 
+Remotes:  
     git::https://github.com/RinteRface/bs4Dash.git@master,
     bioc::mixOmics
 Depends: 
