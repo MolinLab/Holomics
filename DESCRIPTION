@@ -30,7 +30,7 @@ Suggests:
 Config/testthat/edition: 3
 Language: en-US
 Remotes: 
-    git::https://github.com/RinteRface/bs4Dash.git@master
+    git::https://github.com/RinteRface/bs4Dash.git@master,
     bioc::mixOmics
 Depends: 
     R (>= 2.10)
