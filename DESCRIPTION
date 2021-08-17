@@ -17,7 +17,6 @@ Imports:
     glue,
     golem (>= 0.3.1),
     htmltools,
-    mixOmics,
     pkgload,
     processx,
     rgl,
@@ -32,5 +31,6 @@ Config/testthat/edition: 3
 Language: en-US
 Remotes: 
     git::https://github.com/RinteRface/bs4Dash.git@master
+    bioc::mixOmics
 Depends: 
     R (>= 2.10)
