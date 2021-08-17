@@ -52,7 +52,7 @@ app_ui <- function(request) {
         bs4Dash::tabItem(tabName = "home",
                          fluidRow(
                            column(width = 10,
-                                  includeMarkdown("README.md")) # create and change to app/www/home.md
+                                  includeMarkdown("inst/app/www/01-home.md")) # create and change to app/www/home.md
                          )),
         bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
         bs4Dash::tabItem(tabName = "visualisation", mod_PCA_ui("PCA_ui_1"))
