@@ -95,19 +95,19 @@ mod_PCA_server <- function(id){
   
     
   output$PCA <- renderPlot({
-    pca.result <- mixOmics::pca(data.filter, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
+    pca.result <- mixOmics::pca(Holomics::data.filter, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
     plot(pca.result)})
    
   output$PCA.Indiv <- renderPlot({
-    pca.result <- mixOmics::pca(data.filter, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
+    pca.result <- mixOmics::pca(Holomics::data.filter, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
     mixOmics::plotIndiv(pca.result, comp = comp.indiv(), ind.names = F, group = Y, legend = TRUE, guide = none)}) 
   
   output$PCA.Var <- renderPlot({
-    pca.result <- mixOmics::pca(data.filter, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
+    pca.result <- mixOmics::pca(Holomics::data.filter, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
     mixOmics::plotVar(pca.result, comp = comp.var() )})
 ## sPCA
   sPCA.results <- reactive({
-    sPCA.results <- mixOmics::spca(data.filter, ncomp = input$ncomp, logratio = input$logratio, scale = input$scale, keepX = comp.keepX())
+    sPCA.results <- mixOmics::spca(Holomics::data.filter, ncomp = input$ncomp, logratio = input$logratio, scale = input$scale, keepX = comp.keepX())
   })
   
   comp.keepX <- reactive({ 
