@@ -13,7 +13,7 @@ app_ui <- function(request) {
     bs4Dash::dashboardPage(
       
       
-    ## Header 
+      ## Header 
       bs4Dash::dashboardHeader(
         title = bs4Dash::dashboardBrand(
           title = "Holomics",
@@ -23,41 +23,46 @@ app_ui <- function(request) {
           
         )
       ),
-    
       
-    ## Sidebar content  
-    bs4Dash::dashboardSidebar(
+      
+      ## Sidebar content  
+      bs4Dash::dashboardSidebar(
         bs4Dash::sidebarMenu(
-          bs4Dash::menuItem("Home", tabName = "home"),
-          bs4Dash::menuItem("Upload Data", tabName = "upload"),
+          bs4Dash::menuItem("Home", tabName = "home", icon = icon("home")),
+          bs4Dash::menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
           bs4Dash::menuItem("Preprocessing", tabName = "preprocessing", icon = icon("wrench"), startExpanded = FALSE,
-            bs4Dash::menuSubItem("Impute values", tabName = "impute_vals"),
-            bs4Dash::menuSubItem("Normalization", tabName = "normalization"),
-            bs4Dash::menuSubItem("Outlier Detection", tabName = "outliers"),
-            bs4Dash::menuSubItem("Filtration", tabName = "filtration")
+                            bs4Dash::menuSubItem("Impute values", tabName = "impute_vals"),
+                            bs4Dash::menuSubItem("Normalization", tabName = "normalization"),
+                            bs4Dash::menuSubItem("Outlier Detection", tabName = "outliers"),
+                            bs4Dash::menuSubItem("Filtration", tabName = "filtration")
           ),
-          bs4Dash::menuItem("EDA", tabName = "visualisation", startExpanded = FALSE),
-          bs4Dash::menuItem("Integration", tabName = "integration", startExpanded = FALSE,
-            bs4Dash::menuSubItem("DIABLO", tabName = "diablo"),
-            bs4Dash::menuSubItem("WGCNA", tabName = "wgcna")
+          bs4Dash::menuItem("Single 'omics", tabName = "singleOmics", icon = icon("window-minimize"), startExpanded = TRUE,
+                            bs4Dash::menuItem("PCA", tabName = "PCA", icon = icon("angle-double-right"), startExpanded = FALSE, 
+                                              bs4Dash::menuSubItem("Classic", tabName = "PCAclassic"),
+                                              bs4Dash::menuSubItem("Sparse", tabName = "PCAsparse")),
+                            bs4Dash::menuSubItem("PLS-DA", tabName = "PLSDA")
+          ),
+          bs4Dash::menuItem("Multi 'omics", tabName = "multiOmics", icon = icon("layer-group"), startExpanded = TRUE,
+                            bs4Dash::menuSubItem("PLS", tabName = "PLS"), 
+                            bs4Dash::menuSubItem("DIABLO", tabName = "DIABLO")
           )
-
         )
       ),
       
-    ## Body content
-    bs4Dash::dashboardBody(
-      #use_theme(mytheme), # <-- use the theme contained in in theme.R
-      bs4Dash::tabItems(
-        bs4Dash::tabItem(tabName = "home",
-                         fluidRow(
-                           column(width = 10,
-                                  includeMarkdown(app_sys("app/www/01-home.md"))) # create and change to app/www/home.md
-                         )),
-        bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
-        bs4Dash::tabItem(tabName = "visualisation", mod_PCA_ui("PCA_ui_1"))
-      )
-      
+      ## Body content
+      bs4Dash::dashboardBody(
+        #use_theme(mytheme), # <-- use the theme contained in in theme.R
+        bs4Dash::tabItems(
+          bs4Dash::tabItem(tabName = "home",
+                           fluidRow(
+                             column(width = 10,
+                                    includeMarkdown(app_sys("app/www/01-home.md"))) # create and change to app/www/home.md
+                           )),
+          bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
+          bs4Dash::tabItem(tabName = "PCAclassic", mod_PCA_ui("PCA_ui_1")),
+          bs4Dash::tabItem(tabName = "PCAsparse", mod_sPCA_ui("sPCA_ui_1"))
+        )
+        
       )
     ),
     
@@ -65,15 +70,15 @@ app_ui <- function(request) {
       fluidRow(
         column(width = 12, align = "center", 
                a(href = "https://www.ait.ac.at/en/", HTML("<b> AIT - Austrian Institute of Technology"), 
-               br()),
-              "Copyright (C) 2021" #add license
-              #add github link
-          
+                 br()),
+               "Copyright (C) 2021" #add license
+               #add github link
+               
         )
       )
     )
     
-    )
+  )
 }
 
 #' Add external Resources to the Application
@@ -89,15 +94,17 @@ golem_add_external_resources <- function(){
   add_resource_path(
     'www', app_sys('app/www')
   )
- 
+  
   tags$head(
     favicon(),
     bundle_resources(
       path = app_sys('app/www'),
       app_title = 'Holomics'
-    )
+    ),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
+    
+    tags$link(rel = "stylesheet", type ="text/css", href="www/custom.css")
   )
 }
 

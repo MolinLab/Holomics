@@ -7,4 +7,5 @@
 app_server <- function( input, output, session ) {
   # Your application server logic 
   mod_PCA_server("PCA_ui_1")
+  mod_sPCA_server("sPCA_ui_1")
 }
