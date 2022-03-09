@@ -107,7 +107,7 @@ mod_sPCA_server <- function(id){
     })
     
     spca.result <- reactive({
-      spca.result <- mixOmics::spca(Holomics::data.filter, ncomp = input$ncomp, logratio = input$logratio, scale = input$scale, keepX = comp.keepX())
+      spca.result <- mixOmics::spca(Holomics::data.microbiomic, ncomp = input$ncomp, logratio = input$logratio, scale = input$scale, keepX = comp.keepX())
     })
     
     
@@ -115,7 +115,7 @@ mod_sPCA_server <- function(id){
       plot(spca.result())})
     
     output$sPCA.Indiv <- renderPlot({
-      mixOmics::plotIndiv(spca.result(), comp = comp.indiv(), ind.names = F, group = Y, legend = TRUE, guide = none)}) 
+      mixOmics::plotIndiv(spca.result(), comp = comp.indiv(), ind.names = F, group = storability, legend = TRUE, guide = none)}) 
     
     output$sPCA.Var <- renderPlot({
       mixOmics::plotVar(spca.result(), comp = comp.var() )})   

@@ -98,7 +98,7 @@ mod_PCA_server <- function(id){
     })
     
     pca.result <- reactive({
-      pca.result <- mixOmics::pca(Holomics::data.filter, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
+      pca.result <- mixOmics::pca(Holomics::data.microbiomic, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
     })
     
     
@@ -106,7 +106,7 @@ mod_PCA_server <- function(id){
       plot(pca.result())})
     
     output$PCA.Indiv <- renderPlot({
-      mixOmics::plotIndiv(pca.result(), comp = comp.indiv(), ind.names = F, group = Y, legend = TRUE, guide = none)}) 
+      mixOmics::plotIndiv(pca.result(), comp = comp.indiv(), group = storability, legend = TRUE)}) 
     
     output$PCA.Var <- renderPlot({
       mixOmics::plotVar(pca.result(), comp = comp.var() )})
