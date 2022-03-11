@@ -36,16 +36,8 @@ app_ui <- function(request) {
                             bs4Dash::menuSubItem("Outlier Detection", tabName = "outliers"),
                             bs4Dash::menuSubItem("Filtration", tabName = "filtration")
           ),
-          bs4Dash::menuItem("Single 'omics", tabName = "singleOmics", icon = icon("window-minimize"), startExpanded = TRUE,
-                            bs4Dash::menuItem("PCA", tabName = "PCA", icon = icon("angle-double-right"), startExpanded = FALSE, 
-                                              bs4Dash::menuSubItem("Classic", tabName = "PCAclassic"),
-                                              bs4Dash::menuSubItem("Sparse", tabName = "PCAsparse")),
-                            bs4Dash::menuSubItem("PLS-DA", tabName = "PLSDA")
-          ),
-          bs4Dash::menuItem("Multi 'omics", tabName = "multiOmics", icon = icon("layer-group"), startExpanded = TRUE,
-                            bs4Dash::menuSubItem("PLS", tabName = "PLS"), 
-                            bs4Dash::menuSubItem("DIABLO", tabName = "DIABLO")
-          )
+          bs4Dash::menuItem("Single 'omics", tabName = "singleOmics", icon = icon("window-minimize")),
+          bs4Dash::menuItem("Multi 'omics", tabName = "multiOmics", icon = icon("layer-group"))
         )
       ),
       
@@ -59,8 +51,7 @@ app_ui <- function(request) {
                                     includeMarkdown(app_sys("app/www/01-home.md"))) # create and change to app/www/home.md
                            )),
           bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
-          bs4Dash::tabItem(tabName = "PCAclassic", mod_PCA_ui("PCA_ui_1")),
-          bs4Dash::tabItem(tabName = "PCAsparse", mod_sPCA_ui("sPCA_ui_1"))
+          bs4Dash::tabItem(tabName = "singleOmics", mod_SingleOmics_ui("singleOmics"))
         )
         
       )

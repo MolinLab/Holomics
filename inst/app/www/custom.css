@@ -1,9 +1,9 @@
-#PCA_ui_1-PCA\.Sel\.Var {
+#PCA-PCA\.Sel\.Var {
   max-height: 400px;
   overflow-y: scroll;
 }
 
-#sPCA_ui_1-sPCA\.Sel\.Var {
+#PLSDA-PLSDA\.Sel\.Var {
   max-height: 400px;
   overflow-y: scroll;
 }

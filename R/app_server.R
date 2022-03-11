@@ -6,6 +6,9 @@
 #' @noRd
 app_server <- function( input, output, session ) {
   # Your application server logic 
-  mod_PCA_server("PCA_ui_1")
-  mod_sPCA_server("sPCA_ui_1")
+  
+  dataset <- reactiveValues()
+  mod_SingleOmics_server("singleOmics", dataset = dataset)
+  mod_PCA_server("PCA", dataset = dataset)
+  mod_PLSDA_server("PLSDA", dataset = dataset)
 }

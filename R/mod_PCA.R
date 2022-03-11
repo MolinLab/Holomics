@@ -10,29 +10,9 @@
 mod_PCA_ui <- function(id){
   ns <- NS(id)
   tagList(
-    h1("PCA"),
-    fluidRow(
-      bs4Dash::box(
-        title = "Analysis Parameters", width = 12,
-        sliderInput(ns("ncomp"), "Number of components:", value = 3, 
-                    min = 2, max = 5, step = 1),
-        selectInput(ns("logratio"), "Logratio:",
-                    c("centered" = "CLR",
-                      "None" = "none"
-                      #"isometric" = "ILR"    error that matrix contains NA or infinite values although it does not
-                    )),
-        checkboxInput(ns("scale"), "Scaling:", value = TRUE)
-      )
-    ),
-    
     fluidRow(
       bs4Dash::tabBox(
         width = 12,
-        tabPanel("Screeplot",       
-                 bs4Dash::column(width = 6,
-                                 plotOutput(ns("PCA.Scree")),
-                                 style = "margin: auto;")
-        ),
         tabPanel("Sampleplot", 
                  fluidRow(
                    selectInput(ns("pca.indiv.x"), "X-Axis Component", seq(1, 5, 1)),
@@ -40,7 +20,7 @@ mod_PCA_ui <- function(id){
                    selectInput(ns("pca.indiv.y"), "Y-Axis Component", seq(1, 5, 1), selected = 2)
                  ),
                  fluidRow(
-                   bs4Dash::column(width = 6,
+                   bs4Dash::column(width = 12,
                                    plotOutput(ns("PCA.Indiv")),
                                    style = "margin: auto;")             
                  )
@@ -52,7 +32,7 @@ mod_PCA_ui <- function(id){
                    selectInput(ns("pca.var.y"), "Y-Axis Component", seq(1, 5, 1), selected = 2)
                  ),
                  fluidRow(
-                   bs4Dash::column(width = 6,
+                   bs4Dash::column(width = 12,
                                    plotOutput(ns("PCA.Var")),
                                    style = "margin: auto;")         
                  )
@@ -71,7 +51,25 @@ mod_PCA_ui <- function(id){
                                    style = "margin: auto; display: flex"             
                    )
                  )
+        ),
+        tabPanel("Screeplot",       
+                 bs4Dash::column(width = 12,
+                                 plotOutput(ns("PCA.Scree")),
+                                 style = "margin: auto;")
         )
+      )
+    ),
+    fluidRow(
+      bs4Dash::box(
+        title = "Analysis Parameters", width = 12,
+        sliderInput(ns("ncomp"), "Number of components:", value = 3, 
+                    min = 2, max = 5, step = 1),
+        selectInput(ns("logratio"), "Logratio:",
+                    c("centered" = "CLR",
+                      "None" = "none"
+                      #"isometric" = "ILR"    error that matrix contains NA or infinite values although it does not
+                    )),
+        checkboxInput(ns("scale"), "Scaling", value = TRUE)
       )
     )
   )
@@ -80,11 +78,10 @@ mod_PCA_ui <- function(id){
 #' PCA Server Functions
 #'
 #' @noRd 
-mod_PCA_server <- function(id){
+mod_PCA_server <- function(id, dataset){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    ## PCA    
     comp.var <- reactive({ 
       comp.var <- as.numeric(c(input$pca.var.x,input$pca.var.y))
     })
@@ -98,18 +95,18 @@ mod_PCA_server <- function(id){
     })
     
     pca.result <- reactive({
-      pca.result <- mixOmics::pca(Holomics::data.microbiomic, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
+      pca.result <- mixOmics::pca(dataset$selection, ncomp = input$ncomp ,logratio = input$logratio, scale = input$scale)
     })
-    
     
     output$PCA.Scree <- renderPlot({
       plot(pca.result())})
     
     output$PCA.Indiv <- renderPlot({
-      mixOmics::plotIndiv(pca.result(), comp = comp.indiv(), group = storability, legend = TRUE)}) 
+      mixOmics::plotIndiv(pca.result(), comp = comp.indiv(), group = storability, legend = TRUE,
+                          title = "Samplesplot")}) 
     
     output$PCA.Var <- renderPlot({
-      mixOmics::plotVar(pca.result(), comp = comp.var() )})
+      mixOmics::plotVar(pca.result(), comp = comp.var(), title = "Variableplot" )})
     
     output$PCA.Load <- renderPlot({ mixOmics::plotLoadings(pca.result(), comp = as.numeric(input$pca.load.comp))})
     
