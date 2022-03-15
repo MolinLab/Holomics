@@ -65,9 +65,8 @@ mod_PCA_ui <- function(id){
         sliderInput(ns("ncomp"), "Number of components:", value = 3, 
                     min = 2, max = 5, step = 1),
         selectInput(ns("logratio"), "Logratio:",
-                    c("centered" = "CLR",
-                      "None" = "none"
-                      #"isometric" = "ILR"    error that matrix contains NA or infinite values although it does not
+                    c("None" = "none",
+                      "centered" = "CLR"
                     )),
         checkboxInput(ns("scale"), "Scaling", value = TRUE)
       )
