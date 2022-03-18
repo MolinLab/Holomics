@@ -20,13 +20,12 @@ app_ui <- function(request) {
           color = "secondary",
           #href = "https://adminlte.io/themes/v3",
           #image = "https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png"
-          
         )
       ),
       
       
       ## Sidebar content  
-      bs4Dash::dashboardSidebar(
+      bs4Dash::dashboardSidebar(collapsed = TRUE,
         bs4Dash::sidebarMenu(
           bs4Dash::menuItem("Home", tabName = "home", icon = icon("home")),
           bs4Dash::menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
@@ -51,7 +50,8 @@ app_ui <- function(request) {
                                     includeMarkdown(app_sys("app/www/01-home.md"))) # create and change to app/www/home.md
                            )),
           bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
-          bs4Dash::tabItem(tabName = "singleOmics", mod_SingleOmics_ui("singleOmics"))
+          bs4Dash::tabItem(tabName = "singleOmics", mod_SingleOmics_ui("singleOmics")),
+          bs4Dash::tabItem(tabName = "multiOmics", mod_MultiOmics_ui("multiOmics"))
         )
         
       )

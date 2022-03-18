@@ -10,6 +10,7 @@
 mod_SingleOmics_ui <- function(id){
   ns <- NS(id)
   tagList(
+    shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
       selectInput(ns("dataset"), "Select dataset:", 
                   choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"))
@@ -34,15 +35,12 @@ mod_SingleOmics_server <- function(id, dataset){
   moduleServer(id, function(input, output, session){
     observeEvent(input$dataset, {
       if(input$dataset == "t"){
-        dataset$selection <- Holomics::data.transcriptomic
+        dataset$data <- Holomics::data.transcriptomic
       } else if (input$dataset == "me"){
-        dataset$selection <- Holomics::data.metabolites
+        dataset$data <- Holomics::data.metabolites
       } else if (input$dataset == "mi"){
-        dataset$selection <- Holomics::data.microbiomic
+        dataset$data <- Holomics::data.microbiomic
       }
     })
   })
 }
-
-
-
