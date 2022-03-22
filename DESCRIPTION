@@ -20,16 +20,17 @@ Imports:
     pkgload,
     processx,
     rgl,
-    shiny (>= 1.6.0)
+    shiny (>= 1.6.0),
+    shinybusy
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Language: en-US
-Remotes:  
+Remotes: 
     git::https://github.com/RinteRface/bs4Dash.git@master,
     bioc::mixOmics
 Depends: 

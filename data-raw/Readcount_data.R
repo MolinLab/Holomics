@@ -15,6 +15,6 @@ dge_list <- dge_list[keep, ]
 filt <- as.data.frame(dge_list$counts)  #still about 14000 genes remaining
 
 # Filtering by Median Absolute Deviation
-data.transcriptomic <- CancerSubtypes::FSbyMAD(t(filt), cut.type = "topk", value = 10000)
+data.transcriptomic <- as.data.frame(t(CancerSubtypes::FSbyMAD(filt, cut.type = "topk", value = 10000)))
 
 usethis::use_data(data.transcriptomic, overwrite = TRUE) 

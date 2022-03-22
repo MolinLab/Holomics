@@ -18,7 +18,6 @@ app_ui <- function(request) {
         title = bs4Dash::dashboardBrand(
           title = "Holomics",
           color = "secondary",
-          #href = "https://adminlte.io/themes/v3",
           #image = "https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png"
         )
       ),
@@ -42,7 +41,6 @@ app_ui <- function(request) {
       
       ## Body content
       bs4Dash::dashboardBody(
-        #use_theme(mytheme), # <-- use the theme contained in in theme.R
         bs4Dash::tabItems(
           bs4Dash::tabItem(tabName = "home",
                            fluidRow(
@@ -62,7 +60,7 @@ app_ui <- function(request) {
         column(width = 12, align = "center", 
                a(href = "https://www.ait.ac.at/en/", HTML("<b> AIT - Austrian Institute of Technology"), 
                  br()),
-               "Copyright (C) 2021" #add license
+               "Copyright (C) 2022" #add license
                #add github link
                
         )
