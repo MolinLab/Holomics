@@ -14,4 +14,5 @@ app_server <- function( input, output, session ) {
   mod_PLSDA_server("PLSDA", dataset = single_dataset)
   mod_MultiOmics_server("multiOmics", dataset = multi_two_dataset)
   mod_sPLS_server("sPLS", dataset = multi_two_dataset)
+  mod_DIABLO_server("DIABLO", dataset = multi_two_dataset)
 }
