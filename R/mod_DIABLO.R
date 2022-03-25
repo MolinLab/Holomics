@@ -4,15 +4,15 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList
 mod_DIABLO_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(
       bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                      tabPanel("Sample Plot", 
+                      tabPanel("Sample Plot",
                                fluidRow(style = "display: flex; gap: 1rem",
                                         uiOutput(ns("indiv.x.comp")),
                                         uiOutput(ns("indiv.y.comp")),
@@ -20,7 +20,7 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("DIABLO.Indiv")))             
+                                                 plotOutput(ns("DIABLO.Indiv")))
                                )
                       ),
                       tabPanel("Variable Plot",
@@ -31,7 +31,7 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("DIABLO.Var")))         
+                                                 plotOutput(ns("DIABLO.Var")))
                                )
                       ),
                       tabPanel("Loading Plots",
@@ -56,7 +56,7 @@ mod_DIABLO_ui <- function(id){
                       #                                     DT::dataTableOutput(ns("DIABLO.Y.Sel.Var"))
                       #                            )
                       #            )
-                      #          )   
+                      #          )
                       # ),
                       tabPanel("CIM",
                                fluidRow(
@@ -64,7 +64,7 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("DIABLO.Img")))         
+                                                 plotOutput(ns("DIABLO.Img")))
                                )
                       ),
                       tabPanel("Arrow Plot",
@@ -73,7 +73,7 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("DIABLO.Arrow")))         
+                                                 plotOutput(ns("DIABLO.Arrow")))
                                )
                       ),
                       tabPanel("Diablo Plot",
@@ -82,17 +82,17 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("DIABLO.Diablo")))         
+                                                 plotOutput(ns("DIABLO.Diablo")))
                                )
                       ),
                       tabPanel("Circos Plot",
                                fluidRow(
-                                 numericInput(ns("cutoffCircos"), "Cutoff value", 
+                                 numericInput(ns("cutoffCircos"), "Cutoff value",
                                               min = 0, max = 1, step = 0.1, value = 0.7)
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("DIABLO.Circos")))         
+                                                 plotOutput(ns("DIABLO.Circos")))
                                )
                       )
       )
@@ -100,9 +100,15 @@ mod_DIABLO_ui <- function(id){
     fluidRow(
       bs4Dash::box(title = "Analysis Parameters", width = 12,
                    fluidRow(style = "gap: 1rem",
-                            numericInput(ns("ncomp"), "Number of components", value = 3, 
+                            numericInput(ns("ncomp"), "Number of components", value = 3,
                                          min = 2, max = 5, step = 1, width = "45%"),
                             checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
+                   ),
+                   fluidRow(style = "gap: 1rem",
+                            selectInput(ns("selection"), "Variable selection",
+                                        c("Off" = "off", "On" = "on")),
+                            uiOutput(ns("keepX")),
+                            uiOutput(ns("test"))
                    )
       )
     )
@@ -111,7 +117,7 @@ mod_DIABLO_ui <- function(id){
 
 #' DIABLO Server Functions
 #'
-#' @noRd 
+#' @noRd
 mod_DIABLO_server <- function(id, dataset){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -157,18 +163,37 @@ render_diablo_ui_components <- function(ns, input, output, dataset){
     selectInput(ns("diablo.diablo.comp"), "Component:", seq(1, input$ncomp, 1))
   })
   
+  #TODO get keepX values from the input fields
+  #'Variable selection
+  observeEvent(input$selection,{
+    if(input$selection == "on"){
+      output$keepX <- renderUI({
+        purrr::map(names(dataset$data),
+                   # ~ numericInput(paste0(ns("keepX"), .x), paste0("Variables of ", .x),
+                   # min = 2, max = 6, value = 4)
+                   ~ textInput(paste0(ns("keepX"), .x), NULL)
+        )
+      })
+    } else {
+      output$keepX <- renderUI({})
+    }
+  })
+  
+  output$test <- renderText({
+    # purrr::map_chr(names(dataset$data), ~input[[paste0(ns("keepX"), .x)]] %||% "n")
+  })
 }
 
 #' Business logic functions
 generate_diablo_plots <- function(ns, input, output, dataset){
   #' Create reactive values
-  comp.var <- reactive({ 
+  comp.var <- reactive({
     req(input$diablo.var.x)
     req(input$diablo.var.y)
     comp.var <- as.numeric(c(input$diablo.var.x,input$diablo.var.y))
   })
   
-  comp.indiv <- reactive({ 
+  comp.indiv <- reactive({
     req(input$diablo.indiv.x)
     req(input$diablo.indiv.y)
     comp.indiv <- as.numeric(c(input$diablo.indiv.x,input$diablo.indiv.y))
@@ -190,21 +215,26 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   #' run analysis
   diablo.result <- reactive({
-    X <- list(data1 = dataset$data1, data2 = dataset$data2)
-    design <- matrix(0.1, ncol = length(X), nrow = length(X), 
-                     dimnames = list(names(X), names(X)))
-    diag(design) <- 0
-    diablo.result <- mixOmics::block.splsda(X = X, Y = storability,
-                                            ncomp = input$ncomp , scale = input$scale,
-                                            design = design)
+    X <- dataset$data
+    if (!is.null(X)){
+      design <- matrix(0.1, ncol = length(X), nrow = length(X),
+                       dimnames = list(names(X), names(X)))
+      diag(design) <- 0
+      diablo.result <- mixOmics::block.splsda(X = X, Y = storability,
+                                              ncomp = input$ncomp , scale = input$scale,
+                                              design = design)
+    }
   })
   
   #' generate output plots
   #' Sample Plot
   output$DIABLO.Indiv <- renderPlot({
-    mixOmics::plotIndiv(diablo.result(), comp = comp.indiv(), 
-                        group = storability, ind.names = input$indiv.names,
-                        legend = TRUE, legend.title = "Storability classes", legend.position = "bottom")}) 
+    if(!is.null(diablo.result())){
+      mixOmics::plotIndiv(diablo.result(), comp = comp.indiv(),
+                          group = storability, ind.names = input$indiv.names,
+                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom")
+    }
+  })
   
   #' Variable Plot
   output$DIABLO.Var <- renderPlot({
