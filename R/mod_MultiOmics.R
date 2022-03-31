@@ -57,11 +57,11 @@ mod_MultiOmics_server <- function(id, pls_dataset, diablo_dataset){
       data <- list()
       for (d in strsplit(input$diabloDataset, " ")){
         if(d == "t"){
-          data[["Transcriptomic"]] <- Holomics::data.transcriptomic
+          data[["Transcriptomic"]] <- Holomics::data.transcriptomic_small
         } else if (d == "me"){
-          data[["Metabolomic"]] <- Holomics::data.metabolites
+          data[["Metabolomic"]] <- Holomics::data.metabolomic_small
         } else if (d == "mi"){
-          data[["Microbiomic"]] <- Holomics::data.microbiomic
+          data[["Microbiomic"]] <- Holomics::data.microbiomic_small
         }
       }
       diablo_dataset$data <- data
@@ -81,11 +81,11 @@ mod_MultiOmics_server <- function(id, pls_dataset, diablo_dataset){
 #' Return the dataset according to the selection
 get_dataset <- function(selection){
   if(selection == "t"){
-    return (Holomics::data.transcriptomic)
+    return (Holomics::data.transcriptomic_small)
   } else if (selection == "me"){
-    return (Holomics::data.metabolites)
+    return (Holomics::data.metabolomic_small)
   } else if (selection == "mi"){
-    return (Holomics::data.microbiomic)
+    return (Holomics::data.microbiomic_small)
   }
 }
 

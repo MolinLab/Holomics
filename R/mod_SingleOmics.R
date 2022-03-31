@@ -37,7 +37,7 @@ mod_SingleOmics_server <- function(id, dataset){
       if(input$dataset == "t"){
         dataset$data <- Holomics::data.transcriptomic
       } else if (input$dataset == "me"){
-        dataset$data <- Holomics::data.metabolites
+        dataset$data <- Holomics::data.metabolomic
       } else if (input$dataset == "mi"){
         dataset$data <- Holomics::data.microbiomic
       }

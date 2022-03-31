@@ -18,6 +18,13 @@ low.count.removal = function(data, percent=0.01){
   return (data.filter)
 }
 
+#used for pca and pls-da
 data.microbiomic <- low.count.removal(t_asv, percent = 0.01)
 
+#used for spls and diablo
+sel_ASV <- c("ASV_643", "ASV_525", "ASV_861", "ASV_955", "ASV_745", "ASV_1505", "ASV_296", "ASV_541", "ASV_298", "ASV_611", "ASV_587", "ASV_1215", "ASV_649", "ASV_1279", "ASV_1229", "ASV_1568", "ASV_585", "ASV_1690", "ASV_350", "ASV_778", "ASV_683", "ASV_418", "ASV_1256", "ASV_1442", "ASV_1045", "ASV_1161", "ASV_152", "ASV_662", "ASV618", "ASV_44", "ASV_229", "ASV_1827")
+ASV_cols <- (names(data.microbiomic) %in% sel_ASV)
+data.microbiomic_small <- data.microbiomic[, ASV_cols]
+
 usethis::use_data(data.microbiomic, overwrite = TRUE) 
+usethis::use_data(data.microbiomic_small, overwrite = TRUE) 

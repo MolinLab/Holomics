@@ -11,7 +11,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic 
     bs4Dash::dashboardPage(
-      
+      dark = NULL,
       
       ## Header 
       bs4Dash::dashboardHeader(
@@ -27,13 +27,13 @@ app_ui <- function(request) {
       bs4Dash::dashboardSidebar(collapsed = TRUE,
         bs4Dash::sidebarMenu(
           bs4Dash::menuItem("Home", tabName = "home", icon = icon("home")),
-          bs4Dash::menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
-          bs4Dash::menuItem("Preprocessing", tabName = "preprocessing", icon = icon("wrench"), startExpanded = FALSE,
-                            bs4Dash::menuSubItem("Impute values", tabName = "impute_vals"),
-                            bs4Dash::menuSubItem("Normalization", tabName = "normalization"),
-                            bs4Dash::menuSubItem("Outlier Detection", tabName = "outliers"),
-                            bs4Dash::menuSubItem("Filtration", tabName = "filtration")
-          ),
+          # bs4Dash::menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
+          # bs4Dash::menuItem("Preprocessing", tabName = "preprocessing", icon = icon("wrench"), startExpanded = FALSE,
+          #                   bs4Dash::menuSubItem("Impute values", tabName = "impute_vals"),
+          #                   bs4Dash::menuSubItem("Normalization", tabName = "normalization"),
+          #                   bs4Dash::menuSubItem("Outlier Detection", tabName = "outliers"),
+          #                   bs4Dash::menuSubItem("Filtration", tabName = "filtration")
+          # ),
           bs4Dash::menuItem("Single 'omics", tabName = "singleOmics", icon = icon("window-minimize")),
           bs4Dash::menuItem("Multi 'omics", tabName = "multiOmics", icon = icon("layer-group"))
         )
@@ -41,6 +41,7 @@ app_ui <- function(request) {
       
       ## Body content
       bs4Dash::dashboardBody(
+        shinyjs::useShinyjs(),
         bs4Dash::tabItems(
           bs4Dash::tabItem(tabName = "home",
                            fluidRow(

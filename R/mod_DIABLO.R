@@ -1,3 +1,7 @@
+library(visNetwork)
+library(shinyjs)
+library(shinyWidgets)
+
 #' DIABLO UI Function
 #'
 #' @description A shiny Module.
@@ -20,6 +24,7 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
+                                                 textOutput(ns("indiv.error")),
                                                  plotOutput(ns("DIABLO.Indiv")))
                                )
                       ),
@@ -31,6 +36,7 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
+                                                 textOutput(ns("var.error")),
                                                  plotOutput(ns("DIABLO.Var")))
                                )
                       ),
@@ -40,30 +46,17 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
+                                                 textOutput(ns("load.error")),
                                                  plotOutput(ns("DIABLO.Load")))
                                )
                       ),
-                      # tabPanel("Selected Variables",
-                      #          fluidRow(
-                      #            uiOutput(ns("sel.var.comp"))
-                      #          ),
-                      #          fluidRow(
-                      #            bs4Dash::tabBox(width = 12,
-                      #                            tabPanel("Dataset 1",
-                      #                                     DT::dataTableOutput(ns("DIABLO.X.Sel.Var"))
-                      #                            ),
-                      #                            tabPanel("Dataset 2",
-                      #                                     DT::dataTableOutput(ns("DIABLO.Y.Sel.Var"))
-                      #                            )
-                      #            )
-                      #          )
-                      # ),
                       tabPanel("CIM",
                                fluidRow(
                                  uiOutput(ns("img.comp"))
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
+                                                 textOutput(ns("img.error")),
                                                  plotOutput(ns("DIABLO.Img")))
                                )
                       ),
@@ -73,6 +66,7 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
+                                                 textOutput(ns("arrow.error")),
                                                  plotOutput(ns("DIABLO.Arrow")))
                                )
                       ),
@@ -82,6 +76,7 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
+                                                 textOutput(ns("diablo.error")),
                                                  plotOutput(ns("DIABLO.Diablo")))
                                )
                       ),
@@ -92,7 +87,20 @@ mod_DIABLO_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
+                                                 textOutput(ns("circos.error")),
                                                  plotOutput(ns("DIABLO.Circos")))
+                               )
+                      ), 
+                      tabPanel("Network",
+                               fluidRow(style = "gap: 1rem",
+                                        numericInput(ns("cutoffNetwork"), "Cutoff value",
+                                                     min = 0, max = 1, step = 0.1, value = 0.5),
+                                        uiOutput(ns("nodes"))
+                               ),
+                               fluidRow(
+                                 bs4Dash::column(width = 12,
+                                                 textOutput(ns("network.error")),
+                                                 visNetworkOutput(ns("DIABLO.Network")))
                                )
                       )
       )
@@ -101,14 +109,12 @@ mod_DIABLO_ui <- function(id){
       bs4Dash::box(title = "Analysis Parameters", width = 12,
                    fluidRow(style = "gap: 1rem",
                             numericInput(ns("ncomp"), "Number of components", value = 3,
-                                         min = 2, max = 5, step = 1, width = "45%"),
+                                         min = 1, max = 5, step = 1, width = "45%"),
                             checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
                    ),
                    fluidRow(style = "gap: 1rem",
-                            selectInput(ns("selection"), "Variable selection",
-                                        c("Off" = "off", "On" = "on")),
-                            uiOutput(ns("keepX")),
-                            uiOutput(ns("test"))
+                            actionButton(ns("tune"), "Tune parameters"),
+                            uiOutput(ns("tune.switch"))
                    )
       )
     )
@@ -122,7 +128,18 @@ mod_DIABLO_server <- function(id, dataset){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
+    nodes <<- reactiveValues()
+    
+    useTunedVal <<- reactiveVal(FALSE)
+    tunedVals <<- NULL
+    
     render_diablo_ui_components(ns, input, output, dataset)
+    
+    observe_ui_components(ns, session, input, output, dataset)
+    
+    run_analysis(ns, input, output, dataset)
+    
+    generate_error_messages(ns, input, output, dataset)
     
     generate_diablo_plots(ns, input, output, dataset)
     
@@ -132,55 +149,175 @@ mod_DIABLO_server <- function(id, dataset){
 #' Render Ui functions
 render_diablo_ui_components <- function(ns, input, output, dataset){
   output$indiv.x.comp <- renderUI({
-    selectInput(ns("diablo.indiv.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("diablo.indiv.x"), "X-Axis Component:", seq(1, get_ncomp(input), 1))
   })
   
   output$indiv.y.comp <- renderUI({
-    selectInput(ns("diablo.indiv.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("diablo.indiv.y"), "Y-Axis Component:", seq(1, get_ncomp(input), 1), selected = 2)
   })
   
   output$var.x.comp <- renderUI({
-    selectInput(ns("diablo.var.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("diablo.var.x"), "X-Axis Component:", seq(1, get_ncomp(input), 1))
   })
   
   output$var.y.comp <- renderUI({
-    selectInput(ns("diablo.var.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("diablo.var.y"), "Y-Axis Component:", seq(1, get_ncomp(input), 1), selected = 2)
   })
   
   output$load.comp <- renderUI({
-    selectInput(ns("diablo.load.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("diablo.load.comp"), "Component:", seq(1, get_ncomp(input), 1))
   })
   
   output$sel.var.comp <- renderUI({
-    selectInput(ns("diablo.sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("diablo.sel.var.comp"), "Component:", seq(1, get_ncomp(input), 1))
   })
   
   output$img.comp <- renderUI({
-    selectInput(ns("diablo.img.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("diablo.img.comp"), "Component:", seq(1, get_ncomp(input), 1))
   })
   
   output$diablo.comp <- renderUI({
-    selectInput(ns("diablo.diablo.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("diablo.diablo.comp"), "Component:", seq(1, get_ncomp(input), 1))
   })
   
-  #TODO get keepX values from the input fields
-  #'Variable selection
-  observeEvent(input$selection,{
-    if(input$selection == "on"){
-      output$keepX <- renderUI({
-        purrr::map(names(dataset$data),
-                   # ~ numericInput(paste0(ns("keepX"), .x), paste0("Variables of ", .x),
-                   # min = 2, max = 6, value = 4)
-                   ~ textInput(paste0(ns("keepX"), .x), NULL)
-        )
-      })
-    } else {
-      output$keepX <- renderUI({})
+  output$nodes <- renderUI({
+    req(nodes$data)
+    selectizeInput(ns("nodeNames"), "Select a node", 
+                   choices = c("---" = "null", CombineLists(nodes$data["label"], nodes$data["id"])))
+  })
+}
+
+#'Observe different ui components
+observe_ui_components <- function(ns, session, input, output, dataset){
+  #' Observe dataset
+  observeEvent(dataset$data, {
+    output$tune.switch <- renderUI({})
+    useTunedVal(FALSE)
+    enable("ncomp")
+    enable("scale")
+  })
+  
+  
+  #' Observe node name selection
+  observeEvent(input$nodeNames, {
+    if (input$nodeNames == "null"){
+      visNetworkProxy(ns("DIABLO.Network")) %>%
+        visUnselectAll()
+    }else{
+      visNetworkProxy(ns("DIABLO.Network")) %>%
+        visSetSelection(nodesId = input$nodeNames)
     }
   })
   
-  output$test <- renderText({
-    # purrr::map_chr(names(dataset$data), ~input[[paste0(ns("keepX"), .x)]] %||% "n")
+  #' Observe tune button
+  observeEvent(input$tune, {
+    tunedVals <<- tune_values(dataset)
+    if (!is.null(tunedVals)){
+      output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
+    }
+  })
+  
+  #' Observe tune switch
+  observeEvent(input$tuneSwitch,{
+    useTunedVal(input$tuneSwitch)
+    if(input$tuneSwitch){
+      disable("ncomp")
+      disable("scale")
+    } else {
+      enable("ncomp")
+      enable("scale")
+    }
+  })
+}
+
+#' Tune the ncomp and keepX parameter for the given dataset
+tune_values <- function(dataset){
+  X <- dataset$data
+  if (!is.null(X)){
+    Y <- storability
+    design <- matrix(0.1, ncol = length(X), nrow = length(X),
+                     dimnames = list(names(X), names(X)))
+    diag(design) <- 0
+    
+    #tune ncomp
+    perf.diablo <- mixOmics::perf(diablo.result(), validation = 'Mfold', folds = 7, nrepeat = 5, progressBar = TRUE, cpus = 1)
+    ncomp = perf.diablo$choice.ncomp$WeightedVote["Overall.BER", "centroids.dist"]
+    
+    #tune keepX
+    test.keepX = dataset$data
+    for (i in 1 : length(names(dataset$data))){
+      test.keepX[[i]] = c(5:9, seq(10, 18, 2), seq(20,30,5))
+    }
+    
+    BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
+    tune.diablo = mixOmics::tune.block.splsda(X, Y, ncomp = ncomp,
+                                              test.keepX = test.keepX, design = design,
+                                              validation = 'Mfold', folds = 7, nrepeat = 1,
+                                              BPPARAM = BPPARAM, dist = "centroids.dist", progressBar = TRUE)
+    keepX = tune.diablo$choice.keepX
+    
+    return (list("ncomp" = ncomp, "keepX" = keepX))
+  }
+}
+
+#' Run analysis
+run_analysis <- function(ns, input, output, dataset){
+  #' run analysis
+  diablo.result <<- reactive({
+    X <- dataset$data
+    Y <- storability
+    if (!is.null(X)){
+      design <- matrix(0.1, ncol = length(X), nrow = length(X),
+                       dimnames = list(names(X), names(X)))
+      diag(design) <- 0
+      result <- mixOmics::block.splsda(X, Y,
+                                       ncomp = input$ncomp , scale = input$scale,
+                                       design = design)
+      
+      if(useTunedVal()){
+        result <- mixOmics::block.splsda(X, Y, ncomp = tunedVals$ncomp, keepX = tunedVals$keepX, design = design)
+      }
+      
+      result
+    }
+  })
+}
+
+#' Generate the error messages
+generate_error_messages <- function(ns, input, output, dataset){
+  output$indiv.error <- renderText({
+    return (check_oneDataset_ncomp(dataset, input))
+  })
+  
+  output$var.error <- renderText({
+    return (check_oneDataset_ncomp(dataset, input))
+  })
+  
+  output$load.error <- renderText({
+    return(check_oneDataset_ncomp(dataset, ncompCheck = FALSE))
+  })
+  
+  output$img.error <- renderText({
+    return(check_twoDatasets(dataset))
+  })
+  
+  output$arrow.error <- renderText({
+    return (check_oneDataset_ncomp(dataset, input))
+    
+  })
+  
+  output$diablo.error <- renderText({
+    return(check_twoDatasets(dataset))
+    
+  })
+  
+  output$circos.error <- renderText({
+    return(check_twoDatasets(dataset))
+    
+  })
+  
+  output$network.error <- renderText({
+    return(check_twoDatasets(dataset))
   })
 }
 
@@ -213,23 +350,10 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     circos.cutoff <- input$cutoffCiros
   })
   
-  #' run analysis
-  diablo.result <- reactive({
-    X <- dataset$data
-    if (!is.null(X)){
-      design <- matrix(0.1, ncol = length(X), nrow = length(X),
-                       dimnames = list(names(X), names(X)))
-      diag(design) <- 0
-      diablo.result <- mixOmics::block.splsda(X = X, Y = storability,
-                                              ncomp = input$ncomp , scale = input$scale,
-                                              design = design)
-    }
-  })
-  
   #' generate output plots
   #' Sample Plot
   output$DIABLO.Indiv <- renderPlot({
-    if(!is.null(diablo.result())){
+    if(!is.null(diablo.result()) & get_ncomp(input) >= 2){
       mixOmics::plotIndiv(diablo.result(), comp = comp.indiv(),
                           group = storability, ind.names = input$indiv.names,
                           legend = TRUE, legend.title = "Storability classes", legend.position = "bottom")
@@ -238,48 +362,66 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   #' Variable Plot
   output$DIABLO.Var <- renderPlot({
-    mixOmics::plotVar(diablo.result(), comp = comp.var(),
-                      var.names = input$var.names)
+    if(!is.null(diablo.result()) & get_ncomp(input) >= 2){
+      mixOmics::plotVar(diablo.result(), comp = comp.var(),
+                        var.names = input$var.names, pch = seq(1, length(dataset$data), 1),
+                        legend = TRUE)
+    }
   })
   
   #' Loading Plot
   output$DIABLO.Load <- renderPlot({
-    req(input$diablo.load.comp)
-    mixOmics::plotLoadings(diablo.result(), comp = as.numeric(input$diablo.load.comp))})
-  
-  #'Selected Variables Table
-  selVarTable <- reactive({
-    req(input$diablo.sel.var.comp)
-    mixOmics::selectVar(diablo.result(), comp = as.numeric(input$diablo.sel.var.comp))
-  })
-  output$DIABLO.X.Sel.Var <- DT::renderDataTable({
-    ListsToMatrix(selVarTable()$X$name, selVarTable()$X$value, c("name", "value"))
-  })
-  output$DIABLO.Y.Sel.Var <- DT::renderDataTable({
-    ListsToMatrix(selVarTable()$Y$name, selVarTable()$Y$value, c("name", "value"))
+    if(!is.null(diablo.result())){
+      req(input$diablo.load.comp)
+      mixOmics::plotLoadings(diablo.result(), comp = as.numeric(input$diablo.load.comp))
+    }
   })
   
   #' CIM Plot
   output$DIABLO.Img <- renderPlot({
-    mixOmics::cimDiablo(diablo.result(), comp = comp.img(), margin=c(5,15), legend.position = "right",
-                        size.legend = 1)
+    if(!is.null(diablo.result()) & length(dataset$data) > 1){
+      mixOmics::cimDiablo(diablo.result(), comp = comp.img(), margin=c(5,20), legend.position = "right",
+                          size.legend = 1)
+    }
   })
   
   #' Arrow Plot
   output$DIABLO.Arrow <- renderPlot({
-    mixOmics::plotArrow(diablo.result(), group = storability, ind.names = input$namesArrow,
-                        legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
-                        X.label = "Dimension 1", Y.label = "Dimension 2")
+    if(!is.null(diablo.result()) & get_ncomp(input) >= 2){
+      mixOmics::plotArrow(diablo.result(), group = storability, ind.names = input$namesArrow,
+                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+                          X.label = "Dimension 1", Y.label = "Dimension 2")
+    }
   })
   
   #' Diablo Plot
   output$DIABLO.Diablo <- renderPlot({
-    mixOmics::plotDiablo(diablo.result(), ncomp = comp.diablo())
+    if(!is.null(diablo.result()) & length(dataset$data) > 1){
+      mixOmics::plotDiablo(diablo.result(), ncomp = comp.diablo())
+    }
   })
   
   #' Circos Plot
   output$DIABLO.Circos <- renderPlot({
-    mixOmics::circosPlot(diablo.result(), cutoff = 0.7, line = TRUE,
-                         size.labels =1.5, size.variables = .85)
+    if(!is.null(diablo.result()) & length(dataset$data) > 1){
+      mixOmics::circosPlot(diablo.result(), cutoff = input$cutoffCircos, line = TRUE,
+                           size.labels =1.5, size.variables = .85)
+    }
+  })
+  
+  #' Network Plot
+  output$DIABLO.Network <- renderVisNetwork({
+    if(!is.null(diablo.result()) & length(dataset$data) > 1){
+      network = mixOmics::network(diablo.result(), blocks = seq(1, length(dataset$data), 1), cutoff = input$cutoffNetwork)
+      graph <- toVisNetworkData(network$gR)
+      graph$nodes$label = RemovePostFix(graph$nodes$label, "_")
+      
+      nodes$data <- list(label = graph$nodes$label, id = graph$nodes$id)
+      
+      visNetwork(nodes = graph$nodes, edges = graph$edges) %>% 
+        visOptions(highlightNearest = TRUE) %>%
+        visPhysics(enabled = FALSE) %>%
+        visInteraction(navigationButtons = TRUE)
+    }
   })
 }
