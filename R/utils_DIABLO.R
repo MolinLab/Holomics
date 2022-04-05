@@ -7,8 +7,8 @@
 #' @return number of components
 #'
 #' @noRd
-get_ncomp <- function(input){
-  return (ifelse(useTunedVal(), tunedVals$ncomp, input$ncomp))
+diabloGetNcomp <- function(input){
+  return (ifelse(useTunedDiabloVals(), tunedDiabloVals$ncomp, input$ncomp))
 }
 
 
@@ -18,7 +18,7 @@ get_ncomp <- function(input){
 #' @return error message if less than two datasets else empty string
 #'
 #' @noRd
-check_twoDatasets <- function(dataset){
+diabloCheckTwoDatasets <- function(dataset){
   if(length(dataset$data) < 2){
     return("You have to select at least two dataset!")
   } else {
@@ -33,11 +33,11 @@ check_twoDatasets <- function(dataset){
 #'  else empty string
 #'  
 #' @noRd
-check_oneDataset_ncomp <- function(dataset, input, ncompCheck = TRUE){
+diabloCheckOneDatasetNcomp <- function(dataset, input, ncompCheck = TRUE){
   if(length(dataset$data) < 1){
     return("You have to select at least one dataset!")
   } else if(ncompCheck){
-    return(check_ncomp(input))
+    return(diabloCheckNcomp(input))
   } else {
     return("")
   }
@@ -50,8 +50,8 @@ check_oneDataset_ncomp <- function(dataset, input, ncompCheck = TRUE){
 #'  else empty string
 #'  
 #' @noRd
-check_ncomp <- function(input){
-  if(get_ncomp(input) < 2){
+diabloCheckNcomp <- function(input){
+  if(diabloGetNcomp(input) < 2){
     return("There need to be at least two components to render this plot!")
   } else {
     return("")
