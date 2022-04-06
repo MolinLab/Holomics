@@ -102,11 +102,7 @@ mod_sPLS_ui <- function(id){
                    ),
                    fluidRow(style = "gap: 1rem",
                             actionButton(ns("tune"), "Tune parameters"),
-                            uiOutput(ns("tune.switch")),
-                            selectInput(ns("selection"), "Variable selection",
-                                        c("Off" = "off", "On" = "on")),
-                            uiOutput(ns("keep.x")),
-                            uiOutput(ns("keep.y"))
+                            uiOutput(ns("tune.switch"))
                    )
       )
     )
@@ -180,30 +176,6 @@ observe_spls_ui_components <- function(ns, session, input, output, dataset){
     enable("ncomp")
     enable("scale")
     enable("logratio")
-    enable("selection")
-  })
-  
-  #'Variable selection
-  observeEvent(input$selection,{
-    if(input$selection == "on"){
-      output$keep.x <- renderUI({
-        size = ncol(dataset$data1)
-        numericInput(ns("keepX"), "Variables of dataset 1",
-                     min = 2, max = size, value = ifelse(size > 30, 30, round(size/2)),
-                     width = "70%")
-      })
-      
-      output$keep.y <- renderUI({
-        size = ncol(dataset$data2)
-        numericInput(ns("keepY"), "Variables of dataset 2",
-                     min = 2, max = size, value = ifelse(size > 30, 30, round(size/2)),
-                     width = "70%")
-      })
-      
-    } else {
-      output$keep.x <- renderUI({})
-      output$keep.y <- renderUI({})
-    }
   })
   
   #' Observe tune button
@@ -222,12 +194,10 @@ observe_spls_ui_components <- function(ns, session, input, output, dataset){
       disable("ncomp")
       disable("scale")
       disable("logratio")
-      disable("selection")
     } else {
       enable("ncomp")
       enable("scale")
       enable("logratio")
-      enable("selection")
     }
   })
 }
@@ -270,27 +240,13 @@ tune_values <- function(dataset){
 
 #' Run analysis
 run_spls_analysis <- function(ns, input, output, dataset){
-  keepX <- reactive({
-    req(input$keepX)
-    keepX <- input$keepX
-  })
-  
-  keepY <- reactive({
-    req(input$keepY)
-    keepY <- input$keepY
-  })
-  
   spls.result <<- reactive({
     X <- dataset$data1
     Y <- dataset$data2
     if(useTunedsPLSVals()){  #use tuned variables
       result <- mixOmics::spls(X, Y, ncomp = tunedsPLSVals$ncomp, 
                                keepX = tunedsPLSVals$keepX, keepY = tunedsPLSVals$keepY)
-    } else if (input$selection == "on"){   #variable selection on
-      result <- mixOmics::spls(X, Y,
-                               ncomp = input$ncomp ,logratio = input$logratio,
-                               scale = input$scale, keepX = keepX(), keepY = keepY())
-    }else { #variable selection off
+    } else {
       result <- mixOmics::spls(X, Y,
                                ncomp = input$ncomp ,logratio = input$logratio,
                                scale = input$scale)
