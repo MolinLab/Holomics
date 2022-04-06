@@ -23,7 +23,8 @@ mod_sPLS_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("sPLS.Indiv")))
+                                                 plotOutput(ns("sPLS.Indiv")),
+                                                 downloadButton(ns("Indiv.download"), "Save plot"))
                                )
                       ),
                       tabPanel("Variable Plot",
@@ -34,7 +35,8 @@ mod_sPLS_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("sPLS.Var")))
+                                                 plotOutput(ns("sPLS.Var")),
+                                                 downloadButton(ns("Var.download"), "Save plot"))
                                )
                       ),
                       tabPanel("Loading Plots",
@@ -43,7 +45,8 @@ mod_sPLS_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("sPLS.Load")))
+                                                 plotOutput(ns("sPLS.Load")),
+                                                 downloadButton(ns("Load.download"), "Save plot"))
                                )
                       ),
                       tabPanel("Selected Variables",
@@ -53,10 +56,12 @@ mod_sPLS_ui <- function(id){
                                fluidRow(
                                  bs4Dash::tabBox(width = 12,
                                                  tabPanel("Dataset 1",
-                                                          DT::dataTableOutput(ns("sPLS.X.Sel.Var"))
+                                                          DT::dataTableOutput(ns("sPLS.X.Sel.Var")),
+                                                          downloadButton(ns("SelVarX.download"), "Save table")
                                                  ),
                                                  tabPanel("Dataset 2",
-                                                          DT::dataTableOutput(ns("sPLS.Y.Sel.Var"))
+                                                          DT::dataTableOutput(ns("sPLS.Y.Sel.Var")),
+                                                          downloadButton(ns("SelVarY.download"), "Save table")
                                                  )
                                  )
                                )
@@ -67,7 +72,8 @@ mod_sPLS_ui <- function(id){
                                ),
                                fluidRow(
                                  bs4Dash::column(width = 12,
-                                                 plotOutput(ns("sPLS.Img")))
+                                                 plotOutput(ns("sPLS.Img")),
+                                                 downloadButton(ns("Img.download"), "Save plot"))
                                )
                       ),
                       tabPanel("Arrow Plot",
@@ -77,7 +83,8 @@ mod_sPLS_ui <- function(id){
                                fluidRow(
                                  bs4Dash::column(width = 12,
                                                  textOutput(ns("arrow.error")),
-                                                 plotOutput(ns("sPLS.Arrow")))
+                                                 plotOutput(ns("sPLS.Arrow")),
+                                                 downloadButton(ns("Arrow.download"), "Save plot"))
                                )
                       )
       )
@@ -254,8 +261,8 @@ tune_values <- function(dataset){
                         measure = "cor", BPPARAM = BPPARAM,
                         folds = 5, nrepeat = 50, progressBar = TRUE)
     keepY <- tune.Y$choice.keepY
-   
-     incProgress(1/4)
+    
+    incProgress(1/4)
   })
   
   return (list("ncomp" = ncomp, "keepX" = keepX, "keepY" = keepY))
@@ -327,49 +334,90 @@ generate_spls_plots <- function(ns, input, output, dataset){
       input$spls.rep.space
   })
   
-  
   #' generate output plots
-  #' Sample Plot
-  output$sPLS.Indiv <- renderPlot({
+  #' plot functions
+  plot.indiv <- function(){
     mixOmics::plotIndiv(spls.result(), comp = comp.indiv(),
                         group = storability, ind.names = input$indiv.names,
                         legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
-                        rep.space = rep.space())})
-  #' Variable Plot
-  output$sPLS.Var <- renderPlot({
+                        rep.space = rep.space())
+  }
+  
+  plot.var <- function(){
     mixOmics::plotVar(spls.result(), comp = comp.var(),
                       var.names = input$var.names, pch = c(1,2),
                       legend = TRUE)
-  })
+  }
   
-  #' Loading Plot
-  output$sPLS.Load <- renderPlot({
+  plot.load <- function(){
     req(input$spls.load.comp)
-    mixOmics::plotLoadings(spls.result(), comp = as.numeric(input$spls.load.comp))})
+    mixOmics::plotLoadings(spls.result(), comp = as.numeric(input$spls.load.comp))
+  }
   
-  #' Selected Variables Table
-  selVarTable <- reactive({
-    req(input$spls.sel.var.comp)
-    mixOmics::selectVar(spls.result(), comp = as.numeric(input$spls.sel.var.comp))
-  })
-  output$sPLS.X.Sel.Var <- DT::renderDataTable({
-    listsToMatrix(selVarTable()$X$name, selVarTable()$X$value, c("name", "value"))
-  })
-  output$sPLS.Y.Sel.Var <- DT::renderDataTable({
-    listsToMatrix(selVarTable()$Y$name, selVarTable()$Y$value, c("name", "value"))
-  })
+  plot.img <- function(){
+    mixOmics::cim(spls.result(), comp = comp.img(), margin=c(8,10))
+  }
   
-  #' CIM Plot
-  output$sPLS.Img <- renderPlot({
-    mixOmics::cim(spls.result(), comp = comp.img())
-  })
-  
-  #' Arrow Plot
-  output$sPLS.Arrow <- renderPlot({
+  plot.arrow <- function(){
     if(splsGetNcomp(input) >= 2){
       mixOmics::plotArrow(spls.result(), group = storability, ind.names = input$namesArrow,
                           legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
                           X.label = "Dimension 1", Y.label = "Dimension 2")
     }
+  }
+  
+  selVarTable <- reactive({
+    req(input$spls.sel.var.comp)
+    mixOmics::selectVar(spls.result(), comp = as.numeric(input$spls.sel.var.comp))
   })
+  
+  table.selVarX <- function(){
+    listsToMatrix(selVarTable()$X$name, selVarTable()$X$value, c("name", "value"))
+  }
+  
+  table.selVarY <- function(){
+    listsToMatrix(selVarTable()$Y$name, selVarTable()$Y$value, c("name", "value"))
+  }
+  
+  #' Sample Plot
+  output$sPLS.Indiv <- renderPlot(
+    plot.indiv()
+  )
+  
+  #' Variable Plot
+  output$sPLS.Var <- renderPlot(
+    plot.var()
+  )
+  
+  #' Loading Plot
+  output$sPLS.Load <- renderPlot(
+    plot.load()
+  )
+  
+  #' Selected Variables Table
+  output$sPLS.X.Sel.Var <- DT::renderDataTable(
+    table.selVarX()
+  )
+  output$sPLS.Y.Sel.Var <- DT::renderDataTable(
+    table.selVarY()
+  )
+  
+  #' CIM Plot
+  output$sPLS.Img <- renderPlot(
+    plot.img()
+  )
+  
+  #' Arrow Plot
+  output$sPLS.Arrow <- renderPlot(
+    plot.arrow()
+  )
+  
+  #' Download handler
+  output$Indiv.download <- getDownloadHandler("PLS_Sampleplot.png", plot.indiv)
+  output$Var.download <- getDownloadHandler("PLS_Variableplot.png", plot.var)
+  output$Load.download <- getDownloadHandler("PLS_Loadingsplot.png", plot.load)
+  output$Img.download <- getDownloadHandler("PLS_Heatmap.png", plot.img, width = 725)
+  output$Arrow.download <- getDownloadHandler("PLS_Arrowplot.png", plot.arrow, width = 725)
+  output$SelVarX.download <- getDownloadHandler("PLS_SelectedVariable1.csv", table.selVarX, type = "csv")
+  output$SelVarY.download <- getDownloadHandler("PLS_SelectedVariables2.csv", table.selVarY, type = "csv")
 }

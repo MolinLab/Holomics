@@ -21,7 +21,8 @@ mod_PCA_ui <- function(id){
                  ),
                  fluidRow(
                    bs4Dash::column(width = 12,
-                                   plotOutput(ns("PCA.Indiv")))             
+                                   plotOutput(ns("PCA.Indiv")),
+                                   downloadButton(ns("Indiv.download"), "Save plot"))             
                  )
         ),
         tabPanel("Variable Plot",
@@ -32,7 +33,8 @@ mod_PCA_ui <- function(id){
                  ),
                  fluidRow(
                    bs4Dash::column(width = 12,
-                                   plotOutput(ns("PCA.Var")))         
+                                   plotOutput(ns("PCA.Var")),
+                                   downloadButton(ns("Var.download"), "Save plot"))         
                  )
         ),
         tabPanel("Loading Plot",
@@ -41,7 +43,8 @@ mod_PCA_ui <- function(id){
                  ),
                  fluidRow(
                    bs4Dash::column(width = 12,
-                                   plotOutput(ns("PCA.Load")))
+                                   plotOutput(ns("PCA.Load")),
+                                   downloadButton(ns("Load.download"), "Save plot"))
                  )
         ),
         tabPanel("Selected Variables",
@@ -50,13 +53,15 @@ mod_PCA_ui <- function(id){
                  ),
                  fluidRow(
                    bs4Dash::column(width = 12,
-                                   DT::dataTableOutput(ns("PCA.Sel.Var"))
+                                   DT::dataTableOutput(ns("PCA.Sel.Var")),
+                                   downloadButton(ns("SelVar.download"), "Save table")
                    )
                  )     
         ),
         tabPanel("Scree Plot",       
                  bs4Dash::column(width = 12,
-                                 plotOutput(ns("PCA.Scree")))
+                                 plotOutput(ns("PCA.Scree")), 
+                                 downloadButton(ns("Scree.download"), "Save plot"))
         )
       )
     ),
@@ -138,31 +143,63 @@ generate_pca_plots <- function(ns, input, output, dataset){
                                 logratio = input$logratio, scale = input$scale)
   })
   
-  #' Scree Plot
-  output$PCA.Scree <- renderPlot({
-    plot(pca.result())})
+  #' plot functions
+  plot.scree <- function() {
+    plot(pca.result())
+  }
   
-  #' Sample Plot
-  output$PCA.Indiv <- renderPlot({
+  plot.indiv <- function(){
     mixOmics::plotIndiv(pca.result(), comp = comp.indiv(), 
                         group = storability, ind.names = input$indiv.names,
-                        legend = TRUE, legend.title = "Storability classes")})
+                        legend = TRUE, legend.title = "Storability classes")
+  }
   
-  #' Variable Plot
-  output$PCA.Var <- renderPlot({
+  plot.var <- function(){
     mixOmics::plotVar(pca.result(), comp = comp.var(),
                       var.names = input$var.names)
-  })
+  }
   
-  #' Loading Plot
-  output$PCA.Load <- renderPlot({
+  plot.load <- function(){
     req(input$pca.load.comp)
-    mixOmics::plotLoadings(pca.result(), comp = as.numeric(input$pca.load.comp))})
+    mixOmics::plotLoadings(pca.result(), comp = as.numeric(input$pca.load.comp))
+  }
   
-  #'Selected Variables Tables
-  output$PCA.Sel.Var <- DT::renderDataTable({
+  table.selVar <- function(){
     req(input$pca.sel.var.comp)
     selVar <- mixOmics::selectVar(pca.result(), comp = as.numeric(input$pca.sel.var.comp))
-    ListsToMatrix(selVar$name, selVar$value, c("name", "value"))
-  })
+    listsToMatrix(selVar$name, selVar$value, c("name", "value"))
+  }
+  
+  #'output plots
+  #' Sample Plot
+  output$PCA.Indiv <- renderPlot(
+    plot.indiv()
+  )
+  
+  #' Variable Plot
+  output$PCA.Var <- renderPlot(
+    plot.var() 
+  )
+  
+  #' Loading Plot
+  output$PCA.Load <- renderPlot(
+    plot.load()
+  )
+  
+  #'Selected Variables Tables
+  output$PCA.Sel.Var <- DT::renderDataTable(
+    table.selVar()
+  )
+  
+  #' Scree Plot
+  output$PCA.Scree <- renderPlot(
+    plot.scree()
+  )
+  
+  #' Download handler
+  output$Indiv.download <- getDownloadHandler("PCA_Sampleplot.png", plot.indiv)
+  output$Var.download <- getDownloadHandler("PCA_Variableplot.png", plot.var)
+  output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load)
+  output$SelVar.download <- getDownloadHandler("PCA_SelectedVariables.csv", table.selVar, type = "csv")
+  output$Scree.download <- getDownloadHandler("PCA_Screeplot.png", plot.scree)
 }

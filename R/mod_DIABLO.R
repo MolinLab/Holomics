@@ -25,7 +25,8 @@ mod_DIABLO_ui <- function(id){
                                fluidRow(
                                  bs4Dash::column(width = 12,
                                                  textOutput(ns("indiv.error")),
-                                                 plotOutput(ns("DIABLO.Indiv")))
+                                                 plotOutput(ns("DIABLO.Indiv")),
+                                                 downloadButton(ns("Indiv.download"), "Save plot"))
                                )
                       ),
                       tabPanel("Variable Plot",
@@ -37,7 +38,8 @@ mod_DIABLO_ui <- function(id){
                                fluidRow(
                                  bs4Dash::column(width = 12,
                                                  textOutput(ns("var.error")),
-                                                 plotOutput(ns("DIABLO.Var")))
+                                                 plotOutput(ns("DIABLO.Var")),
+                                                 downloadButton(ns("Var.download"), "Save plot"))
                                )
                       ),
                       tabPanel("Loading Plots",
@@ -47,7 +49,8 @@ mod_DIABLO_ui <- function(id){
                                fluidRow(
                                  bs4Dash::column(width = 12,
                                                  textOutput(ns("load.error")),
-                                                 plotOutput(ns("DIABLO.Load")))
+                                                 plotOutput(ns("DIABLO.Load")),
+                                                 downloadButton(ns("Load.download"), "Save plot"))
                                )
                       ),
                       tabPanel("CIM",
@@ -57,7 +60,8 @@ mod_DIABLO_ui <- function(id){
                                fluidRow(
                                  bs4Dash::column(width = 12,
                                                  textOutput(ns("img.error")),
-                                                 plotOutput(ns("DIABLO.Img")))
+                                                 plotOutput(ns("DIABLO.Img")),
+                                                 downloadButton(ns("Img.download"), "Save plot"))
                                )
                       ),
                       tabPanel("Arrow Plot",
@@ -77,7 +81,8 @@ mod_DIABLO_ui <- function(id){
                                fluidRow(
                                  bs4Dash::column(width = 12,
                                                  textOutput(ns("diablo.error")),
-                                                 plotOutput(ns("DIABLO.Diablo")))
+                                                 plotOutput(ns("DIABLO.Diablo")),
+                                                 downloadButton(ns("Diablo.download"), "Save plot"))
                                )
                       ),
                       tabPanel("Circos Plot",
@@ -88,7 +93,8 @@ mod_DIABLO_ui <- function(id){
                                fluidRow(
                                  bs4Dash::column(width = 12,
                                                  textOutput(ns("circos.error")),
-                                                 plotOutput(ns("DIABLO.Circos")))
+                                                 plotOutput(ns("DIABLO.Circos")),
+                                                 downloadButton(ns("Circos.download"), "Save plot"))
                                )
                       ), 
                       tabPanel("Network",
@@ -100,7 +106,8 @@ mod_DIABLO_ui <- function(id){
                                fluidRow(
                                  bs4Dash::column(width = 12,
                                                  textOutput(ns("network.error")),
-                                                 visNetworkOutput(ns("DIABLO.Network")))
+                                                 visNetworkOutput(ns("DIABLO.Network")),
+                                                 downloadButton(ns("NetworkHtml.download"), "Save as html"))
                                )
                       )
       )
@@ -357,63 +364,93 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   })
   
   #' generate output plots
-  #' Sample Plot
-  output$DIABLO.Indiv <- renderPlot({
+  
+  #'  plot functions
+  plot.indiv <- function(){
     if(!is.null(diablo.result()) & diabloGetNcomp(input) >= 2){
       mixOmics::plotIndiv(diablo.result(), comp = comp.indiv(),
                           group = storability, ind.names = input$indiv.names,
                           legend = TRUE, legend.title = "Storability classes", legend.position = "bottom")
     }
-  })
+  }
   
-  #' Variable Plot
-  output$DIABLO.Var <- renderPlot({
+  plot.var <- function(){
     if(!is.null(diablo.result()) & diabloGetNcomp(input) >= 2){
       mixOmics::plotVar(diablo.result(), comp = comp.var(),
                         var.names = input$var.names, pch = seq(1, length(dataset$data), 1),
                         legend = TRUE)
     }
-  })
+  }
   
-  #' Loading Plot
-  output$DIABLO.Load <- renderPlot({
+  plot.load <- function(){
     if(!is.null(diablo.result())){
       req(input$diablo.load.comp)
       mixOmics::plotLoadings(diablo.result(), comp = as.numeric(input$diablo.load.comp))
     }
-  })
+  }
   
-  #' CIM Plot
-  output$DIABLO.Img <- renderPlot({
+  plot.img <- function(){
     if(!is.null(diablo.result()) & length(dataset$data) > 1){
-      mixOmics::cimDiablo(diablo.result(), comp = comp.img(), margin=c(5,20), legend.position = "right",
+      mixOmics::cimDiablo(diablo.result(), comp = comp.img(), margin=c(8,20), legend.position = "right",
                           size.legend = 1)
-    }
-  })
+    }    
+  }
   
-  #' Arrow Plot
-  output$DIABLO.Arrow <- renderPlot({
+  plot.arrow <- function(){
     if(!is.null(diablo.result()) & diabloGetNcomp(input) >= 2){
       mixOmics::plotArrow(diablo.result(), group = storability, ind.names = input$namesArrow,
                           legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
                           X.label = "Dimension 1", Y.label = "Dimension 2")
     }
-  })
+  }
   
-  #' Diablo Plot
-  output$DIABLO.Diablo <- renderPlot({
+  plot.diablo <- function(){
     if(!is.null(diablo.result()) & length(dataset$data) > 1){
       mixOmics::plotDiablo(diablo.result(), ncomp = comp.diablo())
     }
-  })
+  }
   
-  #' Circos Plot
-  output$DIABLO.Circos <- renderPlot({
+  plot.circos <- function(){
     if(!is.null(diablo.result()) & length(dataset$data) > 1){
       mixOmics::circosPlot(diablo.result(), cutoff = input$cutoffCircos, line = TRUE,
                            size.labels =1.5, size.variables = .85)
     }
-  })
+  }
+  
+  #' Sample Plot
+  output$DIABLO.Indiv <- renderPlot(
+    plot.indiv()
+  )
+  
+  #' Variable Plot
+  output$DIABLO.Var <- renderPlot(
+    plot.var()
+  )
+  
+  #' Loading Plot
+  output$DIABLO.Load <- renderPlot(
+    plot.load()
+  )
+  
+  #' CIM Plot
+  output$DIABLO.Img <- renderPlot(
+    plot.img()
+  )
+  
+  #' Arrow Plot
+  output$DIABLO.Arrow <- renderPlot(
+    plot.arrow()
+  )
+  
+  #' Diablo Plot
+  output$DIABLO.Diablo <- renderPlot(
+    plot.diablo()
+  )
+  
+  #' Circos Plot
+  output$DIABLO.Circos <- renderPlot(
+    plot.circos()
+  )
   
   #' Network Plot
   output$DIABLO.Network <- renderVisNetwork({
@@ -424,10 +461,26 @@ generate_diablo_plots <- function(ns, input, output, dataset){
       
       nodes$data <- list(label = graph$nodes$label, id = graph$nodes$id)
       
-      visNetwork(nodes = graph$nodes, edges = graph$edges) %>% 
+      network <<- visNetwork(nodes = graph$nodes, edges = graph$edges) %>% 
         visOptions(highlightNearest = TRUE) %>%
         visPhysics(enabled = FALSE) %>%
-        visInteraction(navigationButtons = TRUE)
+        visInteraction(navigationButtons = TRUE) %>%
+        visExport(label = "Save as png")
     }
   })
+  
+  #' Download handler
+  output$Indiv.download <- getDownloadHandler("DIABLO_Sampleplot.png", plot.indiv)
+  output$Var.download <- getDownloadHandler("DIABLO_Variableplot.png", plot.var)
+  output$Load.download <- getDownloadHandler("DIABLO_Loadingsplot.png", plot.load)
+  output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 725)
+  # output$Arrow.download <- getDownloadHandler("DIABLO_Arrowplot.png", plot.arrow)
+  output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo)
+  output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 725)
+  output$NetworkHtml.download <- downloadHandler(
+    filename = "DIABLO_Network.html",
+    content = function(file){
+      visSave(network, file)
+    }
+  )
 }
