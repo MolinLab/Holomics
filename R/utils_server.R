@@ -1,3 +1,23 @@
+
+#' getDataset 
+#'
+#' @description A utils function, which gets the dataset according to the selection
+#'
+#' @return dataframe with the data
+#'
+#' @noRd
+#' Return 
+getDataset <- function(selection){
+  if(selection == "t"){
+    return (Holomics::data.transcriptomic_small)
+  } else if (selection == "me"){
+    return (Holomics::data.metabolomic_small)
+  } else if (selection == "mi"){
+    return (Holomics::data.microbiomic_small)
+  }
+}
+
+
 #' listsToMatrix 
 #'
 #' @description A utils function, which converts two list to a matrix
@@ -43,7 +63,14 @@ combineLists <- function(a, b){
   return(r)
 }
 
-
+#'
+#' @description A utils function, generates the download handler for either png
+#' or csv files calling the given content function to generate the content of the
+#' file
+#'
+#' @return downloadHandler
+#'
+#' @noRd
 getDownloadHandler <- function(filename, contentfct, type = "png", width = 480, height = 480){
   return (
     downloadHandler(

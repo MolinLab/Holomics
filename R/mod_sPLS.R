@@ -10,6 +10,17 @@
 mod_sPLS_ui <- function(id){
   ns <- NS(id)
   tagList(
+    shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
+    fluidRow(
+      bs4Dash::column(width = 6,
+                      selectInput(ns("dataset1"), "Select first dataset:", 
+                                  choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), width = "150"),
+                      selectInput(ns("dataset2"), "Select second dataset:", 
+                                  choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), 
+                                  selected = "me", width = "fit-content"),
+                      style = "display: flex; gap: 1rem"
+      )
+    ),
     fluidRow(
       bs4Dash::tabBox(width = 12, collapsible = FALSE,
                       tabPanel("Sample Plot",
@@ -112,16 +123,17 @@ mod_sPLS_ui <- function(id){
 #' PLS Server Functions
 #'
 #' @noRd
-mod_sPLS_server <- function(id, dataset){
+mod_sPLS_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
+    dataset <- reactiveValues()
     useTunedsPLSVals <<- reactiveVal(FALSE)
     tunedsPLSVals <<- NULL
     
     render_spls_ui_components(ns, input, output, dataset)
     
-    observe_spls_ui_components(ns, session, input, output, dataset)
+    observe_spls_ui_components(ns, input, output, dataset)
     
     run_spls_analysis(ns, input, output, dataset)
     
@@ -164,12 +176,21 @@ render_spls_ui_components <- function(ns, input, output, dataset){
 }
 
 #'Observe different ui components
-observe_spls_ui_components <- function(ns, session, input, output, dataset){
+observe_spls_ui_components <- function(ns, input, output, dataset){
+  #' Observe change of data selection
+  observeEvent(input$dataset1, {
+    dataset$data1 <- getDataset(input$dataset1)
+  })
+  
+  observeEvent(input$dataset2, {
+    dataset$data2 <- getDataset(input$dataset2)
+  })
+  
+  #' Observe change of data
   observeDataset <- reactive({
     list(dataset$data1, dataset$data2)
   })
   
-  #' Observe dataset
   observeEvent(observeDataset(), {
     output$tune.switch <- renderUI({})
     useTunedsPLSVals(FALSE)

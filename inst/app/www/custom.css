@@ -1,10 +1,10 @@
-#multiOmics-message{
+#DIABLO-dataset\.error{
   display: flex;
   align-items: center;
   color: red;
 }
 
-#DIABLO-nodes{
+#DIABLO-nodes, #DIABLO-nodes\.tuned{
   width: 30%;
 }
 
@@ -12,23 +12,31 @@ a[id*='.download']{
   float: right;
 }
 
-#downloadDIABLO-DIABLO\.Network {
+#downloadDIABLO-DIABLO\.Network,  #downloadDIABLO-DIABLO\.Network\.tuned{
   font-weight: 400;
   border: 1px solid transparent;
   padding: .375rem .75rem !important;
   font-size: 1rem !important;
   line-height: 1.5;
   font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol" !important;
-  background-color: #f8f9fa !important;;
-  border-color: #ddd !important;;
+  background-color: #f8f9fa !important;
+  border-color: #ddd !important;
   color: #444 !important;
   border-radius: .25rem !important;
   margin-bottom: .25rem;
 
 }
 
-#downloadDIABLO-DIABLO\.Network:before {
+#downloadDIABLO-DIABLO\.Network:before, #downloadDIABLO-DIABLO\.Network\.tuned:before {
   content: "\f0c7";
   font-family: 'Font Awesome 5 Free' !important;
   margin-right: 2px;
+}
+
+#DIABLO-tuneBox > .card-header{
+  display: none;
+}
+
+#DIABLO-tune\.switch{
+  margin-top: 1rem
 }

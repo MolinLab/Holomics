@@ -35,7 +35,9 @@ app_ui <- function(request) {
           #                   bs4Dash::menuSubItem("Filtration", tabName = "filtration")
           # ),
           bs4Dash::menuItem("Single 'omics", tabName = "singleOmics", icon = icon("window-minimize")),
-          bs4Dash::menuItem("Multi 'omics", tabName = "multiOmics", icon = icon("layer-group"))
+          bs4Dash::menuItem("Multi 'omics", tabName = "multiOmics", icon = icon("layer-group"), startExpanded = FALSE,
+                            bs4Dash::menuSubItem("sPLS", tabName = "sPLS"),
+                            bs4Dash::menuSubItem("DIABLO", tabName = "DIABLO"))
         )
       ),
       
@@ -50,7 +52,9 @@ app_ui <- function(request) {
                            )),
           bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
           bs4Dash::tabItem(tabName = "singleOmics", mod_SingleOmics_ui("singleOmics")),
-          bs4Dash::tabItem(tabName = "multiOmics", mod_MultiOmics_ui("multiOmics"))
+          # bs4Dash::tabItem(tabName = "multiOmics", mod_MultiOmics_ui("multiOmics")),
+          bs4Dash::tabItem(tabName = "sPLS", mod_sPLS_ui("sPLS")),
+          bs4Dash::tabItem(tabName = "DIABLO", mod_DIABLO_ui("DIABLO"))
         )
         
       )
