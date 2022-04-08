@@ -33,10 +33,10 @@ a[id*='.download']{
   margin-right: 2px;
 }
 
-#DIABLO-tuneBox > .card-header{
+#DIABLO-tuneBox > .card-header, #sPLS-tuneBox > .card-header{
   display: none;
 }
 
-#DIABLO-tune\.switch{
+#DIABLO-tune\.switch, #sPLS-tune\.switch{
   margin-top: 1rem
 }

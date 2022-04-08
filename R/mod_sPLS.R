@@ -22,99 +22,47 @@ mod_sPLS_ui <- function(id){
       )
     ),
     fluidRow(
-      bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                      tabPanel("Sample Plot",
-                               fluidRow(style = "display: flex; gap: 1rem",
-                                        uiOutput(ns("indiv.x.comp")),
-                                        uiOutput(ns("indiv.y.comp")),
-                                        checkboxInput(ns("indiv.names"), "Samplenames", value = FALSE),
-                                        selectInput(ns("spls.rep.space"), "Replication space:",
-                                                    c("Separated"= "NULL", "X-variate"= "X-variate",
-                                                      "Y-variate" = "Y-variate", "XY-variate" = "XY-variate"))
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 plotOutput(ns("sPLS.Indiv")),
-                                                 downloadButton(ns("Indiv.download"), "Save plot"))
-                               )
+      bs4Dash::column(width = 5, 
+                      fluidRow(width = 12,
+                               splsGetUi(ns)
                       ),
-                      tabPanel("Variable Plot",
-                               fluidRow(style = "display: flex; gap: 1rem",
-                                        uiOutput(ns("var.x.comp")),
-                                        uiOutput(ns("var.y.comp")),
-                                        checkboxInput(ns("var.names"), "Variablenames", value = FALSE)
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 plotOutput(ns("sPLS.Var")),
-                                                 downloadButton(ns("Var.download"), "Save plot"))
-                               )
-                      ),
-                      tabPanel("Loading Plots",
-                               fluidRow(
-                                 uiOutput(ns("load.comp"))
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 plotOutput(ns("sPLS.Load")),
-                                                 downloadButton(ns("Load.download"), "Save plot"))
-                               )
-                      ),
-                      tabPanel("Selected Variables",
-                               fluidRow(
-                                 uiOutput(ns("sel.var.comp"))
-                               ),
-                               fluidRow(
-                                 bs4Dash::tabBox(width = 12,
-                                                 tabPanel("Dataset 1",
-                                                          DT::dataTableOutput(ns("sPLS.X.Sel.Var")),
-                                                          downloadButton(ns("SelVarX.download"), "Save table")
-                                                 ),
-                                                 tabPanel("Dataset 2",
-                                                          DT::dataTableOutput(ns("sPLS.Y.Sel.Var")),
-                                                          downloadButton(ns("SelVarY.download"), "Save table")
-                                                 )
-                                 )
-                               )
-                      ),
-                      tabPanel("CIM",
-                               fluidRow(
-                                 uiOutput(ns("img.comp"))
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 plotOutput(ns("sPLS.Img")),
-                                                 downloadButton(ns("Img.download"), "Save plot"))
-                               )
-                      ),
-                      tabPanel("Arrow Plot",
-                               fluidRow(
-                                 checkboxInput(ns("namesArrow"), "Samplenames", value = FALSE)
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 textOutput(ns("arrow.error")),
-                                                 plotOutput(ns("sPLS.Arrow")),
-                                                 downloadButton(ns("Arrow.download"), "Save plot"))
+                      fluidRow(width = 12,
+                               bs4Dash::box(title = "Analysis Parameters", width = 12,
+                                            fluidRow(style = "gap: 1rem",
+                                                     numericInput(ns("ncomp"), "Number of components", value = 3,
+                                                                  min = 1, max = 15, step = 1, width = "45%"),
+                                                     selectInput(ns("logratio"), "Logratio",
+                                                                 c("None" = "none",
+                                                                   "centered" = "CLR"
+                                                                 ), width = "30%"),
+                                                     checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
+                                            )
                                )
                       )
-      )
-    ),
-    fluidRow(
-      bs4Dash::box(title = "Analysis Parameters", width = 12,
-                   fluidRow(style = "gap: 1rem",
-                            numericInput(ns("ncomp"), "Number of components", value = 3,
-                                         min = 1, max = 5, step = 1, width = "45%"),
-                            selectInput(ns("logratio"), "Logratio",
-                                        c("None" = "none",
-                                          "centered" = "CLR"
-                                        ), width = "30%"),
-                            checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
-                   ),
-                   fluidRow(style = "gap: 1rem",
-                            actionButton(ns("tune"), "Tune parameters"),
-                            uiOutput(ns("tune.switch"))
-                   )
+      ),
+      bs4Dash::column(width = 2, style = "display: flex; align-items: center;",
+                      bs4Dash::box(id = ns("tuneBox"), width = 12,
+                                   fluidRow(style = "flex-direction: column",
+                                            actionButton(ns("tune"), "Tune parameters"),
+                                   ),
+                                   fluidRow(
+                                     uiOutput(ns("tune.switch"))
+                                   )
+                      )
+      ),
+      bs4Dash::column(id = ns("tunedCol"), width = 5,
+                      fluidRow(width = 12,
+                               splsGetUi(ns, ".tuned")
+                      ),
+                      fluidRow(width = 12,
+                               bs4Dash::box(title = "Tuned Analysis Parameters", width = 12,
+                                            fluidRow(style = "gap: 1rem",
+                                                     textOutput(ns("ncomp.tuned")),
+                                                     textOutput(ns("keepX.tuned")),
+                                                     textOutput(ns("keepY.tuned"))
+                                            )
+                               )
+                      )
       )
     )
   )
@@ -127,9 +75,11 @@ mod_sPLS_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
+    hide("tunedCol")
+    
     dataset <- reactiveValues()
     useTunedsPLSVals <<- reactiveVal(FALSE)
-    tunedsPLSVals <<- NULL
+    tunedsPLSVals <<- reactiveValues(ncomp = 2, keepX = NULL)
     
     render_spls_ui_components(ns, input, output, dataset)
     
@@ -137,9 +87,9 @@ mod_sPLS_server <- function(id){
     
     run_spls_analysis(ns, input, output, dataset)
     
-    generate_spls_error_messages(ns, input, output, dataset)
-    
     generate_spls_plots(ns, input, output, dataset)
+    
+    generate_spls_error_messages(ns, input, output, dataset)
     
   })
 }
@@ -147,31 +97,60 @@ mod_sPLS_server <- function(id){
 #' Render Ui functions
 render_spls_ui_components <- function(ns, input, output, dataset){
   output$indiv.x.comp <- renderUI({
-    selectInput(ns("spls.indiv.x"), "X-Axis Component:", seq(1, splsGetNcomp(input), 1))
+    selectInput(ns("spls.indiv.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
   })
   
   output$indiv.y.comp <- renderUI({
-    selectInput(ns("spls.indiv.y"), "Y-Axis Component:", seq(1, splsGetNcomp(input), 1), selected = 2)
+    selectInput(ns("spls.indiv.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp <- renderUI({
-    selectInput(ns("spls.var.x"), "X-Axis Component:", seq(1, splsGetNcomp(input), 1))
+    selectInput(ns("spls.var.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
   })
   
   output$var.y.comp <- renderUI({
-    selectInput(ns("spls.var.y"), "Y-Axis Component:", seq(1, splsGetNcomp(input), 1), selected = 2)
+    selectInput(ns("spls.var.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$load.comp <- renderUI({
-    selectInput(ns("spls.load.comp"), "Component:", seq(1, splsGetNcomp(input), 1))
+    selectInput(ns("spls.load.comp"), "Component:", seq(1, input$ncomp, 1))
   })
   
   output$sel.var.comp <- renderUI({
-    selectInput(ns("spls.sel.var.comp"), "Component:", seq(1, splsGetNcomp(input), 1))
+    selectInput(ns("spls.sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
   })
   
   output$img.comp <- renderUI({
-    selectInput(ns("spls.img.comp"), "Component:", seq(1, splsGetNcomp(input), 1))
+    selectInput(ns("spls.img.comp"), "Component:", seq(1, input$ncomp, 1))
+  })
+  
+  #tuned
+  output$indiv.x.comp.tuned <- renderUI({
+    selectInput(ns("spls.indiv.x.tuned"), "X-Axis Component:", seq(1, tunedsPLSVals$ncomp, 1))
+  })
+  
+  output$indiv.y.comp.tuned <- renderUI({
+    selectInput(ns("spls.indiv.y.tuned"), "Y-Axis Component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
+  })
+  
+  output$var.x.comp.tuned <- renderUI({
+    selectInput(ns("spls.var.x.tuned"), "X-Axis Component:", seq(1, tunedsPLSVals$ncomp, 1))
+  })
+  
+  output$var.y.comp.tuned <- renderUI({
+    selectInput(ns("spls.var.y.tuned"), "Y-Axis Component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
+  })
+  
+  output$load.comp.tuned <- renderUI({
+    selectInput(ns("spls.load.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
+  })
+  
+  output$sel.var.comp.tuned <- renderUI({
+    selectInput(ns("spls.sel.var.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
+  })
+  
+  output$img.comp.tuned <- renderUI({
+    selectInput(ns("spls.img.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
   })
 }
 
@@ -194,14 +173,12 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
   observeEvent(observeDataset(), {
     output$tune.switch <- renderUI({})
     useTunedsPLSVals(FALSE)
-    enable("ncomp")
-    enable("scale")
-    enable("logratio")
+    hide("tunedCol")
   })
   
   #' Observe tune button
   observeEvent(input$tune, {
-    tunedsPLSVals <<- tune_values(dataset)
+    tune_values(dataset)
     
     if (!is.null(tunedsPLSVals)){
       output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
@@ -212,13 +189,9 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
   observeEvent(input$tuneSwitch,{
     useTunedsPLSVals(input$tuneSwitch)
     if(input$tuneSwitch){
-      disable("ncomp")
-      disable("scale")
-      disable("logratio")
+      show("tunedCol")
     } else {
-      enable("ncomp")
-      enable("scale")
-      enable("logratio")
+      hide("tunedCol")
     }
   })
 }
@@ -227,36 +200,41 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
 tune_values <- function(dataset){
   withProgress(message = 'Tuning parameters .... Please wait!', value = 1/4, {
     #tune ncomp
-    tune.spls <- mixOmics::perf(spls.result(), validation = "Mfold", folds = 7, progressBar = TRUE, nrepeat = 5)
-    ncomp <- 3  #TODO change this
+    tune.spls <- mixOmics::perf(spls.result(), validation = "Mfold", folds = 7, progressBar = TRUE, nrepeat = 50)
+    ncomp <- tune.spls$measures$Q2.total$summary[which.max(tune.spls$measures$Q2.total$summary$mean), 2]
     
     incProgress(1/4)
+    
+    X <- dataset$data1
+    Y <- dataset$data2
     
     #tune keepX
     list_keepX <- c(2:10, 15, 20)
     BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
-    tune.X <- tune.spls(X, Y, ncomp = ncomp,
-                        validation = "Mfold",
-                        test.keepX = list_keepX, 
-                        measure = "cor", BPPARAM = BPPARAM,
-                        folds = 5, nrepeat = 50, progressBar = TRUE)
+    tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
+                                  validation = "Mfold",
+                                  test.keepX = list_keepX, 
+                                  measure = "cor", BPPARAM = BPPARAM,
+                                  folds = 5, nrepeat = 5, progressBar = TRUE)
     keepX <- tune.X$choice.keepX
     
     incProgress(1/4)
     
     #tune keepY
     list_keepY <- c(1:5, 6, 8, 10)
-    tune.Y <- tune.spls(X, Y, ncomp = ncomp,
-                        validation = "Mfold",
-                        test.keepY = list_keepY, 
-                        measure = "cor", BPPARAM = BPPARAM,
-                        folds = 5, nrepeat = 50, progressBar = TRUE)
+    tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
+                                  validation = "Mfold",
+                                  test.keepY = list_keepY, 
+                                  measure = "cor", BPPARAM = BPPARAM,
+                                  folds = 5, nrepeat = 5, progressBar = TRUE)
     keepY <- tune.Y$choice.keepY
     
     incProgress(1/4)
   })
   
-  return (list("ncomp" = ncomp, "keepX" = keepX, "keepY" = keepY))
+  tunedsPLSVals$ncomp = ncomp
+  tunedsPLSVals$keepX = keepX
+  tunedsPLSVals$keepY = keepY
 }
 
 #' Run analysis
@@ -264,15 +242,18 @@ run_spls_analysis <- function(ns, input, output, dataset){
   spls.result <<- reactive({
     X <- dataset$data1
     Y <- dataset$data2
-    if(useTunedsPLSVals()){  #use tuned variables
+    result <- mixOmics::spls(X, Y,
+                             ncomp = input$ncomp ,logratio = input$logratio,
+                             scale = input$scale)
+  })
+  
+  spls.result.tuned <<- reactive({
+    if (useTunedsPLSVals()){
+      X <- dataset$data1
+      Y <- dataset$data2
       result <- mixOmics::spls(X, Y, ncomp = tunedsPLSVals$ncomp, 
                                keepX = tunedsPLSVals$keepX, keepY = tunedsPLSVals$keepY)
-    } else {
-      result <- mixOmics::spls(X, Y,
-                               ncomp = input$ncomp ,logratio = input$logratio,
-                               scale = input$scale)
     }
-    result
   })
 }
 
@@ -280,7 +261,10 @@ run_spls_analysis <- function(ns, input, output, dataset){
 generate_spls_error_messages <- function(ns, input, output, dataset){
   output$arrow.error <- renderText({
     return (splsCheckNcomp(input))
-    
+  })
+  
+  output$arrow.error.tuned <- renderText({
+    return (splsCheckNcomp(input, tuned = TRUE))
   })
 }
 
@@ -305,14 +289,42 @@ generate_spls_plots <- function(ns, input, output, dataset){
   })
   
   rep.space <- reactive({
-    if (identical(input$spls.rep.space, "NULL"))  #necessary, because it's not possible to set NULL as choice value
+    #necessary, because it's not possible to set NULL as choice value
+    if (identical(input$spls.rep.space, "NULL")){
       NULL
-    else
+    } else{
       input$spls.rep.space
+    } 
   })
   
+  comp.var.tuned <- reactive({
+    req(input$spls.var.x.tuned)
+    req(input$spls.var.y.tuned)
+    comp.var.tuned <- as.numeric(c(input$spls.var.x.tuned,input$spls.var.y.tuned))
+  })
+  
+  comp.indiv.tuned <- reactive({
+    req(input$spls.indiv.x.tuned)
+    req(input$spls.indiv.y.tuned)
+    comp.indiv.tuned <- as.numeric(c(input$spls.indiv.x.tuned,input$spls.indiv.y.tuned))
+  })
+  
+  comp.img.tuned <- reactive({
+    req(input$spls.img.comp.tuned)
+    comp.img.tuned <- as.numeric(input$spls.img.comp.tuned)
+  })
+  
+  rep.space.tuned <- reactive({
+    #necessary, because it's not possible to set NULL as choice value
+    if(identical(input$spls.rep.space.tuned, "NULL")){
+      NULL
+    } else {
+      input$spls.rep.space.tuned
+    }
+  })
+  
+  
   #' generate output plots
-  #' plot functions
   plot.indiv <- function(){
     mixOmics::plotIndiv(spls.result(), comp = comp.indiv(),
                         group = storability, ind.names = input$indiv.names,
@@ -356,6 +368,50 @@ generate_spls_plots <- function(ns, input, output, dataset){
     listsToMatrix(selVarTable()$Y$name, selVarTable()$Y$value, c("name", "value"))
   }
   
+  #tuned
+  plot.indiv.tuned <- function(){
+    mixOmics::plotIndiv(spls.result.tuned(), comp = comp.indiv.tuned(),
+                        group = storability, ind.names = input$indiv.names.tuned,
+                        legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+                        rep.space = rep.space.tuned())
+  }
+  
+  plot.var.tuned <- function(){
+    mixOmics::plotVar(spls.result.tuned(), comp = comp.var.tuned(),
+                      var.names = input$var.names.tuned, pch = c(1,2),
+                      legend = TRUE)
+  }
+  
+  plot.load.tuned <- function(){
+    req(input$spls.load.comp.tuned)
+    mixOmics::plotLoadings(spls.result.tuned(), comp = as.numeric(input$spls.load.comp.tuned))
+  }
+  
+  plot.img.tuned <- function(){
+    mixOmics::cim(spls.result.tuned(), comp = comp.img.tuned(), margin=c(8,10))
+  }
+  
+  plot.arrow.tuned <- function(){
+    if(splsGetNcomp(input, tuned = TRUE) >= 2){
+      mixOmics::plotArrow(spls.result.tuned(), group = storability, ind.names = input$namesArrow.tuned,
+                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+                          X.label = "Dimension 1", Y.label = "Dimension 2")
+    }
+  }
+  
+  selVarTable.tuned <- reactive({
+    req(input$spls.sel.var.comp.tuned)
+    mixOmics::selectVar(spls.result.tuned(), comp = as.numeric(input$spls.sel.var.comp.tuned))
+  })
+  
+  table.selVarX.tuned <- function(){
+    listsToMatrix(selVarTable.tuned()$X$name, selVarTable.tuned()$X$value, c("name", "value"))
+  }
+  
+  table.selVarY.tuned <- function(){
+    listsToMatrix(selVarTable.tuned()$Y$name, selVarTable.tuned()$Y$value, c("name", "value"))
+  }
+  
   #' Sample Plot
   output$sPLS.Indiv <- renderPlot(
     plot.indiv()
@@ -389,6 +445,52 @@ generate_spls_plots <- function(ns, input, output, dataset){
     plot.arrow()
   )
   
+  #tuned
+  #' Sample Plot
+  output$sPLS.Indiv.tuned <- renderPlot(
+    plot.indiv.tuned()
+  )
+  
+  #' Variable Plot
+  output$sPLS.Var.tuned <- renderPlot(
+    plot.var.tuned()
+  )
+  
+  #' Loading Plot
+  output$sPLS.Load.tuned <- renderPlot(
+    plot.load.tuned()
+  )
+  
+  #' Selected Variables Table
+  output$sPLS.X.Sel.Var.tuned <- DT::renderDataTable(
+    table.selVarX.tuned()
+  )
+  output$sPLS.Y.Sel.Var.tuned <- DT::renderDataTable(
+    table.selVarY.tuned()
+  )
+  
+  #' CIM Plot
+  output$sPLS.Img.tuned <- renderPlot(
+    plot.img.tuned()
+  )
+  
+  #' Arrow Plot
+  output$sPLS.Arrow.tuned <- renderPlot(
+    plot.arrow.tuned()
+  )
+  
+  output$ncomp.tuned <- renderText(
+    paste("Number of components: ", tunedsPLSVals$ncomp)
+  )
+  
+  output$keepX.tuned <- renderText(
+    paste("Variables of dataset 1: ",  paste(tunedsPLSVals$keepX, collapse = ", "))
+  )
+  
+  output$keepY.tuned <- renderText(
+    paste("Variables of dataset 2: ",  paste(tunedsPLSVals$keepY, collapse = ", "))
+  )
+  
   #' Download handler
   output$Indiv.download <- getDownloadHandler("PLS_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS_Variableplot.png", plot.var)
@@ -397,4 +499,12 @@ generate_spls_plots <- function(ns, input, output, dataset){
   output$Arrow.download <- getDownloadHandler("PLS_Arrowplot.png", plot.arrow, width = 725)
   output$SelVarX.download <- getDownloadHandler("PLS_SelectedVariable1.csv", table.selVarX, type = "csv")
   output$SelVarY.download <- getDownloadHandler("PLS_SelectedVariables2.csv", table.selVarY, type = "csv")
+  
+  output$Indiv.download.tuned <- getDownloadHandler("PLS_tuned_Sampleplot.png", plot.indiv.tuned)
+  output$Var.download.tuned <- getDownloadHandler("PLS_tuned_Variableplot.png", plot.var.tuned)
+  output$Load.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.png", plot.load.tuned)
+  output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, width = 725)
+  output$Arrow.download.tuned <- getDownloadHandler("PLS_tuned_Arrowplot.png", plot.arrow.tuned, width = 725)
+  output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariable1.csv", table.selVarX.tuned, type = "csv")
+  output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariables2.csv", table.selVarY.tuned, type = "csv")
 }

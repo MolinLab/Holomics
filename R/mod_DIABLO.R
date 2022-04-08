@@ -32,7 +32,7 @@ mod_DIABLO_ui <- function(id){
                                bs4Dash::box(title = "Analysis Parameters", width = 12,
                                             fluidRow(style = "gap: 1rem",
                                                      numericInput(ns("ncomp"), "Number of components", value = 3,
-                                                                  min = 1, max = 5, step = 1, width = "45%"),
+                                                                  min = 1, max = 15, step = 1, width = "45%"),
                                                      checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
                                             )
                                )
