@@ -178,11 +178,16 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
   
   #' Observe tune button
   observeEvent(input$tune, {
-    tune_values(dataset)
-    
-    if (!is.null(tunedsPLSVals)){
-      output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
-    }
+    tryCatch({
+      tune_values(dataset)
+      
+      if (!is.null(tunedsPLSVals)){
+        output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
+      }
+    }, error = function(cond){
+      shinyalert::shinyalert("Error!", "There was an error while trying to tune the parameters. 
+                             This can be related with the chosen datasets.", type = "error")
+    })
   })
   
   #' Observe tune switch
@@ -370,29 +375,37 @@ generate_spls_plots <- function(ns, input, output, dataset){
   
   #tuned
   plot.indiv.tuned <- function(){
-    mixOmics::plotIndiv(spls.result.tuned(), comp = comp.indiv.tuned(),
-                        group = storability, ind.names = input$indiv.names.tuned,
-                        legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
-                        rep.space = rep.space.tuned())
+    if (!is.null(spls.result.tuned())){
+      mixOmics::plotIndiv(spls.result.tuned(), comp = comp.indiv.tuned(),
+                          group = storability, ind.names = input$indiv.names.tuned,
+                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+                          rep.space = rep.space.tuned())
+    }
   }
   
   plot.var.tuned <- function(){
-    mixOmics::plotVar(spls.result.tuned(), comp = comp.var.tuned(),
-                      var.names = input$var.names.tuned, pch = c(1,2),
-                      legend = TRUE)
+    if (!is.null(spls.result.tuned())){
+      mixOmics::plotVar(spls.result.tuned(), comp = comp.var.tuned(),
+                        var.names = input$var.names.tuned, pch = c(1,2),
+                        legend = TRUE)
+    }
   }
   
   plot.load.tuned <- function(){
-    req(input$spls.load.comp.tuned)
-    mixOmics::plotLoadings(spls.result.tuned(), comp = as.numeric(input$spls.load.comp.tuned))
+    if (!is.null(spls.result.tuned())){
+      req(input$spls.load.comp.tuned)
+      mixOmics::plotLoadings(spls.result.tuned(), comp = as.numeric(input$spls.load.comp.tuned))
+    }
   }
   
   plot.img.tuned <- function(){
-    mixOmics::cim(spls.result.tuned(), comp = comp.img.tuned(), margin=c(8,10))
+    if (!is.null(spls.result.tuned())){
+      mixOmics::cim(spls.result.tuned(), comp = comp.img.tuned(), margin=c(8,10))
+    }
   }
   
   plot.arrow.tuned <- function(){
-    if(splsGetNcomp(input, tuned = TRUE) >= 2){
+    if(!is.null(spls.result.tuned()) & splsGetNcomp(input, tuned = TRUE) >= 2){
       mixOmics::plotArrow(spls.result.tuned(), group = storability, ind.names = input$namesArrow.tuned,
                           legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
                           X.label = "Dimension 1", Y.label = "Dimension 2")
@@ -400,8 +413,10 @@ generate_spls_plots <- function(ns, input, output, dataset){
   }
   
   selVarTable.tuned <- reactive({
-    req(input$spls.sel.var.comp.tuned)
-    mixOmics::selectVar(spls.result.tuned(), comp = as.numeric(input$spls.sel.var.comp.tuned))
+    if (!is.null(spls.result.tuned())){
+      req(input$spls.sel.var.comp.tuned)
+      mixOmics::selectVar(spls.result.tuned(), comp = as.numeric(input$spls.sel.var.comp.tuned))
+    }
   })
   
   table.selVarX.tuned <- function(){

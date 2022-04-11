@@ -222,10 +222,15 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
   #' Observe tune button
   observeEvent(input$tune, {
     if (!is.null(input$dataset)){
-      tune_diablo_values(dataset)
-      if (!is.null(tunedDiabloVals)){
-        output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use parameters", value = FALSE)})
-      }
+      tryCatch({
+        tune_diablo_values(dataset)
+        if (!is.null(tunedDiabloVals)){
+          output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use parameters", value = FALSE)})
+        }
+      }, error = function(cond){
+        shinyalert::shinyalert("Error!", "There was an error while trying to tune the parameters. 
+                             This can be related with the chosen datasets.", type = "error")
+      })
     }
   })
   
