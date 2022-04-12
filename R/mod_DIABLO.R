@@ -512,7 +512,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     if(!is.null(diablo.result()) & length(dataset$data) > 1){
       networkResult = diabloGenerateNetwork(diablo.result, dataset, input$cutoffNetwork)
       nodes$data <- networkResult$data
-      network <<- networkResult$network
+      network.untuned <<- networkResult$network
     }
   })
   
@@ -575,7 +575,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 725)
   output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo)
   output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 725)
-  output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", network)
+  output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", network.untuned)
   
   output$Indiv.download.tuned <- getDownloadHandler("DIABLO_tuned_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("DIABLO_tuned_Variableplot.png", plot.var.tuned)

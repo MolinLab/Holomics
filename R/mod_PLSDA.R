@@ -70,7 +70,7 @@ mod_PLSDA_ui <- function(id){
         title = "Analysis Parameters", width = 12,
         fluidRow(style = "gap: 1rem",
                  numericInput(ns("ncomp"), "Number of components:", value = 3, 
-                              min = 2, max = 15, step = 1, width = "45%"),
+                              min = 1, max = 15, step = 1, width = "45%"),
                  selectInput(ns("logratio"), "Logratio:",
                              c("None" = "none",
                                "centered" = "CLR"

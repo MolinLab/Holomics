@@ -1,6 +1,8 @@
 #prepare transcriptomics data
 library(readxl)
 library(edgeR)
+library(mixOmics)
+source("data-raw/Labels_data.R")
 
 # Read read count table
 df_readcounts <- as.data.frame(readxl::read_excel("data-raw/t0_readcounts.xlsx", sheet = 1, col_names = TRUE))
@@ -18,7 +20,26 @@ filt <- as.data.frame(dge_list$counts)  #still about 14000 genes remaining
 data.transcriptomic <- as.data.frame(t(CancerSubtypes::FSbyMAD(filt, cut.type = "topk", value = 10000)))
 
 #for PLS-DA and DIABLO
-sel_tran <- c("BVRB_2g046340", "BVRB_5g107280", "BVRB_4g077370", "BVRB_7g177270", "BVRB_6g134160", "BVRB_6g133990", "BVRB_2g032390", "BVRB_1g014110", "BVRB_6g155460", "BVRB_6g144370", "BVRB_5g106260", "BVRB_2g026930", "BVRB_2g043050", "BVRB_2g043190", "BVRB_7g180710", "BVRB_9g211050", "BVRB_7g162660", "BVRB_9g215340", "BVRB_7g162550", "BVRB_1g021670", "BVRB_2g023940", "BVRB_9g222850", "BVRB_1g011840", "BVRB_1g017530", "BVRB_3g049390", "BVRB_4g073470", "BVRB_8g183860", "BVRB_5g110420", "BVRB_7g169160","BVRB_1g007960", "BVRB_6g137610", "BVRB_9g205340", "BVRB_7g161240", "BVRB_8g186240", "BVRB_4g085890", "BVRB_1g014760", "BVRB_2g040110", "BVRB_1g012380", "BVRB_1g009810", "BVRB_1g002710", "BVRB_5g119570", "BVRB_4g095530", "BVRB_3g059880", "BVRB_4g093150", "BVRB_4g089630", "BVRB_7g167230", "BVRB_7g161280", "BVRB_6g130290", "BVRB_4g081350", "BVRB_5g122560")
+plsda.result <- plsda(data.transcriptomic, storability, ncomp = 4, scale = TRUE)
+grid.keepX <- c(5:10,  seq(20, 100, 10))
+set.seed(30)
+tune.splsda.result <- tune.splsda(data.transcriptomic,Y = storability, ncomp = 4, test.keepX = grid.keepX, 
+                                  validation = c('Mfold'), 
+                                  folds = 5,
+                                  dist = 'max.dist',
+                                  nrepeat = 100,
+                                  progressBar = TRUE)
+ncomp <- tune.splsda.result$choice.ncomp$ncomp
+keepX <- tune.splsda.result$choice.keepX[1:ncomp]
+
+splsda.result <- splsda(data.transcriptomic, Y = storability, ncomp = ncomp, keepX = keepX)
+
+sel_tran = c()
+for (comp in 1:ncomp){
+  loadings <- plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
+  sel_tran <- c(sel_tran, rownames(loadings))
+}
+
 tran_cols <- (names(data.transcriptomic) %in% sel_tran)
 data.transcriptomic_small <- data.transcriptomic[, tran_cols]
 

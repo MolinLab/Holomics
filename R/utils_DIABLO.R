@@ -173,9 +173,10 @@ diabloCheckNcomp <- function(input, tuned){
 #'  
 #' @noRd
 diabloGenerateNetwork <- function(result, dataset, cutoff){
-  network = mixOmics::network(result(), blocks = seq(1, length(dataset$data), 1), cutoff = cutoff)
-  graph <- toVisNetworkData(network$gR)
-  graph$nodes$label = removePostFix(graph$nodes$label, "_")
+  mixNetwork <- mixOmics::network(result(), blocks = seq(1, length(dataset$data), 1), cutoff = cutoff, save = 'jpeg', name.save = "tmp")
+  unlink("tmp.jpeg")
+  graph <- toVisNetworkData(mixNetwork$gR, idToLabel = FALSE)
+  # graph$nodes$label = removePostFix(graph$nodes$label, "_")
   
   data <- list(label = graph$nodes$label, id = graph$nodes$id)
   
