@@ -9,11 +9,11 @@
 #' @noRd
 splsGetUi <- function(ns, postfix = ""){
   bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                  tabPanel("Sample Plot",
+                  tabPanel("Sample plot",
                            fluidRow(style = "display: flex; gap: 1rem",
                                     uiOutput(paste0(ns("indiv.x.comp"), postfix)),
                                     uiOutput(paste0(ns("indiv.y.comp"), postfix)),
-                                    checkboxInput(paste0(ns("indiv.names"), postfix), "Samplenames", value = FALSE),
+                                    checkboxInput(paste0(ns("indiv.names"), postfix), "Sample names", value = FALSE),
                                     selectInput(paste0(ns("spls.rep.space"), postfix), "Replication space:",
                                                 c("Separated"= "NULL", "X-variate"= "X-variate",
                                                   "Y-variate" = "Y-variate", "XY-variate" = "XY-variate"))
@@ -24,11 +24,11 @@ splsGetUi <- function(ns, postfix = ""){
                                              downloadButton(paste0(ns("Indiv.download"), postfix), "Save plot"))
                            )
                   ),
-                  tabPanel("Variable Plot",
+                  tabPanel("Variable plot",
                            fluidRow(style = "display: flex; gap: 1rem",
                                     uiOutput(paste0(ns("var.x.comp"), postfix)),
                                     uiOutput(paste0(ns("var.y.comp"), postfix)),
-                                    checkboxInput(paste0(ns("var.names"), postfix), "Variablenames", value = FALSE)
+                                    checkboxInput(paste0(ns("var.names"), postfix), "Variable names", value = FALSE)
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
@@ -36,7 +36,7 @@ splsGetUi <- function(ns, postfix = ""){
                                              downloadButton(paste0(ns("Var.download"), postfix), "Save plot"))
                            )
                   ),
-                  tabPanel("Loading Plots",
+                  tabPanel("Loading plots",
                            fluidRow(
                              uiOutput(paste0(ns("load.comp"), postfix))
                            ),
@@ -46,7 +46,7 @@ splsGetUi <- function(ns, postfix = ""){
                                              downloadButton(paste0(ns("Load.download"), postfix), "Save plot"))
                            )
                   ),
-                  tabPanel("Selected Variables",
+                  tabPanel("Selected variables",
                            fluidRow(
                              uiOutput(paste0(ns("sel.var.comp"), postfix))
                            ),
@@ -73,9 +73,9 @@ splsGetUi <- function(ns, postfix = ""){
                                              downloadButton(paste0(ns("Img.download"), postfix), "Save plot"))
                            )
                   ),
-                  tabPanel("Arrow Plot",
+                  tabPanel("Arrow plot",
                            fluidRow(
-                             checkboxInput(paste0(ns("namesArrow"), postfix), "Samplenames", value = FALSE)
+                             checkboxInput(paste0(ns("namesArrow"), postfix), "Sample names", value = FALSE)
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,

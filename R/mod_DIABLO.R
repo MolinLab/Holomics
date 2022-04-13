@@ -26,19 +26,19 @@ mod_DIABLO_ui <- function(id){
     fluidRow(
       bs4Dash::column(width = 5,
                       fluidRow(width = 12,
-                               diabloGetUi(ns)
-                      ),
-                      fluidRow(width = 12,
-                               bs4Dash::box(title = "Analysis Parameters", width = 12,
+                               bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
                                             fluidRow(style = "gap: 1rem",
                                                      numericInput(ns("ncomp"), "Number of components", value = 3,
                                                                   min = 1, max = 15, step = 1, width = "45%"),
                                                      checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
                                             )
                                )
+                      ),
+                      fluidRow(width = 12,
+                               diabloGetUi(ns)
                       )
       ),
-      bs4Dash::column(width = 2, style = "display: flex; align-items: center;",
+      bs4Dash::column(width = 2,
                       bs4Dash::box(id = ns("tuneBox"), width = 12,
                                    fluidRow(style = "flex-direction: column",
                                             actionButton(ns("tune"), "Tune parameters"),
@@ -50,15 +50,15 @@ mod_DIABLO_ui <- function(id){
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(width = 12,
-                               diabloGetUi(ns, ".tuned")
-                      ),
-                      fluidRow(width = 12,
-                               bs4Dash::box(title = "Tuned Analysis Parameters", width = 12,
+                               bs4Dash::box(title = "Tuned analysis parameters", width = 12, collapsed = TRUE,
                                             fluidRow(style = "gap: 1rem",
                                                      textOutput(ns("ncomp.tuned")),
                                                      textOutput(ns("keepX.tuned"))
                                             )
                                )
+                      ),
+                      fluidRow(width = 12,
+                               diabloGetUi(ns, ".tuned")
                       )
       )
     )
@@ -96,19 +96,19 @@ mod_DIABLO_server <- function(id){
 #' Render Ui components
 render_diablo_ui_components <- function(ns, input, output, dataset){
   output$indiv.x.comp <- renderUI({
-    selectInput(ns("diablo.indiv.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("diablo.indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$indiv.y.comp <- renderUI({
-    selectInput(ns("diablo.indiv.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("diablo.indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp <- renderUI({
-    selectInput(ns("diablo.var.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("diablo.var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$var.y.comp <- renderUI({
-    selectInput(ns("diablo.var.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("diablo.var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$load.comp <- renderUI({
@@ -135,19 +135,19 @@ render_diablo_ui_components <- function(ns, input, output, dataset){
   
   #tuned
   output$indiv.x.comp.tuned <- renderUI({
-    selectInput(ns("diablo.indiv.x.tuned"), "X-Axis Component:", seq(1, tunedDiabloVals$ncomp, 1))
+    selectInput(ns("diablo.indiv.x.tuned"), "X-Axis component:", seq(1, tunedDiabloVals$ncomp, 1))
   })
   
   output$indiv.y.comp.tuned <- renderUI({
-    selectInput(ns("diablo.indiv.y.tuned"), "Y-Axis Component:", seq(1, tunedDiabloVals$ncomp, 1), selected = 2)
+    selectInput(ns("diablo.indiv.y.tuned"), "Y-Axis component:", seq(1, tunedDiabloVals$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp.tuned <- renderUI({
-    selectInput(ns("diablo.var.x.tuned"), "X-Axis Component:", seq(1, tunedDiabloVals$ncomp, 1))
+    selectInput(ns("diablo.var.x.tuned"), "X-Axis component:", seq(1, tunedDiabloVals$ncomp, 1))
   })
   
   output$var.y.comp.tuned <- renderUI({
-    selectInput(ns("diablo.var.y.tuned"), "Y-Axis Component:", seq(1, tunedDiabloVals$ncomp, 1), selected = 2)
+    selectInput(ns("diablo.var.y.tuned"), "Y-Axis component:", seq(1, tunedDiabloVals$ncomp, 1), selected = 2)
   })
   
   output$load.comp.tuned <- renderUI({
@@ -472,42 +472,42 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   }
   
   #'Set output plots
-  #' Sample Plot
+  #' Sample plot
   output$DIABLO.Indiv <- renderPlot(
     plot.indiv()
   )
   
-  #' Variable Plot
+  #' Variable plot
   output$DIABLO.Var <- renderPlot(
     plot.var()
   )
   
-  #' Loading Plot
+  #' Loading plot
   output$DIABLO.Load <- renderPlot(
     plot.load()
   )
   
-  #' CIM Plot
+  #' CIM plot
   output$DIABLO.Img <- renderPlot(
     plot.img()
   )
   
-  #' Arrow Plot
+  #' Arrow plot
   output$DIABLO.Arrow <- renderPlot(
     plot.arrow()
   )
   
-  #' Diablo Plot
+  #' Diablo plot
   output$DIABLO.Diablo <- renderPlot(
     plot.diablo()
   )
   
-  #' Circos Plot
+  #' Circos plot
   output$DIABLO.Circos <- renderPlot(
     plot.circos()
   )
   
-  #' Network Plot
+  #' Network plot
   output$DIABLO.Network <- renderVisNetwork({
     if(!is.null(diablo.result()) & length(dataset$data) > 1){
       networkResult = diabloGenerateNetwork(diablo.result, dataset, input$cutoffNetwork)
@@ -518,42 +518,42 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     }
   })
   
-  #' Sample Plot tuned
+  #' Sample plot tuned
   output$DIABLO.Indiv.tuned <- renderPlot(
     plot.indiv.tuned()
   )
   
-  #' Variable Plot tuned
+  #' Variable plot tuned
   output$DIABLO.Var.tuned <- renderPlot(
     plot.var.tuned()
   )
   
-  #' Loading Plot tuned
+  #' Loading plot tuned
   output$DIABLO.Load.tuned <- renderPlot(
     plot.load.tuned()
   )
   
-  #' CIM Plot tuned
+  #' CIM plot tuned
   output$DIABLO.Img.tuned <- renderPlot(
     plot.img.tuned()
   )
   
-  #' Arrow Plot tuned
+  #' Arrow plot tuned
   output$DIABLO.Arrow.tuned <- renderPlot(
     plot.arrow.tuned()
   )
   
-  #' Diablo Plot tuned
+  #' Diablo plot tuned
   output$DIABLO.Diablo.tuned <- renderPlot(
     plot.diablo.tuned()
   )
   
-  #' Circos Plot tuned
+  #' Circos plot tuned
   output$DIABLO.Circos.tuned <- renderPlot(
     plot.circos.tuned()
   )
   
-  #' Network Plot tuned
+  #' Network plot tuned
   output$DIABLO.Network.tuned <- renderVisNetwork({
     if(!is.null(diablo.result.tuned()) & length(dataset$data) > 1){
       networkResult = diabloGenerateNetwork(diablo.result.tuned, dataset, input$cutoffNetwork.tuned)

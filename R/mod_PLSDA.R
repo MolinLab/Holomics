@@ -9,76 +9,75 @@
 #' @importFrom shiny NS tagList 
 mod_PLSDA_ui <- function(id){
   ns <- NS(id)
-  tagList(
-    fluidRow(
-      bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                      tabPanel("Sample Plot", 
-                               fluidRow(style = "display: flex; gap: 1rem",
-                                        uiOutput(ns("indiv.x.comp")),
-                                        uiOutput(ns("indiv.y.comp")),
-                                        checkboxInput(ns("indiv.names"), "Samplenames", value = FALSE)
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 plotOutput(ns("PLSDA.Indiv")),
-                                                 downloadButton(ns("Indiv.download"), "Save plot"))             
-                               )
-                      ),
-                      tabPanel("Variable Plot",
-                               fluidRow(style = "display: flex; gap: 1rem",
-                                        uiOutput(ns("var.x.comp")),
-                                        uiOutput(ns("var.y.comp")),
-                                        checkboxInput(ns("var.names"), "Variablenames", value = FALSE)
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 plotOutput(ns("PLSDA.Var")),
-                                                 downloadButton(ns("Var.download"), "Save plot"))         
-                               )
-                      ),
-                      tabPanel("Loading Plot",
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 uiOutput(ns("load.comp")),
-                                                 selectInput(ns("plsda.load.cont"), "Contribution:", 
-                                                             choices = c("minimal" = "min", "maximal" = "max")),
-                                                 selectInput(ns("plsda.load.method"), "Method:", 
-                                                             choices = c("Mean" = "mean", "Median" = "median")),
-                                                 style = "display: flex; gap: 1rem"             
-                                 )
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 plotOutput(ns("PLSDA.Load")),
-                                                 downloadButton(ns("Load.download"), "Save plot"))
-                               )
-                      ),
-                      tabPanel("Selected Variables",
-                               fluidRow(
-                                 uiOutput(ns("sel.var.comp"))
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 DT::dataTableOutput(ns("PLSDA.Sel.Var")),
-                                                 downloadButton(ns("SelVar.download"), "Save table"))
-                               )     
-                      )
-      )
-    ),
-    fluidRow(
-      bs4Dash::box(
-        title = "Analysis Parameters", width = 12,
-        fluidRow(style = "gap: 1rem",
-                 numericInput(ns("ncomp"), "Number of components:", value = 3, 
-                              min = 1, max = 15, step = 1, width = "45%"),
-                 selectInput(ns("logratio"), "Logratio:",
-                             c("None" = "none",
-                               "centered" = "CLR"
-                             ), width = "30%"),
-                 checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
-        )
+  tagList(    fluidRow(
+    bs4Dash::box(
+      title = "Analysis parameters", width = 12, collapsed = TRUE,
+      fluidRow(style = "gap: 1rem",
+               numericInput(ns("ncomp"), "Number of components:", value = 3, 
+                            min = 1, max = 15, step = 1, width = "45%"),
+               selectInput(ns("logratio"), "Logratio:",
+                           c("None" = "none",
+                             "centered" = "CLR"
+                           ), width = "30%"),
+               checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
       )
     )
+  ),
+  fluidRow(
+    bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                    tabPanel("Sample plot", 
+                             fluidRow(style = "display: flex; gap: 1rem",
+                                      uiOutput(ns("indiv.x.comp")),
+                                      uiOutput(ns("indiv.y.comp")),
+                                      checkboxInput(ns("indiv.names"), "Sample names", value = FALSE)
+                             ),
+                             fluidRow(
+                               bs4Dash::column(width = 12,
+                                               plotOutput(ns("PLSDA.Indiv")),
+                                               downloadButton(ns("Indiv.download"), "Save plot"))             
+                             )
+                    ),
+                    tabPanel("Variable plot",
+                             fluidRow(style = "display: flex; gap: 1rem",
+                                      uiOutput(ns("var.x.comp")),
+                                      uiOutput(ns("var.y.comp")),
+                                      checkboxInput(ns("var.names"), "Variable names", value = FALSE)
+                             ),
+                             fluidRow(
+                               bs4Dash::column(width = 12,
+                                               plotOutput(ns("PLSDA.Var")),
+                                               downloadButton(ns("Var.download"), "Save plot"))         
+                             )
+                    ),
+                    tabPanel("Loading plot",
+                             fluidRow(
+                               bs4Dash::column(width = 12,
+                                               uiOutput(ns("load.comp")),
+                                               selectInput(ns("plsda.load.cont"), "Contribution:", 
+                                                           choices = c("minimal" = "min", "maximal" = "max")),
+                                               selectInput(ns("plsda.load.method"), "Method:", 
+                                                           choices = c("Mean" = "mean", "Median" = "median")),
+                                               style = "display: flex; gap: 1rem"             
+                               )
+                             ),
+                             fluidRow(
+                               bs4Dash::column(width = 12,
+                                               plotOutput(ns("PLSDA.Load")),
+                                               downloadButton(ns("Load.download"), "Save plot"))
+                             )
+                    ),
+                    tabPanel("Selected variables",
+                             fluidRow(
+                               uiOutput(ns("sel.var.comp"))
+                             ),
+                             fluidRow(
+                               bs4Dash::column(width = 12,
+                                               DT::dataTableOutput(ns("PLSDA.Sel.Var")),
+                                               downloadButton(ns("SelVar.download"), "Save table"))
+                             )     
+                    )
+    )
+  )
   )
 }
 
@@ -99,19 +98,19 @@ mod_PLSDA_server <- function(id, dataset){
 #' Render Ui functions
 render_plsda_ui_components <- function(ns, input, output, dataset){
   output$indiv.x.comp <- renderUI({
-    selectInput(ns("plsda.indiv.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("plsda.indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$indiv.y.comp <- renderUI({
-    selectInput(ns("plsda.indiv.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("plsda.indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp <- renderUI({
-    selectInput(ns("plsda.var.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("plsda.var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$var.y.comp <- renderUI({
-    selectInput(ns("plsda.var.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("plsda.var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$load.comp <- renderUI({
@@ -169,17 +168,17 @@ generate_plsda_plots <- function(ns, input, output, dataset){
     listsToMatrix(selVar$name, selVar$value, c("name", "value"))
   }
   
-  #'Sample Plot
+  #'Sample plot
   output$PLSDA.Indiv <- renderPlot(
     plot.indiv()
   ) 
   
-  #' Variable Plot
+  #' Variable plot
   output$PLSDA.Var <- renderPlot(
     plot.var()
   )
   
-  #' Loading Plot
+  #' Loading plot
   output$PLSDA.Load <- renderPlot( 
     plot.load()
   )
@@ -188,7 +187,7 @@ generate_plsda_plots <- function(ns, input, output, dataset){
   output$PLSDA.Sel.Var <- DT::renderDataTable(
     table.selVar()
   )
- 
+  
   
   #' Download handler
   output$Indiv.download <- getDownloadHandler("PLS-DA_Sampleplot.png", plot.indiv)

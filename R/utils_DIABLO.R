@@ -9,11 +9,11 @@
 #' @noRd
 diabloGetUi <- function(ns, postfix = ""){
   bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                  tabPanel("Sample Plot",
+                  tabPanel("Sample plot",
                            fluidRow(style = "display: flex; gap: 1rem",
                                     uiOutput(paste0(ns("indiv.x.comp"), postfix)),
                                     uiOutput(paste0(ns("indiv.y.comp"), postfix)),
-                                    checkboxInput(paste0(ns("indiv.names"), postfix), "Samplenames", value = FALSE)
+                                    checkboxInput(paste0(ns("indiv.names"), postfix), "Sample names", value = FALSE)
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
@@ -22,11 +22,11 @@ diabloGetUi <- function(ns, postfix = ""){
                                              downloadButton(paste0(ns("Indiv.download"), postfix), "Save plot"))
                            )
                   ),
-                  tabPanel("Variable Plot",
+                  tabPanel("Variable plot",
                            fluidRow(style = "display: flex; gap: 1rem",
                                     uiOutput(paste0(ns("var.x.comp"), postfix)),
                                     uiOutput(paste0(ns("var.y.comp"), postfix)),
-                                    checkboxInput(paste0(ns("var.names"), postfix), "Variablenames", value = FALSE)
+                                    checkboxInput(paste0(ns("var.names"), postfix), "Variable names", value = FALSE)
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
@@ -57,9 +57,9 @@ diabloGetUi <- function(ns, postfix = ""){
                                              downloadButton(paste0(ns("Img.download"), postfix), "Save plot"))
                            )
                   ),
-                  tabPanel("Arrow Plot",
+                  tabPanel("Arrow plot",
                            fluidRow(
-                             checkboxInput(paste0(ns("namesArrow"), postfix), "Samplenames", value = FALSE)
+                             checkboxInput(paste0(ns("namesArrow"), postfix), "Sample names", value = FALSE)
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
@@ -67,7 +67,7 @@ diabloGetUi <- function(ns, postfix = ""){
                                              plotOutput(paste0(ns("DIABLO.Arrow"), postfix)))
                            )
                   ),
-                  tabPanel("Diablo Plot",
+                  tabPanel("Diablo plot",
                            fluidRow(
                              uiOutput(paste0(ns("diablo.comp"), postfix))
                            ),
@@ -78,7 +78,7 @@ diabloGetUi <- function(ns, postfix = ""){
                                              downloadButton(paste0(ns("Diablo.download"), postfix), "Save plot"))
                            )
                   ),
-                  tabPanel("Circos Plot",
+                  tabPanel("Circos plot",
                            fluidRow(
                              numericInput(paste0(ns("cutoffCircos"), postfix), "Cutoff value",
                                           min = 0, max = 1, step = 0.1, value = 0.7)
@@ -130,7 +130,7 @@ diabloGetNcomp <- function(input, tuned){
 #' @noRd
 diabloCheckTwoDatasets <- function(dataset){
   if(length(dataset$data) < 2){
-    return("You have to select at least two dataset!")
+    return("You have to select at least two datasets!")
   } else {
     return("")
   }

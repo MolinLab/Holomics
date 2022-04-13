@@ -24,10 +24,7 @@ mod_sPLS_ui <- function(id){
     fluidRow(
       bs4Dash::column(width = 5, 
                       fluidRow(width = 12,
-                               splsGetUi(ns)
-                      ),
-                      fluidRow(width = 12,
-                               bs4Dash::box(title = "Analysis Parameters", width = 12,
+                               bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
                                             fluidRow(style = "gap: 1rem",
                                                      numericInput(ns("ncomp"), "Number of components", value = 3,
                                                                   min = 1, max = 15, step = 1, width = "45%"),
@@ -38,9 +35,12 @@ mod_sPLS_ui <- function(id){
                                                      checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
                                             )
                                )
+                      ),
+                      fluidRow(width = 12,
+                               splsGetUi(ns)
                       )
       ),
-      bs4Dash::column(width = 2, style = "display: flex; align-items: center;",
+      bs4Dash::column(width = 2,
                       bs4Dash::box(id = ns("tuneBox"), width = 12,
                                    fluidRow(style = "flex-direction: column",
                                             actionButton(ns("tune"), "Tune parameters"),
@@ -52,16 +52,16 @@ mod_sPLS_ui <- function(id){
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(width = 12,
-                               splsGetUi(ns, ".tuned")
-                      ),
-                      fluidRow(width = 12,
-                               bs4Dash::box(title = "Tuned Analysis Parameters", width = 12,
+                               bs4Dash::box(title = "Tuned analysis parameters", width = 12, collapsed = TRUE,
                                             fluidRow(style = "gap: 1rem",
                                                      textOutput(ns("ncomp.tuned")),
                                                      textOutput(ns("keepX.tuned")),
                                                      textOutput(ns("keepY.tuned"))
                                             )
                                )
+                      ),
+                      fluidRow(width = 12,
+                               splsGetUi(ns, ".tuned")
                       )
       )
     )
@@ -97,19 +97,19 @@ mod_sPLS_server <- function(id){
 #' Render Ui functions
 render_spls_ui_components <- function(ns, input, output, dataset){
   output$indiv.x.comp <- renderUI({
-    selectInput(ns("spls.indiv.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("spls.indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$indiv.y.comp <- renderUI({
-    selectInput(ns("spls.indiv.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("spls.indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp <- renderUI({
-    selectInput(ns("spls.var.x"), "X-Axis Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("spls.var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$var.y.comp <- renderUI({
-    selectInput(ns("spls.var.y"), "Y-Axis Component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("spls.var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$load.comp <- renderUI({
@@ -126,19 +126,19 @@ render_spls_ui_components <- function(ns, input, output, dataset){
   
   #tuned
   output$indiv.x.comp.tuned <- renderUI({
-    selectInput(ns("spls.indiv.x.tuned"), "X-Axis Component:", seq(1, tunedsPLSVals$ncomp, 1))
+    selectInput(ns("spls.indiv.x.tuned"), "X-Axis component:", seq(1, tunedsPLSVals$ncomp, 1))
   })
   
   output$indiv.y.comp.tuned <- renderUI({
-    selectInput(ns("spls.indiv.y.tuned"), "Y-Axis Component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
+    selectInput(ns("spls.indiv.y.tuned"), "Y-Axis component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp.tuned <- renderUI({
-    selectInput(ns("spls.var.x.tuned"), "X-Axis Component:", seq(1, tunedsPLSVals$ncomp, 1))
+    selectInput(ns("spls.var.x.tuned"), "X-Axis component:", seq(1, tunedsPLSVals$ncomp, 1))
   })
   
   output$var.y.comp.tuned <- renderUI({
-    selectInput(ns("spls.var.y.tuned"), "Y-Axis Component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
+    selectInput(ns("spls.var.y.tuned"), "Y-Axis component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
   })
   
   output$load.comp.tuned <- renderUI({
@@ -427,17 +427,17 @@ generate_spls_plots <- function(ns, input, output, dataset){
     listsToMatrix(selVarTable.tuned()$Y$name, selVarTable.tuned()$Y$value, c("name", "value"))
   }
   
-  #' Sample Plot
+  #' Sample plot
   output$sPLS.Indiv <- renderPlot(
     plot.indiv()
   )
   
-  #' Variable Plot
+  #' Variable plot
   output$sPLS.Var <- renderPlot(
     plot.var()
   )
   
-  #' Loading Plot
+  #' Loading plot
   output$sPLS.Load <- renderPlot(
     plot.load()
   )
@@ -450,33 +450,33 @@ generate_spls_plots <- function(ns, input, output, dataset){
     table.selVarY()
   )
   
-  #' CIM Plot
+  #' CIM plot
   output$sPLS.Img <- renderPlot(
     plot.img()
   )
   
-  #' Arrow Plot
+  #' Arrow plot
   output$sPLS.Arrow <- renderPlot(
     plot.arrow()
   )
   
   #tuned
-  #' Sample Plot
+  #' Sample plot
   output$sPLS.Indiv.tuned <- renderPlot(
     plot.indiv.tuned()
   )
   
-  #' Variable Plot
+  #' Variable plot
   output$sPLS.Var.tuned <- renderPlot(
     plot.var.tuned()
   )
   
-  #' Loading Plot
+  #' Loading plot
   output$sPLS.Load.tuned <- renderPlot(
     plot.load.tuned()
   )
   
-  #' Selected Variables Table
+  #' Selected variables table
   output$sPLS.X.Sel.Var.tuned <- DT::renderDataTable(
     table.selVarX.tuned()
   )
@@ -484,12 +484,12 @@ generate_spls_plots <- function(ns, input, output, dataset){
     table.selVarY.tuned()
   )
   
-  #' CIM Plot
+  #' CIM plot
   output$sPLS.Img.tuned <- renderPlot(
     plot.img.tuned()
   )
   
-  #' Arrow Plot
+  #' Arrow plot
   output$sPLS.Arrow.tuned <- renderPlot(
     plot.arrow.tuned()
   )
