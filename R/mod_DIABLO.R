@@ -512,7 +512,9 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     if(!is.null(diablo.result()) & length(dataset$data) > 1){
       networkResult = diabloGenerateNetwork(diablo.result, dataset, input$cutoffNetwork)
       nodes$data <- networkResult$data
-      network.untuned <<- networkResult$network
+      network.untuned <<- list()
+      network.untuned$mixNetwork <<- networkResult$mixNetwork
+      network.untuned$visNetwork <<- networkResult$visNetwork
     }
   })
   
@@ -556,7 +558,9 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     if(!is.null(diablo.result.tuned()) & length(dataset$data) > 1){
       networkResult = diabloGenerateNetwork(diablo.result.tuned, dataset, input$cutoffNetwork.tuned)
       nodes.tuned$data <- networkResult$data
-      network.tuned <<- networkResult$network
+      network.tuned <<- list()
+      network.tuned$mixNetwork <<- networkResult$mixNetwork
+      network.tuned$visNetwork <<- networkResult$visNetwork
     }
   })
   
@@ -571,19 +575,20 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   #' Download handler
   output$Indiv.download <- getDownloadHandler("DIABLO_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("DIABLO_Variableplot.png", plot.var)
-  output$Load.download <- getDownloadHandler("DIABLO_Loadingsplot.png", plot.load)
-  output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 725)
+  output$Load.download <- getDownloadHandler("DIABLO_Loadingsplot.png", plot.load, width = 2592, height = 1944)
+  output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo)
-  output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 725)
-  output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", network.untuned)
+  output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 2592, height = 1944)
+  output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", network.untuned, "html")
+  output$NetworkGml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.gml", network.untuned, "gml")
   
   output$Indiv.download.tuned <- getDownloadHandler("DIABLO_tuned_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("DIABLO_tuned_Variableplot.png", plot.var.tuned)
-  output$Load.download.tuned <- getDownloadHandler("DIABLO_tuned_Loadingsplot.png", plot.load.tuned)
-  output$Img.download.tuned <- getDownloadHandler("DIABLO_tuned_Heatmap.png", plot.img.tuned, width = 725)
+  output$Load.download.tuned <- getDownloadHandler("DIABLO_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$Img.download.tuned <- getDownloadHandler("DIABLO_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$Diablo.download.tuned <- getDownloadHandler("DIABLO_tuned_Diabloplot.png", plot.diablo.tuned)
-  output$Circos.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.png", plot.circos.tuned, width = 725)
-  output$NetworkHtml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.html", network.tuned)
+  output$Circos.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.png", plot.circos.tuned, width = 2592, height = 1944)
+  output$NetworkHtml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.html", network.tuned, "html")
 }
 
 #' Generate the error messages

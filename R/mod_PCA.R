@@ -11,61 +11,6 @@ mod_PCA_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(
-      bs4Dash::tabBox(
-        width = 12, collapsible = FALSE,
-        tabPanel("Sample Plot", 
-                 fluidRow(style = "display: flex; gap: 1rem",
-                          uiOutput(ns("indiv.x.comp")),
-                          uiOutput(ns("indiv.y.comp")),
-                          checkboxInput(ns("indiv.names"), "Samplenames", value = FALSE)
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   plotOutput(ns("PCA.Indiv")),
-                                   downloadButton(ns("Indiv.download"), "Save plot"))             
-                 )
-        ),
-        tabPanel("Variable Plot",
-                 fluidRow(style = "display: flex; gap: 1rem",
-                          uiOutput(ns("var.x.comp")),
-                          uiOutput(ns("var.y.comp")),
-                          checkboxInput(ns("var.names"), "Variablenames", value = FALSE)
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   plotOutput(ns("PCA.Var")),
-                                   downloadButton(ns("Var.download"), "Save plot"))         
-                 )
-        ),
-        tabPanel("Loading Plot",
-                 fluidRow(
-                   uiOutput(ns("load.comp")),
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   plotOutput(ns("PCA.Load")),
-                                   downloadButton(ns("Load.download"), "Save plot"))
-                 )
-        ),
-        tabPanel("Selected Variables",
-                 fluidRow(
-                   uiOutput(ns("sel.var.comp"))
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   DT::dataTableOutput(ns("PCA.Sel.Var")),
-                                   downloadButton(ns("SelVar.download"), "Save table")
-                   )
-                 )     
-        ),
-        tabPanel("Scree Plot",       
-                 bs4Dash::column(width = 12,
-                                 plotOutput(ns("PCA.Scree")), 
-                                 downloadButton(ns("Scree.download"), "Save plot"))
-        )
-      )
-    ),
-    fluidRow(
       bs4Dash::box(title = "Analysis Parameters", width = 12,
                    fluidRow(style = "gap: 1rem", 
                             numericInput(ns("ncomp"), "Number of components", value = 3, 
@@ -76,6 +21,61 @@ mod_PCA_ui <- function(id){
                                         ), width = "30%"),
                             checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
                    )
+      ),
+      fluidRow(
+        bs4Dash::tabBox(
+          width = 12, collapsible = FALSE,
+          tabPanel("Sample Plot", 
+                   fluidRow(style = "display: flex; gap: 1rem",
+                            uiOutput(ns("indiv.x.comp")),
+                            uiOutput(ns("indiv.y.comp")),
+                            checkboxInput(ns("indiv.names"), "Samplenames", value = FALSE)
+                   ),
+                   fluidRow(
+                     bs4Dash::column(width = 12,
+                                     plotOutput(ns("PCA.Indiv")),
+                                     downloadButton(ns("Indiv.download"), "Save plot"))             
+                   )
+          ),
+          tabPanel("Variable Plot",
+                   fluidRow(style = "display: flex; gap: 1rem",
+                            uiOutput(ns("var.x.comp")),
+                            uiOutput(ns("var.y.comp")),
+                            checkboxInput(ns("var.names"), "Variablenames", value = FALSE)
+                   ),
+                   fluidRow(
+                     bs4Dash::column(width = 12,
+                                     plotOutput(ns("PCA.Var")),
+                                     downloadButton(ns("Var.download"), "Save plot"))         
+                   )
+          ),
+          tabPanel("Loading Plot",
+                   fluidRow(
+                     uiOutput(ns("load.comp")),
+                   ),
+                   fluidRow(
+                     bs4Dash::column(width = 12,
+                                     plotOutput(ns("PCA.Load")),
+                                     downloadButton(ns("Load.download"), "Save plot"))
+                   )
+          ),
+          tabPanel("Selected Variables",
+                   fluidRow(
+                     uiOutput(ns("sel.var.comp"))
+                   ),
+                   fluidRow(
+                     bs4Dash::column(width = 12,
+                                     DT::dataTableOutput(ns("PCA.Sel.Var")),
+                                     downloadButton(ns("SelVar.download"), "Save table")
+                     )
+                   )     
+          ),
+          tabPanel("Scree Plot",       
+                   bs4Dash::column(width = 12,
+                                   plotOutput(ns("PCA.Scree")), 
+                                   downloadButton(ns("Scree.download"), "Save plot"))
+          )
+        )
       )
     )
   )
@@ -199,7 +199,7 @@ generate_pca_plots <- function(ns, input, output, dataset){
   #' Download handler
   output$Indiv.download <- getDownloadHandler("PCA_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PCA_Variableplot.png", plot.var)
-  output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load)
+  output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PCA_SelectedVariables.csv", table.selVar, type = "csv")
   output$Scree.download <- getDownloadHandler("PCA_Screeplot.png", plot.scree)
 }

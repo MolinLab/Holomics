@@ -71,13 +71,13 @@ combineLists <- function(a, b){
 #' @return downloadHandler
 #'
 #' @noRd
-getDownloadHandler <- function(filename, contentfct, type = "png", width = 480, height = 480){
+getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800, height = 1200){
   return (
     downloadHandler(
       filename = filename,
       content = function(file){
         if (type == "png"){
-          png(file, width, height)
+          png(file, width, height, res = 300)
           contentfct()
           dev.off()
         }else if (type == "csv"){

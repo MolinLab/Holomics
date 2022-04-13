@@ -24,7 +24,10 @@ a[id*='.download']{
   color: #444 !important;
   border-radius: .25rem !important;
   margin-bottom: .25rem;
+}
 
+#DIABLO-NetworkHtml\.download{
+  margin-right: .5rem;
 }
 
 #downloadDIABLO-DIABLO\.Network:before, #downloadDIABLO-DIABLO\.Network\.tuned:before {

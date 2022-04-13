@@ -193,6 +193,6 @@ generate_plsda_plots <- function(ns, input, output, dataset){
   #' Download handler
   output$Indiv.download <- getDownloadHandler("PLS-DA_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS-DA_Variableplot.png", plot.var)
-  output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load)
+  output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedVariables.csv", table.selVar, type = "csv")
 }

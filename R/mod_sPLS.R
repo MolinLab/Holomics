@@ -509,15 +509,15 @@ generate_spls_plots <- function(ns, input, output, dataset){
   #' Download handler
   output$Indiv.download <- getDownloadHandler("PLS_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS_Variableplot.png", plot.var)
-  output$Load.download <- getDownloadHandler("PLS_Loadingsplot.png", plot.load)
-  output$Img.download <- getDownloadHandler("PLS_Heatmap.png", plot.img, width = 725)
+  output$Load.download <- getDownloadHandler("PLS_Loadingsplot.png", plot.load, width = 2592, height = 1944)
+  output$Img.download <- getDownloadHandler("PLS_Heatmap.png", plot.img, , width = 2592, height = 1944)
   output$SelVarX.download <- getDownloadHandler("PLS_SelectedVariable1.csv", table.selVarX, type = "csv")
   output$SelVarY.download <- getDownloadHandler("PLS_SelectedVariables2.csv", table.selVarY, type = "csv")
   
   output$Indiv.download.tuned <- getDownloadHandler("PLS_tuned_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("PLS_tuned_Variableplot.png", plot.var.tuned)
-  output$Load.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.png", plot.load.tuned)
-  output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, width = 725)
+  output$Load.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, , width = 2592, height = 1944)
   output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariable1.csv", table.selVarX.tuned, type = "csv")
   output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariables2.csv", table.selVarY.tuned, type = "csv")
 }

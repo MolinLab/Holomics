@@ -100,7 +100,9 @@ diabloGetUi <- function(ns, postfix = ""){
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("network.error"), postfix)),
                                              visNetworkOutput(paste0(ns("DIABLO.Network"), postfix)),
-                                             downloadButton(paste0(ns("NetworkHtml.download"), postfix), "Save as html"))
+                                             downloadButton(paste0(ns("NetworkGml.download"), postfix), "Save as gml"),
+                                             downloadButton(paste0(ns("NetworkHtml.download"), postfix), "Save as html")
+                             )
                            )
                   )
   )
@@ -176,7 +178,6 @@ diabloGenerateNetwork <- function(result, dataset, cutoff){
   mixNetwork <- mixOmics::network(result(), blocks = seq(1, length(dataset$data), 1), cutoff = cutoff, save = 'jpeg', name.save = "tmp")
   unlink("tmp.jpeg")
   graph <- toVisNetworkData(mixNetwork$gR, idToLabel = FALSE)
-  # graph$nodes$label = removePostFix(graph$nodes$label, "_")
   
   data <- list(label = graph$nodes$label, id = graph$nodes$id)
   
@@ -185,7 +186,7 @@ diabloGenerateNetwork <- function(result, dataset, cutoff){
     visPhysics(enabled = FALSE) %>%
     visInteraction(navigationButtons = TRUE) %>%
     visExport(label = "Save as png")
-  return (list(data = data, network = visNetwork))
+  return (list(data = data, visNetwork = visNetwork, mixNetwork = mixNetwork))
 }
 
 #'
@@ -195,12 +196,18 @@ diabloGenerateNetwork <- function(result, dataset, cutoff){
 #' @return downloadHandler
 #'
 #' @noRd
-diabloGetNetworkDownloadHandler <- function(filename, network){
+diabloGetNetworkDownloadHandler <- function(filename, network, type){
   return(
     downloadHandler(
       filename = filename,
       content = function(file){
-        visNetwork::visSave(network, file)
+        if (type == "html"){
+          visNetwork::visSave(network$visNetwork, file)
+        } else if (type == "gml"){
+          library(igraph)
+          print(network$mixNetwork$gR)
+          write.graph(network$mixNetwork$gR, file, format = "gml")
+        }
       }
     )
   )
