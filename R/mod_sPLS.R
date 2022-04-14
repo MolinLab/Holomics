@@ -220,18 +220,18 @@ tune_values <- function(dataset){
                                   validation = "Mfold",
                                   test.keepX = list_keepX, 
                                   measure = "cor", BPPARAM = BPPARAM,
-                                  folds = 5, nrepeat = 5, progressBar = TRUE)
+                                  folds = 5, nrepeat = 50, progressBar = TRUE)
     keepX <- tune.X$choice.keepX
     
     incProgress(1/4)
     
     #tune keepY
-    list_keepY <- c(1:5, 6, 8, 10)
+    list_keepY <- c(2:10, 15, 20)
     tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
                                   validation = "Mfold",
                                   test.keepY = list_keepY, 
                                   measure = "cor", BPPARAM = BPPARAM,
-                                  folds = 5, nrepeat = 5, progressBar = TRUE)
+                                  folds = 5, nrepeat = 50, progressBar = TRUE)
     keepY <- tune.Y$choice.keepY
     
     incProgress(1/4)

@@ -49,5 +49,8 @@ unfiltered_data <- as.data.frame(t(df_asv))
 ASV_cols <- (names(unfiltered_data) %in% sel_ASV)
 data.microbiomic_small <- unfiltered_data[, ASV_cols]
 
+asv_var <- nearZeroVar(data.microbiomic_small, freqCut = 75/13, uniqueCut = 32)
+data.microbiomic_small <- data.microbiomic_small[,-asv_var$Position]
+
 usethis::use_data(data.microbiomic, overwrite = TRUE) 
 usethis::use_data(data.microbiomic_small, overwrite = TRUE) 
