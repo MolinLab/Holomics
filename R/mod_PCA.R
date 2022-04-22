@@ -12,14 +12,14 @@ mod_PCA_ui <- function(id){
   tagList(
     fluidRow(
       bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
-                   fluidRow(style = "gap: 1rem", 
+                   fluidRow(style = "column-gap: 1rem", 
                             numericInput(ns("ncomp"), "Number of components", value = 3, 
                                          min = 1, max = 15, step = 1, width = "45%"),
                             selectInput(ns("logratio"), "Logratio:",
                                         c("None" = "none",
                                           "centered" = "CLR"
                                         ), width = "30%"),
-                            checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
+                            awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
                    )
       )    
     ),
@@ -27,10 +27,10 @@ mod_PCA_ui <- function(id){
       bs4Dash::tabBox(
         width = 12, collapsible = FALSE,
         tabPanel("Sample plot", 
-                 fluidRow(style = "display: flex; gap: 1rem",
+                 fluidRow(style = "display: flex; column-gap: 1rem",
                           uiOutput(ns("indiv.x.comp")),
                           uiOutput(ns("indiv.y.comp")),
-                          checkboxInput(ns("indiv.names"), "Sample names", value = FALSE)
+                          awesomeCheckbox(ns("indiv.names"), "Sample names", value = FALSE)
                  ),
                  fluidRow(
                    bs4Dash::column(width = 12,
@@ -39,10 +39,10 @@ mod_PCA_ui <- function(id){
                  )
         ),
         tabPanel("Variable plot",
-                 fluidRow(style = "display: flex; gap: 1rem",
+                 fluidRow(style = "display: flex; column-gap: 1rem",
                           uiOutput(ns("var.x.comp")),
                           uiOutput(ns("var.y.comp")),
-                          checkboxInput(ns("var.names"), "Variable names", value = FALSE)
+                          awesomeCheckbox(ns("var.names"), "Variable names", value = FALSE)
                  ),
                  fluidRow(
                    bs4Dash::column(width = 12,

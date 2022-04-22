@@ -18,8 +18,9 @@ app_ui <- function(request) {
         title = bs4Dash::dashboardBrand(
           title = "Holomics",
           color = "secondary",
-          #image = "https://adminlte.io/themes/v3/dist/img/AdminLTELogo.png"
+          image = "www/logo.png"
         )
+        # title = tags$img(src='www/logo.png')
       ),
       
       
@@ -98,7 +99,8 @@ golem_add_external_resources <- function(){
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
     
-    tags$link(rel = "stylesheet", type ="text/css", href="www/custom.css")
+    tags$link(rel = "stylesheet", type ="text/css", href="www/custom.css"),
+    tags$link(rel = "stylesheet", type ="text/css", href="www/theme.css")
   )
 }
 

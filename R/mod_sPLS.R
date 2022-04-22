@@ -18,21 +18,21 @@ mod_sPLS_ui <- function(id){
                       selectInput(ns("dataset2"), "Select second dataset:", 
                                   choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), 
                                   selected = "me", width = "fit-content"),
-                      style = "display: flex; gap: 1rem"
+                      style = "display: flex; column-gap: 1rem"
       )
     ),
     fluidRow(
       bs4Dash::column(width = 5, 
                       fluidRow(width = 12,
                                bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
-                                            fluidRow(style = "gap: 1rem",
+                                            fluidRow(style = "column-gap: 1rem",
                                                      numericInput(ns("ncomp"), "Number of components", value = 3,
                                                                   min = 1, max = 15, step = 1, width = "45%"),
                                                      selectInput(ns("logratio"), "Logratio",
                                                                  c("None" = "none",
                                                                    "centered" = "CLR"
                                                                  ), width = "30%"),
-                                                     checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
+                                                     awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
                                             )
                                )
                       ),
@@ -45,15 +45,15 @@ mod_sPLS_ui <- function(id){
                                    fluidRow(style = "flex-direction: column",
                                             actionButton(ns("tune"), "Tune parameters"),
                                    ),
-                                   fluidRow(
-                                     uiOutput(ns("tune.switch"))
+                                   fluidRow(id = ns("switchRow"),
+                                            uiOutput(ns("tune.switch"))
                                    )
                       )
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(width = 12,
                                bs4Dash::box(title = "Tuned analysis parameters", width = 12, collapsed = TRUE,
-                                            fluidRow(style = "gap: 1rem",
+                                            fluidRow(style = "column-gap: 1rem",
                                                      textOutput(ns("ncomp.tuned")),
                                                      textOutput(ns("keepX.tuned")),
                                                      textOutput(ns("keepY.tuned"))
@@ -76,6 +76,7 @@ mod_sPLS_server <- function(id){
     ns <- session$ns
     
     hide("tunedCol")
+    hide("switchRow")
     
     dataset <- reactiveValues()
     useTunedsPLSVals <<- reactiveVal(FALSE)
@@ -174,6 +175,7 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
     output$tune.switch <- renderUI({})
     useTunedsPLSVals(FALSE)
     hide("tunedCol")
+    hide("switchRow")
   })
   
   #' Observe tune button
@@ -182,6 +184,7 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
       tune_values(dataset)
       
       if (!is.null(tunedsPLSVals)){
+        show("switchRow")
         output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
       }
     }, error = function(cond){

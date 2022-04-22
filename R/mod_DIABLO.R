@@ -16,7 +16,7 @@ mod_DIABLO_ui <- function(id){
   tagList(
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
-      bs4Dash::column(width = 6, style = "display: flex; gap: 1rem",
+      bs4Dash::column(width = 6, style = "display: flex; column-gap: 1rem",
                       selectInput(ns("dataset"), "Select the datasets: ",
                                   choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), 
                                   multiple = TRUE),
@@ -27,10 +27,10 @@ mod_DIABLO_ui <- function(id){
       bs4Dash::column(width = 5,
                       fluidRow(width = 12,
                                bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
-                                            fluidRow(style = "gap: 1rem",
+                                            fluidRow(style = "column-gap: 1rem",
                                                      numericInput(ns("ncomp"), "Number of components", value = 3,
                                                                   min = 1, max = 15, step = 1, width = "45%"),
-                                                     checkboxInput(ns("scale"), "Scaling", value = TRUE, width = "15%")
+                                                     awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
                                             )
                                )
                       ),
@@ -43,7 +43,7 @@ mod_DIABLO_ui <- function(id){
                                    fluidRow(style = "flex-direction: column",
                                             actionButton(ns("tune"), "Tune parameters"),
                                    ),
-                                   fluidRow(
+                                   fluidRow(id = ns("switchRow"),
                                      uiOutput(ns("tune.switch"))
                                    )
                       )
@@ -51,7 +51,7 @@ mod_DIABLO_ui <- function(id){
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(width = 12,
                                bs4Dash::box(title = "Tuned analysis parameters", width = 12, collapsed = TRUE,
-                                            fluidRow(style = "gap: 1rem",
+                                            fluidRow(style = "column-gap: 1rem",
                                                      textOutput(ns("ncomp.tuned")),
                                                      textOutput(ns("keepX.tuned"))
                                             )
@@ -73,6 +73,7 @@ mod_DIABLO_server <- function(id){
     ns <- session$ns
     
     hide("tunedCol")
+    hide("switchRow")
     
     dataset <- reactiveValues()
     nodes <<- reactiveValues()
@@ -196,6 +197,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
     output$tune.switch <- renderUI({})
     useTunedDiabloVals(FALSE)
     hide("tunedCol")
+    hide("switchRow")
   })
   
   #' Observe node name selection
@@ -225,7 +227,8 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
       tryCatch({
         tune_diablo_values(dataset)
         if (!is.null(tunedDiabloVals)){
-          output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use parameters", value = FALSE)})
+          show("switchRow")
+          output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
         }
       }, error = function(cond){
         shinyalert::shinyalert("Error!", "There was an error while trying to tune the parameters. 

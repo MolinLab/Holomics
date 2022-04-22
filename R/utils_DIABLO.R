@@ -10,10 +10,10 @@
 diabloGetUi <- function(ns, postfix = ""){
   bs4Dash::tabBox(width = 12, collapsible = FALSE,
                   tabPanel("Sample plot",
-                           fluidRow(style = "display: flex; gap: 1rem",
+                           fluidRow(style = "display: flex; column-gap: 1rem",
                                     uiOutput(paste0(ns("indiv.x.comp"), postfix)),
                                     uiOutput(paste0(ns("indiv.y.comp"), postfix)),
-                                    checkboxInput(paste0(ns("indiv.names"), postfix), "Sample names", value = FALSE)
+                                    awesomeCheckbox(paste0(ns("indiv.names"), postfix), "Sample names", value = FALSE)
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
@@ -23,10 +23,10 @@ diabloGetUi <- function(ns, postfix = ""){
                            )
                   ),
                   tabPanel("Variable plot",
-                           fluidRow(style = "display: flex; gap: 1rem",
+                           fluidRow(style = "display: flex; column-gap: 1rem",
                                     uiOutput(paste0(ns("var.x.comp"), postfix)),
                                     uiOutput(paste0(ns("var.y.comp"), postfix)),
-                                    checkboxInput(paste0(ns("var.names"), postfix), "Variable names", value = FALSE)
+                                    awesomeCheckbox(paste0(ns("var.names"), postfix), "Variable names", value = FALSE)
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
@@ -59,7 +59,7 @@ diabloGetUi <- function(ns, postfix = ""){
                   ),
                   tabPanel("Arrow plot",
                            fluidRow(
-                             checkboxInput(paste0(ns("namesArrow"), postfix), "Sample names", value = FALSE)
+                             awesomeCheckbox(paste0(ns("namesArrow"), postfix), "Sample names", value = FALSE)
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
@@ -91,7 +91,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            )
                   ), 
                   tabPanel("Network",
-                           fluidRow(style = "gap: 1rem",
+                           fluidRow(style = "column-gap: 1rem",
                                     numericInput(paste0(ns("cutoffNetwork"), postfix), "Cutoff value",
                                                  min = 0, max = 1, step = 0.1, value = 0.5),
                                     uiOutput(paste0(ns("nodes"), postfix))
@@ -179,11 +179,17 @@ diabloGenerateNetwork <- function(result, dataset, cutoff){
   unlink("tmp.jpeg")
   graph <- toVisNetworkData(mixNetwork$gR, idToLabel = FALSE)
   
+  #before changing label
   data <- list(label = graph$nodes$label, id = graph$nodes$id)
+  
+  #hover and shorten label
+  graph$nodes$title = graph$nodes$label
+  graph$nodes$label = lapply(graph$nodes$label, function(x){substring(x, 1, 3)})
   
   visNetwork <- visNetwork(nodes = graph$nodes, edges = graph$edges) %>% 
     visOptions(highlightNearest = TRUE) %>%
     visPhysics(enabled = FALSE) %>%
+    visNodes(widthConstraint = 50) %>%
     visInteraction(navigationButtons = TRUE) %>%
     visExport(label = "Save as png")
   return (list(data = data, visNetwork = visNetwork, mixNetwork = mixNetwork))
@@ -205,7 +211,6 @@ diabloGetNetworkDownloadHandler <- function(filename, network, type){
           visNetwork::visSave(network$visNetwork, file)
         } else if (type == "gml"){
           library(igraph)
-          print(network$mixNetwork$gR)
           write.graph(network$mixNetwork$gR, file, format = "gml")
         }
       }

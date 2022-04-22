@@ -1,0 +1,125 @@
+:root {
+  --grey: #f1f3f2;
+  --green: #bfc531;
+  --blue: #39B6CA;
+  --orange: #e6a136;
+}
+
+/* Main div */
+.content-wrapper{
+  background-color: white;
+}
+
+/* Sidebar */
+#sidebarId{
+  background-color: var(--grey);
+}
+
+/* Top of sidebar */
+.brand-link{
+  background-color: var(--grey) !important;
+  color: black !important;
+  border-bottom: 1px solid var(--green) !important;
+}
+
+/* Top of sidebar hover */
+a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg-secondary:hover{
+  background-color: var(--grey) !important;
+}
+
+/* Sidebar items */
+[class*="sidebar-dark-"] .sidebar a {
+  color: var(--green);
+}
+
+/* Sidebar items hover */
+[class*="sidebar-dark-"] .nav-sidebar > .nav-item:hover > .nav-link{
+  background-color: var(--grey);
+  color: var(--green);
+  opacity: .5;
+}
+
+/* Active sidebar item */
+[class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link.active{
+  color: white;
+}
+
+.nav-link.active{
+  background-color: var(--green) !important;
+}
+
+/* Opened menu in sidebar */
+[class*="sidebar-dark-"] .nav-sidebar > .nav-item.menu-open > .nav-link, [class*="sidebar-dark-"] .nav-sidebar > .has-treeview > .nav-link:focus{
+  color: var(--green);
+}
+
+[class*="sidebar-dark-"] .nav-sidebar > .nav-item.menu-open > .nav-link.active {
+  color: white;
+}
+
+/* Subitems in sidebar */
+.treeview-link{
+  color: var(--green) !important;
+}
+
+.treeview-link.active{
+  color: white !important;
+}
+
+/*Subitems in sidebar hover */
+.treeview-link:hover{
+  background-color: var(--grey);
+  color: var(--green);
+  opacity: .5;
+}
+
+/* Save plot buttons and tune buttons */
+.shiny-download-link, .shiny-download-link:hover, button[id*='-tune'], button[id*='-tune']:hover{
+  background-color: var(--green);
+  color: white;
+}
+
+/* Collapse card buttons */
+.btn-sm{
+  color: var(--green)
+}
+
+/* Card header */
+.nav-pills .nav-link:not(.active):hover{
+  color: var(--green) !important;
+  border-top: 3px solid var(--grey) !important;
+}
+
+.card .card-header .nav-pills .nav-item .nav-link {
+  color: black;
+}
+
+.card .card-header .nav-pills .nav-item .nav-link.active {
+  color: white;
+}
+
+/* Checkboxes */
+.checkbox-primary input[type="checkbox"]:checked + label::before, .checkbox-primary input[type="radio"]:checked + label::before{
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+/* Tune buttons */
+div[id*='-tuneBox'] > .card-body{
+  padding: .5rem 1.25rem .5rem 1.25rem;
+}
+
+/* Tune switch */
+.material-switch > label::before{
+  box-shadow: inset 0 0 10px rgb(191, 197, 49);
+  background-color: var(--grey);
+}
+
+div[id*='-tune.switch'] > div {
+ margin-bottom: 0 !important;
+}
+
+/* Footer link */
+footer a{
+  color: var(--green)
+}
