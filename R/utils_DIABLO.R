@@ -94,7 +94,8 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(style = "column-gap: 1rem",
                                     numericInput(paste0(ns("cutoffNetwork"), postfix), "Cutoff value",
                                                  min = 0, max = 1, step = 0.1, value = 0.5),
-                                    uiOutput(paste0(ns("nodes"), postfix))
+                                    uiOutput(paste0(ns("nodes"), postfix)),
+                                    awesomeCheckbox(paste0(ns("fullName"), postfix), "Show full names")
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
@@ -171,27 +172,49 @@ diabloCheckNcomp <- function(input, tuned){
 #' @description A utils function, which generates the visNetwork
 #' for the given analysis result and selected dataset and cutoff
 #'
-#' @return list with node data and the network
+#' @return list with node data, the visnetwork and the mixomics network
 #'  
 #' @noRd
-diabloGenerateNetwork <- function(result, dataset, cutoff){
+diabloGenerateNetwork <- function(ns, postfix, result, dataset, cutoff, fullNames){
   mixNetwork <- mixOmics::network(result(), blocks = seq(1, length(dataset$data), 1), cutoff = cutoff, save = 'jpeg', name.save = "tmp")
   unlink("tmp.jpeg")
   graph <- toVisNetworkData(mixNetwork$gR, idToLabel = FALSE)
   
-  #before changing label
   data <- list(label = graph$nodes$label, id = graph$nodes$id)
   
-  #hover and shorten label
-  graph$nodes$title = graph$nodes$label
-  graph$nodes$label = lapply(graph$nodes$label, function(x){substring(x, 1, 3)})
+  clickedFunc = paste0("function(ng_nodes){
+                          clicked = ng_nodes.nodes[0];
+                          if (clicked == undefined){
+                            clicked = 'null';
+                          }
+                          Shiny.onInputChange('", ns('clicked_node'), postfix, "', clicked);
+      }")
   
-  visNetwork <- visNetwork(nodes = graph$nodes, edges = graph$edges) %>% 
-    visOptions(highlightNearest = TRUE) %>%
-    visPhysics(enabled = FALSE) %>%
-    visNodes(widthConstraint = 50) %>%
-    visInteraction(navigationButtons = TRUE) %>%
-    visExport(label = "Save as png")
+  if(fullNames){
+    graph$nodes$font.size = rep(15, length(graph$nodes$size))
+    visNetwork <- visNetwork(nodes = graph$nodes, edges = graph$edges) %>% 
+      visOptions(highlightNearest = TRUE) %>%
+      visPhysics(enabled = FALSE) %>%
+      visNodes(widthConstraint = 50) %>%
+      visInteraction(navigationButtons = TRUE) %>%
+      visLayout(randomSeed = 2) %>%
+      visExport(label = "Save as png") %>%
+      visEvents(click = clickedFunc)
+    
+  } else {
+    #hover and shorten label
+    graph$nodes$title = graph$nodes$label
+    graph$nodes$label = lapply(graph$nodes$label, function(x){substring(x, 1, 3)})
+    
+    visNetwork <- visNetwork(nodes = graph$nodes, edges = graph$edges) %>% 
+      visOptions(highlightNearest = TRUE) %>%
+      visPhysics(enabled = FALSE) %>%
+      visNodes(widthConstraint = 50) %>%
+      visInteraction(navigationButtons = TRUE) %>%
+      visLayout(randomSeed = 2) %>%
+      visEvents(click = clickedFunc)
+  }
+  
   return (list(data = data, visNetwork = visNetwork, mixNetwork = mixNetwork))
 }
 

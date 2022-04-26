@@ -44,7 +44,7 @@ mod_DIABLO_ui <- function(id){
                                             actionButton(ns("tune"), "Tune parameters"),
                                    ),
                                    fluidRow(id = ns("switchRow"),
-                                     uiOutput(ns("tune.switch"))
+                                            uiOutput(ns("tune.switch"))
                                    )
                       )
       ),
@@ -76,6 +76,8 @@ mod_DIABLO_server <- function(id){
     hide("switchRow")
     
     dataset <- reactiveValues()
+    network <<- reactiveValues()
+    network.tuned <<- reactiveValues()
     nodes <<- reactiveValues()
     nodes.tuned <<- reactiveValues()
     useTunedDiabloVals <<- reactiveVal(FALSE)
@@ -130,8 +132,8 @@ render_diablo_ui_components <- function(ns, input, output, dataset){
   
   output$nodes <- renderUI({
     req(nodes$data)
-    selectizeInput(ns("nodeNames"), "Select a node", 
-                   choices = c("---" = "null", combineLists(nodes$data["label"], nodes$data["id"])))
+    selectInput(ns("nodeNames"), "Select a node", 
+                choices = c("---" = "null", combineLists(nodes$data["label"], nodes$data["id"])))
   })
   
   #tuned
@@ -164,7 +166,7 @@ render_diablo_ui_components <- function(ns, input, output, dataset){
   })
   
   output$diablo.comp.tuned <- renderUI({
-    selectInput(ns("diablo.diablo.comp.tuned"), "Component:", seq(1, tunedDiabloVals$ncomp, 1))
+    selectizeInput(ns("diablo.diablo.comp.tuned"), "Component:", seq(1, tunedDiabloVals$ncomp, 1))
   })
   
   output$nodes.tuned <- renderUI({
@@ -209,6 +211,8 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
       visNetworkProxy(ns("DIABLO.Network")) %>%
         visSetSelection(nodesId = input$nodeNames)
     }
+    runjs(paste0("Shiny.setInputValue('", ns('clicked_node'), "'input$nodeNames"))
+    
   })
   
   observeEvent(input$nodeNames.tuned, {
@@ -219,6 +223,16 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
       visNetworkProxy(ns("DIABLO.Network.tuned")) %>%
         visSetSelection(nodesId = input$nodeNames.tuned)
     }
+    runjs(paste0("Shiny.setInputValue('", ns('clicked_node.tuned'), "'input$nodeNames.tuned"))
+  })
+  
+  #' Observe node clicked
+  observeEvent(input$clicked_node, {
+    updateSelectizeInput(session, "nodeNames", selected = input$clicked_node)
+  })
+  
+  observeEvent(input$clicked_node.tuned, {
+    updateSelectizeInput(session, "nodeNames.tuned", selected = input$clicked_node.tuned)
   })
   
   #' Observe tune button
@@ -344,6 +358,10 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     circos.cutoff <- input$cutoffCiros
   })
   
+  network.reactive <- reactive ({
+    network.reactive <- network
+  })
+  
   comp.var.tuned <- reactive({
     req(input$diablo.var.x.tuned)
     req(input$diablo.var.y.tuned)
@@ -368,6 +386,10 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   circos.cutoff.tuned <- reactive({
     circos.cutoff.tuned <- input$cutoffCiros.tuned
+  })
+  
+  network.tuned.reactive <- reactive ({
+    network.tuned.reactive <- network.tuned
   })
   
   
@@ -513,11 +535,10 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   #' Network plot
   output$DIABLO.Network <- renderVisNetwork({
     if(!is.null(diablo.result()) & length(dataset$data) > 1){
-      networkResult = diabloGenerateNetwork(diablo.result, dataset, input$cutoffNetwork)
+      networkResult = diabloGenerateNetwork(ns, "", diablo.result, dataset, input$cutoffNetwork, input$fullName)
       nodes$data <- networkResult$data
-      network.untuned <<- list()
-      network.untuned$mixNetwork <<- networkResult$mixNetwork
-      network.untuned$visNetwork <<- networkResult$visNetwork
+      network$mixNetwork <<- networkResult$mixNetwork
+      network$visNetwork <<- networkResult$visNetwork
     }
   })
   
@@ -559,9 +580,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   #' Network plot tuned
   output$DIABLO.Network.tuned <- renderVisNetwork({
     if(!is.null(diablo.result.tuned()) & length(dataset$data) > 1){
-      networkResult = diabloGenerateNetwork(diablo.result.tuned, dataset, input$cutoffNetwork.tuned)
+      networkResult = diabloGenerateNetwork(ns, ".tuned", diablo.result.tuned, dataset, input$cutoffNetwork.tuned, input$fullName.tuned)
       nodes.tuned$data <- networkResult$data
-      network.tuned <<- list()
       network.tuned$mixNetwork <<- networkResult$mixNetwork
       network.tuned$visNetwork <<- networkResult$visNetwork
     }
@@ -582,8 +602,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo)
   output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 2592, height = 1944)
-  output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", network.untuned, "html")
-  output$NetworkGml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.gml", network.untuned, "gml")
+  output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", network.reactive(), "html")
+  output$NetworkGml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.gml", network.reactive(), "gml")
   
   output$Indiv.download.tuned <- getDownloadHandler("DIABLO_tuned_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("DIABLO_tuned_Variableplot.png", plot.var.tuned)
@@ -591,7 +611,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   output$Img.download.tuned <- getDownloadHandler("DIABLO_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$Diablo.download.tuned <- getDownloadHandler("DIABLO_tuned_Diabloplot.png", plot.diablo.tuned)
   output$Circos.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.png", plot.circos.tuned, width = 2592, height = 1944)
-  output$NetworkHtml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.html", network.tuned, "html")
+  output$NetworkHtml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.html", network.tuned.reactive(), "html")
+  output$NetworkGml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.gml", network.tuned.reactive(), "gml")
 }
 
 #' Generate the error messages

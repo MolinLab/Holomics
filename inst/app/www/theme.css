@@ -79,6 +79,20 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
   color: white;
 }
 
+#downloadDIABLO-DIABLO\.Network,  #downloadDIABLO-DIABLO\.Network\.tuned{
+  font-weight: 400;
+  border: 1px solid transparent;
+  padding: .375rem .75rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5;
+  font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol" !important;
+  background-color: var(--green) !important;
+  color: white !important;
+  border-color: #ddd !important;
+  border-radius: .25rem !important;
+  margin-bottom: .25rem;
+}
+
 /* Collapse card buttons */
 .btn-sm{
   color: var(--green)

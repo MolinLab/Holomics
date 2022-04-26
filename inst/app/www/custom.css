@@ -12,20 +12,6 @@ a[id*='.download']{
   float: right;
 }
 
-#downloadDIABLO-DIABLO\.Network,  #downloadDIABLO-DIABLO\.Network\.tuned{
-  font-weight: 400;
-  border: 1px solid transparent;
-  padding: .375rem .75rem !important;
-  font-size: 1rem !important;
-  line-height: 1.5;
-  font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol" !important;
-  background-color: #f8f9fa !important;
-  border-color: #ddd !important;
-  color: #444 !important;
-  border-radius: .25rem !important;
-  margin-bottom: .25rem;
-}
-
 #DIABLO-NetworkHtml\.download{
   margin-right: .5rem;
 }
