@@ -273,6 +273,7 @@ tune_diablo_values <- function(dataset){
       diag(design) <- 0
       
       #tune ncomp
+      set.seed(30)
       perf.diablo <- mixOmics::perf(diablo.result(), validation = 'Mfold', folds = 7, nrepeat = 50, progressBar = TRUE, cpus = 1)
       ncomp = perf.diablo$choice.ncomp$WeightedVote["Overall.BER", "centroids.dist"]
       
@@ -284,6 +285,7 @@ tune_diablo_values <- function(dataset){
         test.keepX[[i]] = c(5:9, seq(10, 18, 2), seq(20,30,5))
       }
       
+      set.seed(30)
       BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
       tune.diablo = mixOmics::tune.block.splsda(X, Y, ncomp = ncomp,
                                                 test.keepX = test.keepX, design = design,

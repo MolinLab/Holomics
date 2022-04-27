@@ -12,65 +12,67 @@
 
 /* Sidebar */
 #sidebarId{
-  background-color: var(--grey);
+  background-color: var(--green);
 }
 
 /* Top of sidebar */
 .brand-link{
-  background-color: var(--grey) !important;
-  color: black !important;
+  background-color: var(--green) !important;
+  color: white !important;
   border-bottom: 1px solid var(--green) !important;
+}
+
+.brand-image{
+  box-shadow: none !important;;
+}
+
+.brand-text{
+  font-weight: 500 !important;
 }
 
 /* Top of sidebar hover */
 a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg-secondary:hover{
-  background-color: var(--grey) !important;
+  background-color: var(--green) !important;
 }
 
 /* Sidebar items */
 [class*="sidebar-dark-"] .sidebar a {
-  color: var(--green);
+  color: white;
 }
 
 /* Sidebar items hover */
 [class*="sidebar-dark-"] .nav-sidebar > .nav-item:hover > .nav-link{
-  background-color: var(--grey);
-  color: var(--green);
-  opacity: .5;
+  background-color: white;
+  color: var(--green) ;
 }
 
 /* Active sidebar item */
 [class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link.active{
-  color: white;
+  color: var(--green) ;
 }
 
 .nav-link.active{
-  background-color: var(--green) !important;
+  background-color: white !important;
 }
 
 /* Opened menu in sidebar */
-[class*="sidebar-dark-"] .nav-sidebar > .nav-item.menu-open > .nav-link, [class*="sidebar-dark-"] .nav-sidebar > .has-treeview > .nav-link:focus{
-  color: var(--green);
-}
-
 [class*="sidebar-dark-"] .nav-sidebar > .nav-item.menu-open > .nav-link.active {
-  color: white;
+  color: var(--green);
 }
 
 /* Subitems in sidebar */
 .treeview-link{
-  color: var(--green) !important;
+  color: white !important;
 }
 
 .treeview-link.active{
-  color: white !important;
+  color: var(--green) !important;
 }
 
 /*Subitems in sidebar hover */
 .treeview-link:hover{
-  background-color: var(--grey);
+  background-color: white;
   color: var(--green);
-  opacity: .5;
 }
 
 /* Save plot buttons and tune buttons */
@@ -99,9 +101,9 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
 }
 
 /* Card header */
-.nav-pills .nav-link:not(.active):hover{
-  color: var(--green) !important;
-  border-top: 3px solid var(--grey) !important;
+.card .card-header .nav-pills .nav-link:not(.active):hover{
+  /*! color: var(--green) !important; */
+  /*! border-top: 3px solid var(--grey) !important; */
 }
 
 .card .card-header .nav-pills .nav-item .nav-link {
@@ -109,6 +111,7 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
 }
 
 .card .card-header .nav-pills .nav-item .nav-link.active {
+  background-color: var(--green) !important;
   color: white;
 }
 
@@ -133,7 +136,12 @@ div[id*='-tune.switch'] > div {
  margin-bottom: 0 !important;
 }
 
+/* Progress bar */
+.progress-bar{
+  background-color: var(--green);
+}
+
 /* Footer link */
 footer a{
-  color: var(--green)
+  color: #79151d;
 }

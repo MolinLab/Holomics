@@ -207,7 +207,9 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
 #' Tune the ncomp and keepX parameter for the given dataset
 tune_values <- function(dataset){
   withProgress(message = 'Tuning parameters .... Please wait!', value = 1/4, {
+    
     #tune ncomp
+    set.seed(30)
     tune.spls <- mixOmics::perf(spls.result(), validation = "Mfold", folds = 7, progressBar = TRUE, nrepeat = 50)
     ncomp <- tune.spls$measures$Q2.total$summary[which.max(tune.spls$measures$Q2.total$summary$mean), 2]
     
@@ -217,6 +219,7 @@ tune_values <- function(dataset){
     Y <- dataset$data2
     
     #tune keepX
+    set.seed(30)
     list_keepX <- c(2:10, 15, 20)
     BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
     tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
@@ -229,6 +232,7 @@ tune_values <- function(dataset){
     incProgress(1/4)
     
     #tune keepY
+    set.seed(30)
     list_keepY <- c(2:10, 15, 20)
     tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
                                   validation = "Mfold",
