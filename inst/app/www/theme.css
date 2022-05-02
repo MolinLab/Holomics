@@ -12,6 +12,10 @@
 
 /* Sidebar */
 #sidebarId{
+  background-color: var(--grey);
+}
+
+#sidebarItemExpanded{
   background-color: var(--green);
 }
 

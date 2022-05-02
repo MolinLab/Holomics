@@ -15,18 +15,14 @@ app_ui <- function(request) {
       
       ## Header 
       bs4Dash::dashboardHeader(
-        title = bs4Dash::dashboardBrand(
-          title = "Holomics",
-          color = "secondary",
-          image = "www/logo.png"
-        )
-        # title = tags$img(src='www/logo.png')
+        title = tags$img(src='www/logo_hell.png', width="80%", style="display: block; margin: auto;")
       ),
       
       
       ## Sidebar content  
-      bs4Dash::dashboardSidebar(collapsed = TRUE,
+      bs4Dash::dashboardSidebar(
         bs4Dash::sidebarMenu(
+          
           bs4Dash::menuItem("Home", tabName = "home", icon = icon("home")),
           # bs4Dash::menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
           # bs4Dash::menuItem("Preprocessing", tabName = "preprocessing", icon = icon("wrench"), startExpanded = FALSE,

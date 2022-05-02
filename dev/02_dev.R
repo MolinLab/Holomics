@@ -15,7 +15,10 @@
 
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
-usethis::use_package( "thinkr" )
+usethis::use_package("rlang")
+usethis::use_package("visNetwork")
+usethis::use_package("shinyWidgets")
+usethis::use_package("mixOmics")
 
 ## Add modules ----
 ## Create a module infrastructure in R/

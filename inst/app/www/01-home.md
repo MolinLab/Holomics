@@ -1,35 +1,17 @@
-
 # Welcome to Holomics
 
-<!-- badges: start -->
+Holomics is a web application, which allows you to perform single and multi omics analyses. <br>
+The used analyses methods are based on the <a href="http://mixomics.org/" rel="noreferrer noopener" target="_blank" style="color: var(--green)">mixOmics</a> package.
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
+With the current version Holomics can only be used with a test dataset. In the future you will be able to upload your data and use it.
 
-The goal of Holomics is to ease the process of interpretation and integration of transcriptomic, metabolomic and metagenomic plant data.
-Most methods are based on the mixOmics package.
-A demo version is hosted on shinyapps.io https://z3nqcf-hirun.shinyapps.io/holomics/
+### Workflow
 
-## Installation
+To make a use of the full functionality provided by Holomics, the following workflow should be followed:
 
-You can install the development version of Holomics
-
-``` r
-install.packages("devtools")
-devtools::install_github("Hirun/Holomics")
-```
-
-## Overview Methods
-
-The following methods are being implemented at the moment.
+<img src="workflow.png" alt="Workflow image" width="80%"/>
 
 
-<img src="01-overview-1.png" width="100%" />
+### About
 
-
-## About Holomics
-
-Holomics has been developed at the Austrian Institute of Technology as part of the Omics 4.0 project.
-
-
+Holomics has been developed at the Austrian Institute of Technology as part of the <a href="https://metabolomics-ifa.boku.ac.at/OMICS40Project/" rel="noreferrer noopener" target="_blank" style="color: var(--green)"> Omics 4.0 project</a>.

@@ -53,10 +53,10 @@ mod_PLSDA_ui <- function(id){
                              fluidRow(
                                bs4Dash::column(width = 12,
                                                uiOutput(ns("load.comp")),
-                                               selectInput(ns("plsda.load.cont"), "Contribution:", 
+                                               selectInput(ns("plsda.load.cont"), "Contribution:", width = "100",
                                                            choices = c("minimal" = "min", "maximal" = "max")),
-                                               selectInput(ns("plsda.load.method"), "Method:", 
-                                                           choices = c("Mean" = "mean", "Median" = "median")),
+                                               selectInput(ns("plsda.load.method"), "Method:", width = "100",
+                                                           choices = c("mean" = "mean", "median" = "median")),
                                                style = "display: flex; column-gap: 1rem"             
                                )
                              ),
