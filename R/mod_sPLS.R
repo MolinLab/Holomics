@@ -13,10 +13,8 @@ mod_sPLS_ui <- function(id){
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
       bs4Dash::column(width = 6,
-                      selectInput(ns("dataset1"), "Select first dataset:", 
-                                  choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), width = "150"),
-                      selectInput(ns("dataset2"), "Select second dataset:", 
-                                  choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), 
+                      getDatasetComponent(ns("dataset1"), "Select first dataset:", width = "150"),
+                      getDatasetComponent(ns("dataset2"), "Select second dataset:", 
                                   selected = "me", width = "fit-content"),
                       style = "display: flex; column-gap: 1rem"
       )
@@ -339,8 +337,8 @@ generate_spls_plots <- function(ns, input, output, dataset){
   #' generate output plots
   plot.indiv <- function(){
     mixOmics::plotIndiv(spls.result(), comp = comp.indiv(),
-                        group = storability, ind.names = input$indiv.names,
-                        legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+                        group = sampleClasses, ind.names = input$indiv.names,
+                        legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
                         rep.space = rep.space())
   }
   
@@ -361,8 +359,8 @@ generate_spls_plots <- function(ns, input, output, dataset){
   
   plot.arrow <- function(){
     if(splsGetNcomp(input) >= 2){
-      mixOmics::plotArrow(spls.result(), group = storability, ind.names = input$namesArrow,
-                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+      mixOmics::plotArrow(spls.result(), group = sampleClasses, ind.names = input$namesArrow,
+                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
                           X.label = "Dimension 1", Y.label = "Dimension 2")
     }
   }
@@ -384,8 +382,8 @@ generate_spls_plots <- function(ns, input, output, dataset){
   plot.indiv.tuned <- function(){
     if (!is.null(spls.result.tuned())){
       mixOmics::plotIndiv(spls.result.tuned(), comp = comp.indiv.tuned(),
-                          group = storability, ind.names = input$indiv.names.tuned,
-                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+                          group = sampleClasses, ind.names = input$indiv.names.tuned,
+                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
                           rep.space = rep.space.tuned())
     }
   }
@@ -413,8 +411,8 @@ generate_spls_plots <- function(ns, input, output, dataset){
   
   plot.arrow.tuned <- function(){
     if(!is.null(spls.result.tuned()) & splsGetNcomp(input, tuned = TRUE) >= 2){
-      mixOmics::plotArrow(spls.result.tuned(), group = storability, ind.names = input$namesArrow.tuned,
-                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+      mixOmics::plotArrow(spls.result.tuned(), group = sampleClasses, ind.names = input$namesArrow.tuned,
+                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
                           X.label = "Dimension 1", Y.label = "Dimension 2")
     }
   }
@@ -517,14 +515,14 @@ generate_spls_plots <- function(ns, input, output, dataset){
   output$Indiv.download <- getDownloadHandler("PLS_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS_Loadingsplot.png", plot.load, width = 2592, height = 1944)
-  output$Img.download <- getDownloadHandler("PLS_Heatmap.png", plot.img, , width = 2592, height = 1944)
+  output$Img.download <- getDownloadHandler("PLS_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$SelVarX.download <- getDownloadHandler("PLS_SelectedVariable1.csv", table.selVarX, type = "csv")
   output$SelVarY.download <- getDownloadHandler("PLS_SelectedVariables2.csv", table.selVarY, type = "csv")
   
   output$Indiv.download.tuned <- getDownloadHandler("PLS_tuned_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("PLS_tuned_Variableplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
-  output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, , width = 2592, height = 1944)
+  output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariable1.csv", table.selVarX.tuned, type = "csv")
   output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariables2.csv", table.selVarY.tuned, type = "csv")
 }

@@ -139,7 +139,7 @@ generate_plsda_plots <- function(ns, input, output, dataset){
   
   #' run analysis
   plsda.result <- reactive({
-    plsda.result <- mixOmics::plsda(dataset$data, Y = Holomics::storability,
+    plsda.result <- mixOmics::plsda(dataset$data, Y = sampleClasses,
                                     ncomp = input$ncomp ,logratio = input$logratio, 
                                     scale = input$scale)
   })
@@ -147,8 +147,8 @@ generate_plsda_plots <- function(ns, input, output, dataset){
   #' plot functions
   plot.indiv <- function(){
     mixOmics::plotIndiv(plsda.result(), comp = comp.indiv(), 
-                        group = storability, ind.names = input$indiv.names,
-                        legend = TRUE, legend.title = "Storability classes")
+                        group = sampleClasses, ind.names = input$indiv.names,
+                        legend = TRUE, legend.title = classesLabel)
   }
   
   plot.var <- function(){

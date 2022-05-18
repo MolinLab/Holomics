@@ -49,7 +49,6 @@ app_ui <- function(request) {
                            )),
           bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
           bs4Dash::tabItem(tabName = "singleOmics", mod_SingleOmics_ui("singleOmics")),
-          # bs4Dash::tabItem(tabName = "multiOmics", mod_MultiOmics_ui("multiOmics")),
           bs4Dash::tabItem(tabName = "sPLS", mod_sPLS_ui("sPLS")),
           bs4Dash::tabItem(tabName = "DIABLO", mod_DIABLO_ui("DIABLO"))
         )
@@ -60,11 +59,12 @@ app_ui <- function(request) {
     bs4Dash::bs4DashFooter(
       fluidRow(
         column(width = 12, align = "center", 
-               a(href = "https://www.ait.ac.at/en/", HTML("<b> AIT - Austrian Institute of Technology"), 
-                 br()),
+               a(href = "https://www.ait.ac.at/en/", HTML("<b> AIT - Austrian Institute of Technology"),
+                 target = "_blank", rel="noreferrer noopener"), 
+
+                br(),
                "Copyright (C) 2022" #add license
                #add github link
-               
         )
       )
     )

@@ -150,7 +150,7 @@ generate_pca_plots <- function(ns, input, output, dataset){
   
   plot.indiv <- function(){
     mixOmics::plotIndiv(pca.result(), comp = comp.indiv(), 
-                        group = storability, ind.names = input$indiv.names,
+                        group = sampleClasses, ind.names = input$indiv.names,
                         legend = TRUE, legend.title = "Storability classes")
   }
   

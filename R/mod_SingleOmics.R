@@ -12,8 +12,7 @@ mod_SingleOmics_ui <- function(id){
   tagList(
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
-      selectInput(ns("dataset"), "Select dataset:", 
-                  choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"))
+      getDatasetComponent(ns("dataset"), "Select dataset:")
     ),
     fluidRow(
       bs4Dash::column( width = 6,

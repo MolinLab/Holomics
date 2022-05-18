@@ -1,3 +1,19 @@
+#' getDataset 
+#'
+#' @description A utils function, which gets the dataset according to the selection
+#'
+#' @return dataframe with the data
+#'
+#' @noRd
+#' Return 
+getDatasetComponent <- function(id, label, selected = NULL, multiple = FALSE, width = NULL){
+  return(
+    selectInput(id, label,
+                choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), 
+                multiple = multiple, width = width, selected = selected)
+  )
+}
+
 
 #' getDataset 
 #'

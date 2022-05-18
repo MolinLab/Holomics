@@ -17,9 +17,7 @@ mod_DIABLO_ui <- function(id){
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
       bs4Dash::column(width = 6, style = "display: flex; column-gap: 1rem",
-                      selectInput(ns("dataset"), "Select the datasets: ",
-                                  choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), 
-                                  multiple = TRUE),
+                      getDatasetComponent(ns("dataset"), "Select the datasets: ", multiple = TRUE),
                       textOutput(ns("dataset.error"))
       )
     ),
@@ -267,7 +265,7 @@ tune_diablo_values <- function(dataset){
   X <- dataset$data
   if (!is.null(X)){
     withProgress(message = 'Tuning parameters .... Please wait!', value = 1/3, {
-      Y <- storability
+      Y <- sampleClasses
       design <- matrix(0.1, ncol = length(X), nrow = length(X),
                        dimnames = list(names(X), names(X)))
       diag(design) <- 0
@@ -305,7 +303,7 @@ tune_diablo_values <- function(dataset){
 run_diablo_analysis <- function(ns, input, output, dataset){
   diablo.result <<- reactive({
     X <- dataset$data
-    Y <- storability
+    Y <- sampleClasses
     if (!is.null(X)){
       design <- matrix(0.1, ncol = length(X), nrow = length(X),
                        dimnames = list(names(X), names(X)))
@@ -319,7 +317,7 @@ run_diablo_analysis <- function(ns, input, output, dataset){
   diablo.result.tuned <<- reactive({
     if (useTunedDiabloVals()){
       X <- dataset$data
-      Y <- storability
+      Y <- sampleClasses
       if (!is.null(X)){
         design <- matrix(0.1, ncol = length(X), nrow = length(X),
                          dimnames = list(names(X), names(X)))
@@ -399,8 +397,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   plot.indiv <- function(){
     if(!is.null(diablo.result()) & input$ncomp >= 2){
       mixOmics::plotIndiv(diablo.result(), comp = comp.indiv(),
-                          group = storability, ind.names = input$indiv.names,
-                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom")
+                          group = sampleClasses, ind.names = input$indiv.names,
+                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom")
     }
   }
   
@@ -428,8 +426,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   plot.arrow <- function(){
     if(!is.null(diablo.result()) & input$ncomp >= 2){
-      mixOmics::plotArrow(diablo.result(), group = storability, ind.names = input$namesArrow,
-                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+      mixOmics::plotArrow(diablo.result(), group = sampleClasses, ind.names = input$namesArrow,
+                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
                           X.label = "Dimension 1", Y.label = "Dimension 2")
     }
   }
@@ -450,8 +448,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   plot.indiv.tuned <- function(){
     if(!is.null(diablo.result.tuned()) & tunedDiabloVals$ncomp >= 2){
       mixOmics::plotIndiv(diablo.result.tuned(), comp = comp.indiv.tuned(),
-                          group = storability, ind.names = input$indiv.names.tuned,
-                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom")
+                          group = sampleClasses, ind.names = input$indiv.names.tuned,
+                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom")
     }
   }
   
@@ -479,8 +477,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   plot.arrow.tuned <- function(){
     if(!is.null(diablo.result.tuned()) & tunedDiabloVals$ncomp >= 2){
-      mixOmics::plotArrow(diablo.result.tuned(), group = storability, ind.names = input$namesArrow.tuned,
-                          legend = TRUE, legend.title = "Storability classes", legend.position = "bottom",
+      mixOmics::plotArrow(diablo.result.tuned(), group = sampleClasses, ind.names = input$namesArrow.tuned,
+                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
                           X.label = "Dimension 1", Y.label = "Dimension 2")
     }
   }
