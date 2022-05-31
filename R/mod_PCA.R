@@ -16,51 +16,10 @@ mod_PCA_ui <- function(id){
     fluidRow(
       bs4Dash::tabBox(
         width = 12, collapsible = FALSE,
-        tabPanel("Sample plot", 
-                 fluidRow(style = "display: flex; column-gap: 1rem",
-                          uiOutput(ns("indiv.x.comp")),
-                          uiOutput(ns("indiv.y.comp")),
-                          awesomeCheckbox(ns("indiv.names"), "Sample names", value = FALSE)
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   plotOutput(ns("Indiv")),
-                                   downloadButton(ns("Indiv.download"), "Save plot"))             
-                 )
-        ),
-        tabPanel("Variable plot",
-                 fluidRow(style = "display: flex; column-gap: 1rem",
-                          uiOutput(ns("var.x.comp")),
-                          uiOutput(ns("var.y.comp")),
-                          awesomeCheckbox(ns("var.names"), "Variable names", value = FALSE)
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   plotOutput(ns("Var")),
-                                   downloadButton(ns("Var.download"), "Save plot"))         
-                 )
-        ),
-        tabPanel("Loading plot",
-                 fluidRow(
-                   uiOutput(ns("load.comp")),
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   plotOutput(ns("Load")),
-                                   downloadButton(ns("Load.download"), "Save plot"))
-                 )
-        ),
-        tabPanel("Selected variables",
-                 fluidRow(
-                   uiOutput(ns("sel.var.comp"))
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   DT::dataTableOutput(ns("Sel.Var")),
-                                   downloadButton(ns("SelVar.download"), "Save table")
-                   )
-                 )     
-        ),
+        getSamplePlot(ns),
+        getVariablePlot(ns),
+        getLoadingsPlot(ns),
+        getSelectedVarsPlot(ns),
         tabPanel("Scree plot",       
                  bs4Dash::column(width = 12,
                                  plotOutput(ns("Scree")), 
