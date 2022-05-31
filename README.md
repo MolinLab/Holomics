@@ -3,40 +3,10 @@
 
 # Holomics
 
-<!-- badges: start -->
+Holomics is a web application, which allows you to perform single and
+multi omics analyses. <br> The used analyses methods are based on the
+<a href="http://mixomics.org/" rel="noreferrer noopener" target="_blank" style="color: var(--green)">mixOmics</a>
+package.
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
-
-The goal of Holomics is to …
-
-## Installation
-
-### Local as R package
-You can install the development version of Holomics as a R package from
-github with
-
-
-
-``` r
-#Note: under Windows mixOmics requires stringi to be installed from win.binary
-#remove.packages("stringi")
-#install.packages("stringi", type = "win.binary")
-
-install.packages("devtools")
-devtools::install_github("Hirun/Holomics")
-```
-### Local as Docker container
-
-``` r
-docker pull
-```
-
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
+With the current version Holomics can only be used with a test dataset.
+In the future you will be able to upload your data and use it.
