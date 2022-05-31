@@ -10,18 +10,7 @@
 mod_PLSDA_ui <- function(id){
   ns <- NS(id)
   tagList(    fluidRow(
-    bs4Dash::box(
-      title = "Analysis parameters", width = 12, collapsed = TRUE,
-      fluidRow(style = "column-gap: 1rem",
-               numericInput(ns("ncomp"), "Number of components:", value = 3, 
-                            min = 1, max = 15, step = 1, width = "45%"),
-               selectInput(ns("logratio"), "Logratio:",
-                           c("None" = "none",
-                             "centered" = "CLR"
-                           ), width = "30%"),
-               awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
-      )
-    )
+    getAnalysisParametersComponent(ns, TRUE)
   ),
   fluidRow(
     bs4Dash::tabBox(width = 12, collapsible = FALSE,
@@ -33,7 +22,7 @@ mod_PLSDA_ui <- function(id){
                              ),
                              fluidRow(
                                bs4Dash::column(width = 12,
-                                               plotOutput(ns("PLSDA.Indiv")),
+                                               plotOutput(ns("Indiv")),
                                                downloadButton(ns("Indiv.download"), "Save plot"))             
                              )
                     ),
@@ -45,7 +34,7 @@ mod_PLSDA_ui <- function(id){
                              ),
                              fluidRow(
                                bs4Dash::column(width = 12,
-                                               plotOutput(ns("PLSDA.Var")),
+                                               plotOutput(ns("Var")),
                                                downloadButton(ns("Var.download"), "Save plot"))         
                              )
                     ),
@@ -53,16 +42,16 @@ mod_PLSDA_ui <- function(id){
                              fluidRow(
                                bs4Dash::column(width = 12,
                                                uiOutput(ns("load.comp")),
-                                               selectInput(ns("plsda.load.cont"), "Contribution:", width = "100",
+                                               selectInput(ns("load.cont"), "Contribution:", width = "100",
                                                            choices = c("minimal" = "min", "maximal" = "max")),
-                                               selectInput(ns("plsda.load.method"), "Method:", width = "100",
+                                               selectInput(ns("load.method"), "Method:", width = "100",
                                                            choices = c("mean" = "mean", "median" = "median")),
                                                style = "display: flex; column-gap: 1rem"             
                                )
                              ),
                              fluidRow(
                                bs4Dash::column(width = 12,
-                                               plotOutput(ns("PLSDA.Load")),
+                                               plotOutput(ns("Load")),
                                                downloadButton(ns("Load.download"), "Save plot"))
                              )
                     ),
@@ -72,7 +61,7 @@ mod_PLSDA_ui <- function(id){
                              ),
                              fluidRow(
                                bs4Dash::column(width = 12,
-                                               DT::dataTableOutput(ns("PLSDA.Sel.Var")),
+                                               DT::dataTableOutput(ns("Sel.Var")),
                                                downloadButton(ns("SelVar.download"), "Save table"))
                              )     
                     )
@@ -98,27 +87,27 @@ mod_PLSDA_server <- function(id, dataset){
 #' Render Ui functions
 render_plsda_ui_components <- function(ns, input, output, dataset){
   output$indiv.x.comp <- renderUI({
-    selectInput(ns("plsda.indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
+    selectInput(ns("indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$indiv.y.comp <- renderUI({
-    selectInput(ns("plsda.indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp <- renderUI({
-    selectInput(ns("plsda.var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
+    selectInput(ns("var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$var.y.comp <- renderUI({
-    selectInput(ns("plsda.var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$load.comp <- renderUI({
-    selectInput(ns("plsda.load.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("load.comp"), "Component:", seq(1, input$ncomp, 1))
   })
   
   output$sel.var.comp <- renderUI({
-    selectInput(ns("plsda.sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
   })
 }
 
@@ -126,65 +115,65 @@ render_plsda_ui_components <- function(ns, input, output, dataset){
 generate_plsda_plots <- function(ns, input, output, dataset){
   #' Create reactive values
   comp.var <- reactive({ 
-    req(input$plsda.var.x)
-    req(input$plsda.var.y)
-    comp.var <- as.numeric(c(input$plsda.var.x,input$plsda.var.y))
+    req(input$var.x)
+    req(input$var.y)
+    comp.var <- as.numeric(c(input$var.x,input$var.y))
   })
   
   comp.indiv <- reactive({
-    req(input$plsda.indiv.x)
-    req(input$plsda.indiv.y)
-    comp.indiv <- as.numeric(c(input$plsda.indiv.x,input$plsda.indiv.y))
+    req(input$indiv.x)
+    req(input$indiv.y)
+    comp.indiv <- as.numeric(c(input$indiv.x,input$indiv.y))
   })
   
   #' run analysis
-  plsda.result <- reactive({
-    plsda.result <- mixOmics::plsda(dataset$data, Y = sampleClasses,
+  result <- reactive({
+    result <- mixOmics::plsda(dataset$data, Y = sampleClasses,
                                     ncomp = input$ncomp ,logratio = input$logratio, 
                                     scale = input$scale)
   })
   
   #' plot functions
   plot.indiv <- function(){
-    mixOmics::plotIndiv(plsda.result(), comp = comp.indiv(), 
+    mixOmics::plotIndiv(result(), comp = comp.indiv(), 
                         group = sampleClasses, ind.names = input$indiv.names,
                         legend = TRUE, legend.title = classesLabel)
   }
   
   plot.var <- function(){
-    mixOmics::plotVar(plsda.result(), comp = comp.var(),
+    mixOmics::plotVar(result(), comp = comp.var(),
                       var.names = input$var.names)
   }
   
   plot.load <- function(){
-    req(input$plsda.load.comp)
-    mixOmics::plotLoadings(plsda.result(), comp = as.numeric(input$plsda.load.comp),
-                           contrib = input$plsda.load.cont, method = input$plsda.load.method)
+    req(input$load.comp)
+    mixOmics::plotLoadings(result(), comp = as.numeric(input$load.comp),
+                           contrib = input$load.cont, method = input$load.method)
   }
   
   table.selVar <- function(){
-    req(input$plsda.sel.var.comp)
-    selVar <- mixOmics::selectVar(plsda.result(), comp = as.numeric(input$plsda.sel.var.comp))
+    req(input$sel.var.comp)
+    selVar <- mixOmics::selectVar(result(), comp = as.numeric(input$sel.var.comp))
     listsToMatrix(selVar$name, selVar$value, c("name", "value"))
   }
   
   #'Sample plot
-  output$PLSDA.Indiv <- renderPlot(
+  output$Indiv <- renderPlot(
     plot.indiv()
   ) 
   
   #' Variable plot
-  output$PLSDA.Var <- renderPlot(
+  output$Var <- renderPlot(
     plot.var()
   )
   
   #' Loading plot
-  output$PLSDA.Load <- renderPlot( 
+  output$Load <- renderPlot( 
     plot.load()
   )
   
   #' Selected Variables Tables
-  output$PLSDA.Sel.Var <- DT::renderDataTable(
+  output$Sel.Var <- DT::renderDataTable(
     table.selVar()
   )
   

@@ -18,7 +18,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("indiv.error"), postfix)),
-                                             plotOutput(paste0(ns("DIABLO.Indiv"), postfix)),
+                                             plotOutput(paste0(ns("Indiv"), postfix)),
                                              downloadButton(paste0(ns("Indiv.download"), postfix), "Save plot"))
                            )
                   ),
@@ -31,7 +31,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("var.error"), postfix)),
-                                             plotOutput(paste0(ns("DIABLO.Var"), postfix)),
+                                             plotOutput(paste0(ns("Var"), postfix)),
                                              downloadButton(paste0(ns("Var.download"), postfix), "Save plot"))
                            )
                   ),
@@ -42,7 +42,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("load.error"), postfix)),
-                                             plotOutput(paste0(ns("DIABLO.Load"), postfix)),
+                                             plotOutput(paste0(ns("Load"), postfix)),
                                              downloadButton(paste0(ns("Load.download"), postfix), "Save plot"))
                            )
                   ),
@@ -53,7 +53,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("img.error"), postfix)),
-                                             plotOutput(paste0(ns("DIABLO.Img"), postfix)),
+                                             plotOutput(paste0(ns("Img"), postfix)),
                                              downloadButton(paste0(ns("Img.download"), postfix), "Save plot"))
                            )
                   ),
@@ -64,7 +64,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("arrow.error"), postfix)),
-                                             plotOutput(paste0(ns("DIABLO.Arrow"), postfix)))
+                                             plotOutput(paste0(ns("Arrow"), postfix)))
                            )
                   ),
                   tabPanel("Diablo plot",
@@ -74,7 +74,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("diablo.error"), postfix)),
-                                             plotOutput(paste0(ns("DIABLO.Diablo"), postfix)),
+                                             plotOutput(paste0(ns("Diablo"), postfix)),
                                              downloadButton(paste0(ns("Diablo.download"), postfix), "Save plot"))
                            )
                   ),
@@ -86,7 +86,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("circos.error"), postfix)),
-                                             plotOutput(paste0(ns("DIABLO.Circos"), postfix)),
+                                             plotOutput(paste0(ns("Circos"), postfix)),
                                              downloadButton(paste0(ns("Circos.download"), postfix), "Save plot"))
                            )
                   ), 
@@ -100,7 +100,7 @@ diabloGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("network.error"), postfix)),
-                                             visNetworkOutput(paste0(ns("DIABLO.Network"), postfix)),
+                                             visNetworkOutput(paste0(ns("Network"), postfix)),
                                              downloadButton(paste0(ns("NetworkGml.download"), postfix), "Save as gml"),
                                              downloadButton(paste0(ns("NetworkHtml.download"), postfix), "Save as html")
                              )

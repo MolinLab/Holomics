@@ -22,41 +22,18 @@ mod_sPLS_ui <- function(id){
     fluidRow(
       bs4Dash::column(width = 5, 
                       fluidRow(width = 12,
-                               bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
-                                            fluidRow(style = "column-gap: 1rem",
-                                                     numericInput(ns("ncomp"), "Number of components", value = 3,
-                                                                  min = 1, max = 15, step = 1, width = "45%"),
-                                                     selectInput(ns("logratio"), "Logratio",
-                                                                 c("None" = "none",
-                                                                   "centered" = "CLR"
-                                                                 ), width = "30%"),
-                                                     awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
-                                            )
-                               )
+                               getAnalysisParametersComponent(ns, TRUE)
                       ),
                       fluidRow(width = 12,
                                splsGetUi(ns)
                       )
       ),
       bs4Dash::column(width = 2,
-                      bs4Dash::box(id = ns("tuneBox"), width = 12,
-                                   fluidRow(style = "flex-direction: column",
-                                            actionButton(ns("tune"), "Tune parameters"),
-                                   ),
-                                   fluidRow(id = ns("switchRow"),
-                                            uiOutput(ns("tune.switch"))
-                                   )
-                      )
+                      getTuneBox(ns)
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(width = 12,
-                               bs4Dash::box(title = "Tuned analysis parameters", width = 12, collapsed = TRUE,
-                                            fluidRow(style = "column-gap: 1rem",
-                                                     textOutput(ns("ncomp.tuned")),
-                                                     textOutput(ns("keepX.tuned")),
-                                                     textOutput(ns("keepY.tuned"))
-                                            )
-                               )
+                         getTunedParametersComponent(ns, TRUE)
                       ),
                       fluidRow(width = 12,
                                splsGetUi(ns, ".tuned")
@@ -96,60 +73,60 @@ mod_sPLS_server <- function(id){
 #' Render Ui functions
 render_spls_ui_components <- function(ns, input, output, dataset){
   output$indiv.x.comp <- renderUI({
-    selectInput(ns("spls.indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
+    selectInput(ns("indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$indiv.y.comp <- renderUI({
-    selectInput(ns("spls.indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp <- renderUI({
-    selectInput(ns("spls.var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
+    selectInput(ns("var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
   })
   
   output$var.y.comp <- renderUI({
-    selectInput(ns("spls.var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   output$load.comp <- renderUI({
-    selectInput(ns("spls.load.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("load.comp"), "Component:", seq(1, input$ncomp, 1))
   })
   
   output$sel.var.comp <- renderUI({
-    selectInput(ns("spls.sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
   })
   
   output$img.comp <- renderUI({
-    selectInput(ns("spls.img.comp"), "Component:", seq(1, input$ncomp, 1))
+    selectInput(ns("img.comp"), "Component:", seq(1, input$ncomp, 1))
   })
   
   #tuned
   output$indiv.x.comp.tuned <- renderUI({
-    selectInput(ns("spls.indiv.x.tuned"), "X-Axis component:", seq(1, tunedsPLSVals$ncomp, 1))
+    selectInput(ns("indiv.x.tuned"), "X-Axis component:", seq(1, tunedsPLSVals$ncomp, 1))
   })
   
   output$indiv.y.comp.tuned <- renderUI({
-    selectInput(ns("spls.indiv.y.tuned"), "Y-Axis component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
+    selectInput(ns("indiv.y.tuned"), "Y-Axis component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
   })
   
   output$var.x.comp.tuned <- renderUI({
-    selectInput(ns("spls.var.x.tuned"), "X-Axis component:", seq(1, tunedsPLSVals$ncomp, 1))
+    selectInput(ns("var.x.tuned"), "X-Axis component:", seq(1, tunedsPLSVals$ncomp, 1))
   })
   
   output$var.y.comp.tuned <- renderUI({
-    selectInput(ns("spls.var.y.tuned"), "Y-Axis component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
+    selectInput(ns("var.y.tuned"), "Y-Axis component:", seq(1, tunedsPLSVals$ncomp, 1), selected = 2)
   })
   
   output$load.comp.tuned <- renderUI({
-    selectInput(ns("spls.load.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
+    selectInput(ns("load.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
   })
   
   output$sel.var.comp.tuned <- renderUI({
-    selectInput(ns("spls.sel.var.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
+    selectInput(ns("sel.var.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
   })
   
   output$img.comp.tuned <- renderUI({
-    selectInput(ns("spls.img.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
+    selectInput(ns("img.comp.tuned"), "Component:", seq(1, tunedsPLSVals$ncomp, 1))
   })
 }
 
@@ -252,7 +229,7 @@ run_spls_analysis <- function(ns, input, output, dataset){
   spls.result <<- reactive({
     X <- dataset$data1
     Y <- dataset$data2
-    result <- mixOmics::spls(X, Y,
+    spls.result <- mixOmics::spls(X, Y,
                              ncomp = input$ncomp ,logratio = input$logratio,
                              scale = input$scale)
   })
@@ -261,7 +238,7 @@ run_spls_analysis <- function(ns, input, output, dataset){
     if (useTunedsPLSVals()){
       X <- dataset$data1
       Y <- dataset$data2
-      result <- mixOmics::spls(X, Y, ncomp = tunedsPLSVals$ncomp, 
+      spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedsPLSVals$ncomp, 
                                keepX = tunedsPLSVals$keepX, keepY = tunedsPLSVals$keepY)
     }
   })
@@ -282,54 +259,54 @@ generate_spls_error_messages <- function(ns, input, output, dataset){
 generate_spls_plots <- function(ns, input, output, dataset){
   #' Create reactive values
   comp.var <- reactive({
-    req(input$spls.var.x)
-    req(input$spls.var.y)
-    comp.var <- as.numeric(c(input$spls.var.x,input$spls.var.y))
+    req(input$var.x)
+    req(input$var.y)
+    comp.var <- as.numeric(c(input$var.x,input$var.y))
   })
   
   comp.indiv <- reactive({
-    req(input$spls.indiv.x)
-    req(input$spls.indiv.y)
-    comp.indiv <- as.numeric(c(input$spls.indiv.x,input$spls.indiv.y))
+    req(input$indiv.x)
+    req(input$indiv.y)
+    comp.indiv <- as.numeric(c(input$indiv.x,input$indiv.y))
   })
   
   comp.img <- reactive({
-    req(input$spls.img.comp)
-    comp.img <- as.numeric(input$spls.img.comp)
+    req(input$img.comp)
+    comp.img <- as.numeric(input$img.comp)
   })
   
   rep.space <- reactive({
     #necessary, because it's not possible to set NULL as choice value
-    if (identical(input$spls.rep.space, "NULL")){
+    if (identical(input$rep.space, "NULL")){
       NULL
     } else{
-      input$spls.rep.space
+      input$rep.space
     } 
   })
   
   comp.var.tuned <- reactive({
-    req(input$spls.var.x.tuned)
-    req(input$spls.var.y.tuned)
-    comp.var.tuned <- as.numeric(c(input$spls.var.x.tuned,input$spls.var.y.tuned))
+    req(input$var.x.tuned)
+    req(input$var.y.tuned)
+    comp.var.tuned <- as.numeric(c(input$var.x.tuned,input$var.y.tuned))
   })
   
   comp.indiv.tuned <- reactive({
-    req(input$spls.indiv.x.tuned)
-    req(input$spls.indiv.y.tuned)
-    comp.indiv.tuned <- as.numeric(c(input$spls.indiv.x.tuned,input$spls.indiv.y.tuned))
+    req(input$indiv.x.tuned)
+    req(input$indiv.y.tuned)
+    comp.indiv.tuned <- as.numeric(c(input$indiv.x.tuned,input$indiv.y.tuned))
   })
   
   comp.img.tuned <- reactive({
-    req(input$spls.img.comp.tuned)
-    comp.img.tuned <- as.numeric(input$spls.img.comp.tuned)
+    req(input$img.comp.tuned)
+    comp.img.tuned <- as.numeric(input$img.comp.tuned)
   })
   
   rep.space.tuned <- reactive({
     #necessary, because it's not possible to set NULL as choice value
-    if(identical(input$spls.rep.space.tuned, "NULL")){
+    if(identical(input$rep.space.tuned, "NULL")){
       NULL
     } else {
-      input$spls.rep.space.tuned
+      input$rep.space.tuned
     }
   })
   
@@ -349,8 +326,8 @@ generate_spls_plots <- function(ns, input, output, dataset){
   }
   
   plot.load <- function(){
-    req(input$spls.load.comp)
-    mixOmics::plotLoadings(spls.result(), comp = as.numeric(input$spls.load.comp))
+    req(input$load.comp)
+    mixOmics::plotLoadings(spls.result(), comp = as.numeric(input$load.comp))
   }
   
   plot.img <- function(){
@@ -366,8 +343,8 @@ generate_spls_plots <- function(ns, input, output, dataset){
   }
   
   selVarTable <- reactive({
-    req(input$spls.sel.var.comp)
-    mixOmics::selectVar(spls.result(), comp = as.numeric(input$spls.sel.var.comp))
+    req(input$sel.var.comp)
+    mixOmics::selectVar(spls.result(), comp = as.numeric(input$sel.var.comp))
   })
   
   table.selVarX <- function(){
@@ -398,8 +375,8 @@ generate_spls_plots <- function(ns, input, output, dataset){
   
   plot.load.tuned <- function(){
     if (!is.null(spls.result.tuned())){
-      req(input$spls.load.comp.tuned)
-      mixOmics::plotLoadings(spls.result.tuned(), comp = as.numeric(input$spls.load.comp.tuned))
+      req(input$load.comp.tuned)
+      mixOmics::plotLoadings(spls.result.tuned(), comp = as.numeric(input$load.comp.tuned))
     }
   }
   
@@ -419,8 +396,8 @@ generate_spls_plots <- function(ns, input, output, dataset){
   
   selVarTable.tuned <- reactive({
     if (!is.null(spls.result.tuned())){
-      req(input$spls.sel.var.comp.tuned)
-      mixOmics::selectVar(spls.result.tuned(), comp = as.numeric(input$spls.sel.var.comp.tuned))
+      req(input$sel.var.comp.tuned)
+      mixOmics::selectVar(spls.result.tuned(), comp = as.numeric(input$sel.var.comp.tuned))
     }
   })
   
@@ -433,69 +410,69 @@ generate_spls_plots <- function(ns, input, output, dataset){
   }
   
   #' Sample plot
-  output$sPLS.Indiv <- renderPlot(
+  output$Indiv <- renderPlot(
     plot.indiv()
   )
   
   #' Variable plot
-  output$sPLS.Var <- renderPlot(
+  output$Var <- renderPlot(
     plot.var()
   )
   
   #' Loading plot
-  output$sPLS.Load <- renderPlot(
+  output$Load <- renderPlot(
     plot.load()
   )
   
   #' Selected Variables Table
-  output$sPLS.X.Sel.Var <- DT::renderDataTable(
+  output$X.Sel.Var <- DT::renderDataTable(
     table.selVarX()
   )
-  output$sPLS.Y.Sel.Var <- DT::renderDataTable(
+  output$Y.Sel.Var <- DT::renderDataTable(
     table.selVarY()
   )
   
   #' CIM plot
-  output$sPLS.Img <- renderPlot(
+  output$Img <- renderPlot(
     plot.img()
   )
   
   #' Arrow plot
-  output$sPLS.Arrow <- renderPlot(
+  output$Arrow <- renderPlot(
     plot.arrow()
   )
   
   #tuned
   #' Sample plot
-  output$sPLS.Indiv.tuned <- renderPlot(
+  output$Indiv.tuned <- renderPlot(
     plot.indiv.tuned()
   )
   
   #' Variable plot
-  output$sPLS.Var.tuned <- renderPlot(
+  output$Var.tuned <- renderPlot(
     plot.var.tuned()
   )
   
   #' Loading plot
-  output$sPLS.Load.tuned <- renderPlot(
+  output$Load.tuned <- renderPlot(
     plot.load.tuned()
   )
   
   #' Selected variables table
-  output$sPLS.X.Sel.Var.tuned <- DT::renderDataTable(
+  output$X.Sel.Var.tuned <- DT::renderDataTable(
     table.selVarX.tuned()
   )
-  output$sPLS.Y.Sel.Var.tuned <- DT::renderDataTable(
+  output$Y.Sel.Var.tuned <- DT::renderDataTable(
     table.selVarY.tuned()
   )
   
   #' CIM plot
-  output$sPLS.Img.tuned <- renderPlot(
+  output$Img.tuned <- renderPlot(
     plot.img.tuned()
   )
   
   #' Arrow plot
-  output$sPLS.Arrow.tuned <- renderPlot(
+  output$Arrow.tuned <- renderPlot(
     plot.arrow.tuned()
   )
   

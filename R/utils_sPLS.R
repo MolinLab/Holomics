@@ -14,13 +14,13 @@ splsGetUi <- function(ns, postfix = ""){
                                     uiOutput(paste0(ns("indiv.x.comp"), postfix)),
                                     uiOutput(paste0(ns("indiv.y.comp"), postfix)),
                                     awesomeCheckbox(paste0(ns("indiv.names"), postfix), "Sample names", value = FALSE),
-                                    selectInput(paste0(ns("spls.rep.space"), postfix), "Replication space:",
+                                    selectInput(paste0(ns("rep.space"), postfix), "Replication space:",
                                                 c("Separated"= "NULL", "X-variate"= "X-variate",
                                                   "Y-variate" = "Y-variate", "XY-variate" = "XY-variate"))
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
-                                             plotOutput(paste0(ns("sPLS.Indiv"), postfix)),
+                                             plotOutput(paste0(ns("Indiv"), postfix)),
                                              downloadButton(paste0(ns("Indiv.download"), postfix), "Save plot"))
                            )
                   ),
@@ -32,7 +32,7 @@ splsGetUi <- function(ns, postfix = ""){
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
-                                             plotOutput(paste0(ns("sPLS.Var"), postfix)),
+                                             plotOutput(paste0(ns("Var"), postfix)),
                                              downloadButton(paste0(ns("Var.download"), postfix), "Save plot"))
                            )
                   ),
@@ -42,7 +42,7 @@ splsGetUi <- function(ns, postfix = ""){
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
-                                             plotOutput(paste0(ns("sPLS.Load"), postfix)),
+                                             plotOutput(paste0(ns("Load"), postfix)),
                                              downloadButton(paste0(ns("Load.download"), postfix), "Save plot"))
                            )
                   ),
@@ -53,11 +53,11 @@ splsGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::tabBox(width = 12,
                                              tabPanel("Dataset 1",
-                                                      DT::dataTableOutput(paste0(ns("sPLS.X.Sel.Var"), postfix)),
+                                                      DT::dataTableOutput(paste0(ns("X.Sel.Var"), postfix)),
                                                       downloadButton(paste0(ns("SelVarX.download"), postfix), "Save table")
                                              ),
                                              tabPanel("Dataset 2",
-                                                      DT::dataTableOutput(paste0(ns("sPLS.Y.Sel.Var"), postfix)),
+                                                      DT::dataTableOutput(paste0(ns("Y.Sel.Var"), postfix)),
                                                       downloadButton(paste0(ns("SelVarY.download"), postfix), "Save table")
                                              )
                              )
@@ -69,7 +69,7 @@ splsGetUi <- function(ns, postfix = ""){
                            ),
                            fluidRow(
                              bs4Dash::column(width = 12,
-                                             plotOutput(paste0(ns("sPLS.Img"), postfix)),
+                                             plotOutput(paste0(ns("Img"), postfix)),
                                              downloadButton(paste0(ns("Img.download"), postfix), "Save plot"))
                            )
                   ),
@@ -80,7 +80,7 @@ splsGetUi <- function(ns, postfix = ""){
                            fluidRow(
                              bs4Dash::column(width = 12,
                                              textOutput(paste0(ns("arrow.error"), postfix)),
-                                             plotOutput(paste0(ns("sPLS.Arrow"), postfix))
+                                             plotOutput(paste0(ns("Arrow"), postfix))
                              )
                            )
                   )
