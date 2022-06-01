@@ -56,7 +56,6 @@ diabloGetUi <- function(ns, postfix = ""){
   )
 }
 
-
 #'
 #' @description A utils function, which returns the number of components.
 #' If the tune switch is on or off the number is taken from

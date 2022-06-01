@@ -236,3 +236,98 @@ getArrowPlot <- function(ns, postfix = ""){
 }
 
 
+#' @description A utils function to render the 
+#' components for the sample plot
+#'
+#' @noRd
+renderIndivComps <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
+  output$indiv.x.comp <- renderUI({
+    selectInput(ns("indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
+  })
+  
+  output$indiv.y.comp <- renderUI({
+    selectInput(ns("indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
+  })
+
+  if (tuned){
+    output$indiv.x.comp.tuned <- renderUI({
+      selectInput(ns("indiv.x.tuned"), "X-Axis component:", seq(1, tunedInput$ncomp, 1))
+    })
+    
+    output$indiv.y.comp.tuned <- renderUI({
+      selectInput(ns("indiv.y.tuned"), "Y-Axis component:", seq(1, tunedInput$ncomp, 1), selected = 2)
+    })
+  }
+}
+
+#' @description A utils function to render the 
+#' components for the variable plot
+#'
+#' @noRd
+renderVarComps <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
+  output$var.x.comp <- renderUI({
+    selectInput(ns("var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
+  })
+  
+  output$var.y.comp <- renderUI({
+    selectInput(ns("var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
+  })
+  
+  if (tuned) {
+    output$var.x.comp.tuned <- renderUI({
+      selectInput(ns("var.x.tuned"), "X-Axis component:", seq(1, tunedInput$ncomp, 1))
+    })
+    
+    output$var.y.comp.tuned <- renderUI({
+      selectInput(ns("var.y.tuned"), "Y-Axis component:", seq(1, tunedInput$ncomp, 1), selected = 2)
+    })
+  }
+}
+
+#' @description A utils function to render the 
+#' component for the loadings plot
+#'
+#' @noRd
+renderLoadComp <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
+  output$load.comp <- renderUI({
+    selectInput(ns("load.comp"), "Component:", seq(1, input$ncomp, 1))
+  })
+  
+  if (tuned) {
+    output$load.comp.tuned <- renderUI({
+      selectInput(ns("load.comp.tuned"), "Component:", seq(1, tunedInput$ncomp, 1))
+    })
+  }
+}
+
+#' @description A utils function to render the 
+#' component for the selected variables table
+#'
+#' @noRd
+renderSelVarComp <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
+  output$sel.var.comp <- renderUI({
+    selectInput(ns("sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
+  })
+  
+  if (tuned) {
+    output$sel.var.comp.tuned <- renderUI({
+      selectInput(ns("sel.var.comp.tuned"), "Component:", seq(1, tunedInput$ncomp, 1))
+    })
+  }
+}
+
+#' @description A utils function to render the 
+#' component for the img plot
+#'
+#' @noRd
+renderImgComp <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
+  output$img.comp <- renderUI({
+    selectInput(ns("img.comp"), "Component:", seq(1, input$ncomp, 1))
+  })
+  
+  if (tuned){
+    output$img.comp.tuned <- renderUI({
+      selectInput(ns("img.comp.tuned"), "Component:", seq(1, tunedInput$ncomp, 1))
+    })
+  } 
+}

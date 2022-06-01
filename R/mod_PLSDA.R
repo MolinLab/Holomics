@@ -55,29 +55,13 @@ mod_PLSDA_server <- function(id, dataset){
 
 #' Render Ui functions
 render_plsda_ui_components <- function(ns, input, output, dataset){
-  output$indiv.x.comp <- renderUI({
-    selectInput(ns("indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
-  })
+  renderIndivComps(ns, input, output)
   
-  output$indiv.y.comp <- renderUI({
-    selectInput(ns("indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
-  })
+  renderVarComps(ns, input, output)
   
-  output$var.x.comp <- renderUI({
-    selectInput(ns("var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
-  })
+  renderLoadComp(ns, input, output)
   
-  output$var.y.comp <- renderUI({
-    selectInput(ns("var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
-  })
-  
-  output$load.comp <- renderUI({
-    selectInput(ns("load.comp"), "Component:", seq(1, input$ncomp, 1))
-  })
-  
-  output$sel.var.comp <- renderUI({
-    selectInput(ns("sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
-  })
+  renderSelVarComp(ns, input, output)
 }
 
 #' Business logic functions

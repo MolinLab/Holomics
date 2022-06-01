@@ -78,33 +78,15 @@ mod_DIABLO_server <- function(id){
 
 #' Render Ui components
 render_diablo_ui_components <- function(ns, input, output, dataset){
-  output$indiv.x.comp <- renderUI({
-    selectInput(ns("indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
-  })
+  renderIndivComps(ns, input, output, TRUE, tunedDiabloVals)
   
-  output$indiv.y.comp <- renderUI({
-    selectInput(ns("indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
-  })
+  renderVarComps(ns, input, output, TRUE, tunedDiabloVals)
   
-  output$var.x.comp <- renderUI({
-    selectInput(ns("var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
-  })
+  renderLoadComp(ns, input, output, TRUE, tunedDiabloVals)
   
-  output$var.y.comp <- renderUI({
-    selectInput(ns("var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
-  })
+  renderSelVarComp(ns, input, output, TRUE, tunedDiabloVals)
   
-  output$load.comp <- renderUI({
-    selectInput(ns("load.comp"), "Component:", seq(1, input$ncomp, 1))
-  })
-  
-  output$sel.var.comp <- renderUI({
-    selectInput(ns("sel.var.comp"), "Component:", seq(1, input$ncomp, 1))
-  })
-  
-  output$img.comp <- renderUI({
-    selectInput(ns("img.comp"), "Component:", seq(1, input$ncomp, 1))
-  })
+  renderImgComp(ns, input, output, TRUE, tunedDiabloVals)
   
   output$diablo.comp <- renderUI({
     selectInput(ns("diablo.comp"), "Component:", seq(1, input$ncomp, 1))
@@ -117,34 +99,6 @@ render_diablo_ui_components <- function(ns, input, output, dataset){
   })
   
   #tuned
-  output$indiv.x.comp.tuned <- renderUI({
-    selectInput(ns("indiv.x.tuned"), "X-Axis component:", seq(1, tunedDiabloVals$ncomp, 1))
-  })
-  
-  output$indiv.y.comp.tuned <- renderUI({
-    selectInput(ns("indiv.y.tuned"), "Y-Axis component:", seq(1, tunedDiabloVals$ncomp, 1), selected = 2)
-  })
-  
-  output$var.x.comp.tuned <- renderUI({
-    selectInput(ns("var.x.tuned"), "X-Axis component:", seq(1, tunedDiabloVals$ncomp, 1))
-  })
-  
-  output$var.y.comp.tuned <- renderUI({
-    selectInput(ns("var.y.tuned"), "Y-Axis component:", seq(1, tunedDiabloVals$ncomp, 1), selected = 2)
-  })
-  
-  output$load.comp.tuned <- renderUI({
-    selectInput(ns("load.comp.tuned"), "Component:", seq(1, tunedDiabloVals$ncomp, 1))
-  })
-  
-  output$sel.var.comp.tuned <- renderUI({
-    selectInput(ns("sel.var.comp.tuned"), "Component:", seq(1, tunedDiabloVals$ncomp, 1))
-  })
-  
-  output$img.comp.tuned <- renderUI({
-    selectInput(ns("img.comp.tuned"), "Component:", seq(1, tunedDiabloVals$ncomp, 1))
-  })
-  
   output$diablo.comp.tuned <- renderUI({
     selectizeInput(ns("diablo.comp.tuned"), "Component:", seq(1, tunedDiabloVals$ncomp, 1))
   })
