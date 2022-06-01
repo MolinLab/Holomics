@@ -27,7 +27,13 @@ a[id*='.download']{
 }
 
 #DIABLO-tune\.switch, #sPLS-tune\.switch{
-  margin-top: 1rem
+  margin: 1rem auto 0 auto;
+}
+
+#DIABLO-switchRow, #sPLS-switchRow{
+  margin: auto;
+  width: 100%;
+  margin-top: .5rem;
 }
 
 /* Network navigation parameters */
