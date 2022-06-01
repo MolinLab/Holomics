@@ -212,22 +212,9 @@ generate_spls_error_messages <- function(ns, input, output, dataset){
 #' Business logic functions
 generate_spls_plots <- function(ns, input, output, dataset){
   #' Create reactive values
-  comp.var <- reactive({
-    req(input$var.x)
-    req(input$var.y)
-    comp.var <- as.numeric(c(input$var.x,input$var.y))
-  })
-  
-  comp.indiv <- reactive({
-    req(input$indiv.x)
-    req(input$indiv.y)
-    comp.indiv <- as.numeric(c(input$indiv.x,input$indiv.y))
-  })
-  
-  comp.img <- reactive({
-    req(input$img.comp)
-    comp.img <- as.numeric(input$img.comp)
-  })
+  comp.indiv <- getCompIndivReactive(input)
+  comp.var <- getCompVarReactive(input)
+  comp.img <- getCompImgReactive(input)
   
   rep.space <- reactive({
     #necessary, because it's not possible to set NULL as choice value
@@ -238,22 +225,9 @@ generate_spls_plots <- function(ns, input, output, dataset){
     } 
   })
   
-  comp.var.tuned <- reactive({
-    req(input$var.x.tuned)
-    req(input$var.y.tuned)
-    comp.var.tuned <- as.numeric(c(input$var.x.tuned,input$var.y.tuned))
-  })
-  
-  comp.indiv.tuned <- reactive({
-    req(input$indiv.x.tuned)
-    req(input$indiv.y.tuned)
-    comp.indiv.tuned <- as.numeric(c(input$indiv.x.tuned,input$indiv.y.tuned))
-  })
-  
-  comp.img.tuned <- reactive({
-    req(input$img.comp.tuned)
-    comp.img.tuned <- as.numeric(input$img.comp.tuned)
-  })
+  comp.indiv.tuned <- getCompIndivReactive(input, tuned = TRUE)
+  comp.var.tuned <- getCompVarReactive(input, tuned = TRUE)
+  comp.img.tuned <- getCompImgReactive(input, tuned = TRUE)
   
   rep.space.tuned <- reactive({
     #necessary, because it's not possible to set NULL as choice value
@@ -267,21 +241,18 @@ generate_spls_plots <- function(ns, input, output, dataset){
   
   #' generate output plots
   plot.indiv <- function(){
-    mixOmics::plotIndiv(spls.result(), comp = comp.indiv(),
-                        group = sampleClasses, ind.names = input$indiv.names,
-                        legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
-                        rep.space = rep.space())
+    plotIndiv(spls.result(), comp.indiv(), indNames = input$indiv.names, 
+              repSpace = rep.space(), legendPosition = "bottom")
   }
   
   plot.var <- function(){
-    mixOmics::plotVar(spls.result(), comp = comp.var(),
-                      var.names = input$var.names, pch = c(1,2),
-                      legend = TRUE)
+    plotVar(spls.result(), comp.var(), input$var.names,
+            pch = c(1,2), legend = TRUE)
   }
   
   plot.load <- function(){
     req(input$load.comp)
-    mixOmics::plotLoadings(spls.result(), comp = as.numeric(input$load.comp))
+    plotLoadings(spls.result(), as.numeric(input$load.comp))
   }
   
   plot.img <- function(){
@@ -290,47 +261,42 @@ generate_spls_plots <- function(ns, input, output, dataset){
   
   plot.arrow <- function(){
     if(splsGetNcomp(input) >= 2){
-      mixOmics::plotArrow(spls.result(), group = sampleClasses, ind.names = input$namesArrow,
-                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
-                          X.label = "Dimension 1", Y.label = "Dimension 2")
+      plotArrow(spls.result(), input$namesArrow)
     }
   }
   
   selVarTable <- reactive({
     req(input$sel.var.comp)
-    mixOmics::selectVar(spls.result(), comp = as.numeric(input$sel.var.comp))
+    selectVar(spls.result(), as.numeric(input$sel.var.comp), XY = TRUE)
   })
   
   table.selVarX <- function(){
-    listsToMatrix(selVarTable()$X$name, selVarTable()$X$value, c("name", "value"))
+    selVarTable()$X
   }
   
   table.selVarY <- function(){
-    listsToMatrix(selVarTable()$Y$name, selVarTable()$Y$value, c("name", "value"))
+    selVarTable()$Y
   }
   
   #tuned
   plot.indiv.tuned <- function(){
     if (!is.null(spls.result.tuned())){
-      mixOmics::plotIndiv(spls.result.tuned(), comp = comp.indiv.tuned(),
-                          group = sampleClasses, ind.names = input$indiv.names.tuned,
-                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
-                          rep.space = rep.space.tuned())
+      plotIndiv(spls.result.tuned(), comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+                repSpace = rep.space.tuned(), legendPosition = "bottom")
     }
   }
   
   plot.var.tuned <- function(){
     if (!is.null(spls.result.tuned())){
-      mixOmics::plotVar(spls.result.tuned(), comp = comp.var.tuned(),
-                        var.names = input$var.names.tuned, pch = c(1,2),
-                        legend = TRUE)
+      plotVar(spls.result.tuned(), comp.var.tuned(), input$var.names.tuned,
+              pch = c(1,2), legend = TRUE)
     }
   }
   
   plot.load.tuned <- function(){
     if (!is.null(spls.result.tuned())){
       req(input$load.comp.tuned)
-      mixOmics::plotLoadings(spls.result.tuned(), comp = as.numeric(input$load.comp.tuned))
+      plotLoadings(spls.result.tuned(), as.numeric(input$load.comp.tuned))
     }
   }
   
@@ -342,25 +308,23 @@ generate_spls_plots <- function(ns, input, output, dataset){
   
   plot.arrow.tuned <- function(){
     if(!is.null(spls.result.tuned()) & splsGetNcomp(input, tuned = TRUE) >= 2){
-      mixOmics::plotArrow(spls.result.tuned(), group = sampleClasses, ind.names = input$namesArrow.tuned,
-                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
-                          X.label = "Dimension 1", Y.label = "Dimension 2")
+      plotArrow(spls.result.tuned(), input$namesArrow.tuned)
     }
   }
   
   selVarTable.tuned <- reactive({
     if (!is.null(spls.result.tuned())){
       req(input$sel.var.comp.tuned)
-      mixOmics::selectVar(spls.result.tuned(), comp = as.numeric(input$sel.var.comp.tuned))
+      selectVar(spls.result.tuned(), as.numeric(input$sel.var.comp.tuned), XY = TRUE)
     }
   })
   
   table.selVarX.tuned <- function(){
-    listsToMatrix(selVarTable.tuned()$X$name, selVarTable.tuned()$X$value, c("name", "value"))
+    selVarTable.tuned()$X
   }
   
   table.selVarY.tuned <- function(){
-    listsToMatrix(selVarTable.tuned()$Y$name, selVarTable.tuned()$Y$value, c("name", "value"))
+    selVarTable.tuned()$Y
   }
   
   #' Sample plot

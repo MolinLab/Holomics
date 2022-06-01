@@ -1,5 +1,3 @@
-#' getDataset 
-#'
 #' @description A utils function, which gets the dataset according to the selection
 #'
 #' @return dataframe with the data
@@ -16,9 +14,6 @@ getDataset <- function(selection){
   }
 }
 
-
-#' listsToMatrix 
-#'
 #' @description A utils function, which converts two list to a matrix
 #'
 #' @return matrix
@@ -30,8 +25,6 @@ listsToMatrix <- function (list1, list2, colnames){
   return (matrix)
 }
 
-#' removePostFix 
-#'
 #' @description A utils function, which removes the text after the last delimiter
 #'
 #' @return list of string
@@ -46,8 +39,6 @@ removePostFix <- function(strings, delimiter){
   return(new_strings)
 }
 
-#' combineLists 
-#'
 #' @description A utils function, which combines two lists to one,
 #' where the value of the first list is the key and the value of the second the key
 #'
@@ -62,7 +53,144 @@ combineLists <- function(a, b){
   return(r)
 }
 
+#' @description A utils function to get a reactive
+#' object for the comp parameter of the sample plot
 #'
+#' @return reactive object
+#'
+#' @noRd
+getCompIndivReactive <- function(input, tuned = FALSE){
+  return (
+    reactive({
+      if (tuned){
+        req(input$indiv.x.tuned)
+        req(input$indiv.y.tuned)
+        as.numeric(c(input$indiv.x.tuned,input$indiv.y.tuned))
+      } else {
+        req(input$indiv.x)
+        req(input$indiv.y)
+        as.numeric(c(input$indiv.x,input$indiv.y))
+      }
+    })
+  )
+}
+
+#' @description A utils function to get a reactive
+#' object for the comp parameter of the variable plot
+#'
+#' @return reactive object
+#'
+#' @noRd
+getCompVarReactive <- function(input, tuned = FALSE){
+  return (
+    reactive({
+      if (tuned){
+        req(input$var.x.tuned)
+        req(input$var.y.tuned)
+        comp.var.tuned <- as.numeric(c(input$var.x.tuned,input$var.y.tuned))
+      } else {
+        req(input$var.x)
+        req(input$var.y)
+        comp.var <- as.numeric(c(input$var.x,input$var.y))
+      }
+    })
+  )
+}
+
+#' @description A utils function to get a reactive
+#' object for the comp parameter of the img plot
+#'
+#' @return reactive object
+#'
+#' @noRd
+getCompImgReactive <- function(input, tuned = FALSE){
+  return (
+    reactive({
+      if (tuned) {
+        req(input$img.comp.tuned)
+        comp.img.tuned <- as.numeric(input$img.comp.tuned)
+      } else {
+        req(input$img.comp)
+        comp.img <- as.numeric(input$img.comp)
+      }
+    })
+  )
+}
+
+#' @description adapter for the plotIndiv function of
+#' the mixOmics package
+#'
+#' @return sample plot
+#'
+#' @noRd
+plotIndiv <- function(result, comp, repSpace = NULL, indNames, legendPosition = "right") {
+  mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
+                      group = sampleClasses, ind.names = indNames,
+                      legend = TRUE, legend.title = classesLabel,
+                      legend.position = legendPosition)
+}
+
+#' @description adapter for the plotVar function of
+#' the mixOmics package
+#'
+#' @return variable plot
+#'
+#' @noRd
+plotVar <- function(result, comp, varNames, legend = FALSE, pch) {
+  if (!missing(pch)){
+    mixOmics::plotVar(result, comp = comp,
+                      var.names = varNames, pch = pch,
+                      legend = legend)
+  } else {
+    mixOmics::plotVar(result, comp = comp,
+                      var.names = varNames, legend = legend)
+  }
+}
+
+#' @description adapter for the plotLoadings function of
+#' the mixOmics package
+#'
+#' @return loadings plot
+#'
+#' @noRd
+plotLoadings <- function(result, comp, contrib = NULL, method = "mean") {
+  mixOmics::plotLoadings(result, comp = comp,
+                         contrib = contrib, method = method)
+}
+
+#' @description adapter for the selectVar function of
+#' the mixOmics package
+#' 
+#' if XY is true then two matrices have to be generated
+#'
+#' @return matrix with the variables
+#'
+#' @noRd
+selectVar <- function(result, comp, XY = FALSE) {
+  selVar <- mixOmics::selectVar(result, comp = comp)
+  if (XY){
+    return ( 
+      list (X = listsToMatrix(selVar$X$name, selVar$X$value, c("name", "value")),
+            Y = listsToMatrix(selVar$Y$name, selVar$Y$value, c("name", "value"))
+      )
+    )
+  } else {
+    listsToMatrix(selVar$name, selVar$value, c("name", "value"))
+  }
+}
+
+#' @description adapter for the plotArrow function of
+#' the mixOmics package
+#'
+#' @return arrow plot
+#'
+#' @noRd
+plotArrow <- function(result, indNames) {
+  mixOmics::plotArrow(result, group = sampleClasses, ind.names = indNames,
+                      legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
+                      X.label = "Dimension 1", Y.label = "Dimension 2")
+}
+
 #' @description A utils function, generates the download handler for either png
 #' or csv files calling the given content function to generate the content of the
 #' file

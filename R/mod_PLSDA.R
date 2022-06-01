@@ -67,17 +67,8 @@ render_plsda_ui_components <- function(ns, input, output, dataset){
 #' Business logic functions
 generate_plsda_plots <- function(ns, input, output, dataset){
   #' Create reactive values
-  comp.var <- reactive({ 
-    req(input$var.x)
-    req(input$var.y)
-    comp.var <- as.numeric(c(input$var.x,input$var.y))
-  })
-  
-  comp.indiv <- reactive({
-    req(input$indiv.x)
-    req(input$indiv.y)
-    comp.indiv <- as.numeric(c(input$indiv.x,input$indiv.y))
-  })
+  comp.indiv <- getCompIndivReactive(input)
+  comp.var <- getCompVarReactive(input)
   
   #' run analysis
   result <- reactive({
@@ -88,26 +79,22 @@ generate_plsda_plots <- function(ns, input, output, dataset){
   
   #' plot functions
   plot.indiv <- function(){
-    mixOmics::plotIndiv(result(), comp = comp.indiv(), 
-                        group = sampleClasses, ind.names = input$indiv.names,
-                        legend = TRUE, legend.title = classesLabel)
+    plotIndiv(result(), comp.indiv(), indNames = input$indiv.names)
   }
   
   plot.var <- function(){
-    mixOmics::plotVar(result(), comp = comp.var(),
-                      var.names = input$var.names)
+    plotVar(result(), comp.var(), input$var.names)
   }
   
   plot.load <- function(){
     req(input$load.comp)
-    mixOmics::plotLoadings(result(), comp = as.numeric(input$load.comp),
-                           contrib = input$load.cont, method = input$load.method)
+    plotLoadings(result(), as.numeric(input$load.comp),
+                 contrib = input$load.cont, method = input$load.method)
   }
   
   table.selVar <- function(){
     req(input$sel.var.comp)
-    selVar <- mixOmics::selectVar(result(), comp = as.numeric(input$sel.var.comp))
-    listsToMatrix(selVar$name, selVar$value, c("name", "value"))
+    selectVar(result(), as.numeric(input$sel.var.comp))
   }
   
   #'Sample plot

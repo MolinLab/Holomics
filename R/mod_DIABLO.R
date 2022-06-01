@@ -268,22 +268,9 @@ run_diablo_analysis <- function(ns, input, output, dataset){
 #' Business logic functions
 generate_diablo_plots <- function(ns, input, output, dataset){
   #' Create reactive values
-  comp.var <- reactive({
-    req(input$var.x)
-    req(input$var.y)
-    comp.var <- as.numeric(c(input$var.x,input$var.y))
-  })
-  
-  comp.indiv <- reactive({
-    req(input$indiv.x)
-    req(input$indiv.y)
-    comp.indiv <- as.numeric(c(input$indiv.x,input$indiv.y))
-  })
-  
-  comp.img <- reactive({
-    req(input$img.comp)
-    comp.img <- as.numeric(input$img.comp)
-  })
+  comp.indiv <- getCompIndivReactive(input)
+  comp.var <- getCompVarReactive(input)
+  comp.img <- getCompImgReactive(input)
   
   comp.diablo <- reactive({
     req(input$diablo.comp)
@@ -298,22 +285,9 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     network.reactive <- network
   })
   
-  comp.var.tuned <- reactive({
-    req(input$var.x.tuned)
-    req(input$var.y.tuned)
-    comp.var.tuned <- as.numeric(c(input$var.x.tuned,input$var.y.tuned))
-  })
-  
-  comp.indiv.tuned <- reactive({
-    req(input$indiv.x.tuned)
-    req(input$indiv.y.tuned)
-    comp.indiv.tuned <- as.numeric(c(input$indiv.x.tuned,input$indiv.y.tuned))
-  })
-  
-  comp.img.tuned <- reactive({
-    req(input$img.comp.tuned)
-    comp.img.tuned <- as.numeric(input$img.comp.tuned)
-  })
+  comp.indiv.tuned <- getCompIndivReactive(input, tuned = TRUE)
+  comp.var.tuned <- getCompVarReactive(input, tuned = TRUE)
+  comp.img.tuned <- getCompImgReactive(input, tuned = TRUE)
   
   comp.diablo.tuned <- reactive({
     req(input$diablo.comp.tuned)
@@ -332,24 +306,21 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   #'  plot functions
   plot.indiv <- function(){
     if(!is.null(diablo.result()) & input$ncomp >= 2){
-      mixOmics::plotIndiv(diablo.result(), comp = comp.indiv(),
-                          group = sampleClasses, ind.names = input$indiv.names,
-                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom")
+      plotIndiv(diablo.result(), comp.indiv(), indNames = input$indiv.names, legendPosition = "bottom")
     }
   }
   
   plot.var <- function(){
     if(!is.null(diablo.result()) & input$ncomp >= 2){
-      mixOmics::plotVar(diablo.result(), comp = comp.var(),
-                        var.names = input$var.names, pch = seq(1, length(dataset$data), 1),
-                        legend = TRUE)
+      plotVar(diablo.result(), comp.var(), input$var.names,
+              pch = seq(1, length(dataset$data), 1), legend = TRUE)
     }
   }
   
   plot.load <- function(){
     if(!is.null(diablo.result())){
       req(input$load.comp)
-      mixOmics::plotLoadings(diablo.result(), comp = as.numeric(input$load.comp))
+      plotLoadings(diablo.result(), as.numeric(input$load.comp))
     }
   }
   
@@ -362,9 +333,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   plot.arrow <- function(){
     if(!is.null(diablo.result()) & input$ncomp >= 2){
-      mixOmics::plotArrow(diablo.result(), group = sampleClasses, ind.names = input$namesArrow,
-                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
-                          X.label = "Dimension 1", Y.label = "Dimension 2")
+      plotArrow(diablo.result(), input$namesArrow)
     }
   }
   
@@ -381,26 +350,25 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     }
   }
   
+  #tuned
   plot.indiv.tuned <- function(){
     if(!is.null(diablo.result.tuned()) & tunedDiabloVals$ncomp >= 2){
-      mixOmics::plotIndiv(diablo.result.tuned(), comp = comp.indiv.tuned(),
-                          group = sampleClasses, ind.names = input$indiv.names.tuned,
-                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom")
+      plotIndiv(diablo.result.tuned(), comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+                repSpace = rep.space.tuned(), legendPosition = "bottom")
     }
   }
   
   plot.var.tuned <- function(){
     if(!is.null(diablo.result.tuned()) & tunedDiabloVals$ncomp >= 2){
-      mixOmics::plotVar(diablo.result.tuned(), comp = comp.var.tuned(),
-                        var.names = input$var.names.tuned, pch = seq(1, length(dataset$data), 1),
-                        legend = TRUE)
+      plotVar(diablo.result.tuned(), comp.var.tuned(), input$var.names.tuned,
+              pch = seq(1, length(dataset$data), 1), legend = TRUE)
     }
   }
   
   plot.load.tuned <- function(){
     if(!is.null(diablo.result.tuned())){
       req(input$load.comp.tuned)
-      mixOmics::plotLoadings(diablo.result.tuned(), comp = as.numeric(input$load.comp.tuned))
+      plotLoadings(diablo.result.tuned(), as.numeric(input$load.comp.tuned))
     }
   }
   
@@ -413,9 +381,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   plot.arrow.tuned <- function(){
     if(!is.null(diablo.result.tuned()) & tunedDiabloVals$ncomp >= 2){
-      mixOmics::plotArrow(diablo.result.tuned(), group = sampleClasses, ind.names = input$namesArrow.tuned,
-                          legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
-                          X.label = "Dimension 1", Y.label = "Dimension 2")
+      plotArrow(diablo.result.tuned(), input$namesArrow.tuned)
     }
   }
   
