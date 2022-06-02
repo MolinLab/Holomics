@@ -20,8 +20,9 @@ low.count.removal = function(data, percent=0.01){
   return (data.filter)
 }
 
-#used for pca and pls-da - using mixmc without logratio - select logratio in analysis 
-data.microbiomic <- low.count.removal(t_asv, percent = 0.01)
+#used for pca and pls-da - using mixmc 
+data.filtered <- low.count.removal(t_asv, percent = 0.01)
+data.microbiomic <- logratio.transfo(as.matrix(data.filtered), logratio = "CLR")
 
 #used for spls and diablo
 plsda.result <- plsda(data.microbiomic, storability, ncomp = 4, logratio = "CLR", scale = TRUE)

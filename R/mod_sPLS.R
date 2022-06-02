@@ -22,7 +22,7 @@ mod_sPLS_ui <- function(id){
     fluidRow(
       bs4Dash::column(width = 5, 
                       fluidRow(width = 12,
-                               getAnalysisParametersComponent(ns, TRUE)
+                               getAnalysisParametersComponent(ns)
                       ),
                       fluidRow(width = 12,
                                splsGetUi(ns)
@@ -184,8 +184,7 @@ run_spls_analysis <- function(ns, input, output, dataset){
     X <- dataset$data1
     Y <- dataset$data2
     spls.result <- mixOmics::spls(X, Y,
-                             ncomp = input$ncomp ,logratio = input$logratio,
-                             scale = input$scale)
+                             ncomp = input$ncomp, scale = input$scale)
   })
   
   spls.result.tuned <<- reactive({

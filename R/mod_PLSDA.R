@@ -10,7 +10,7 @@
 mod_PLSDA_ui <- function(id){
   ns <- NS(id)
   tagList(    fluidRow(
-    getAnalysisParametersComponent(ns, TRUE)
+    getAnalysisParametersComponent(ns)
   ),
   fluidRow(
     bs4Dash::tabBox(width = 12, collapsible = FALSE,
@@ -73,8 +73,7 @@ generate_plsda_plots <- function(ns, input, output, dataset){
   #' run analysis
   result <- reactive({
     result <- mixOmics::plsda(dataset$data, Y = sampleClasses,
-                                    ncomp = input$ncomp ,logratio = input$logratio, 
-                                    scale = input$scale)
+                                    ncomp = input$ncomp , scale = input$scale)
   })
   
   #' plot functions

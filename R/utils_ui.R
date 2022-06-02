@@ -17,37 +17,20 @@ getDatasetComponent <- function(id, label, selected = NULL, multiple = FALSE, wi
 #' utils_ui 
 #'
 #' @description A utils function to get the block with the analysis parameters.
-#' If logratio is true a selectInput with the available logratios will be returned
 #'
 #' @return bootstrap box with the parameter components
 #'
 #' @noRd
-getAnalysisParametersComponent <- function(ns, logratio = FALSE){
-  if (logratio){
-    return(
-      bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
-                   fluidRow(style = "column-gap: 1rem", 
-                            numericInput(ns("ncomp"), "Number of components", value = 3, 
-                                         min = 1, max = 15, step = 1, width = "45%"),
-                            selectInput(ns("logratio"), "Logratio:",
-                                        c("None" = "none","centered" = "CLR"), width = "30%"),
-                            awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
-                   )
-      ) 
-    )
-  } else {
-    return(
-      bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
-                   fluidRow(style = "column-gap: 1rem", 
-                            numericInput(ns("ncomp"), "Number of components", value = 3, 
-                                         min = 1, max = 15, step = 1, width = "45%"),
-                            selectInput(ns("logratio"), "Logratio:",
-                                        c("None" = "none","centered" = "CLR"), width = "30%"),
-                            awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
-                   )
-      )  
-    )
-  }
+getAnalysisParametersComponent <- function(ns){
+  return(
+    bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
+                 fluidRow(style = "column-gap: 1rem", 
+                          numericInput(ns("ncomp"), "Number of components", value = 3, 
+                                       min = 1, max = 15, step = 1, width = "45%"),
+                          awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
+                 )
+    )  
+  )
 }
 
 

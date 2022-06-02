@@ -11,7 +11,7 @@ mod_PCA_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(
-      getAnalysisParametersComponent(ns, TRUE)
+      getAnalysisParametersComponent(ns)
     ),
     fluidRow(
       bs4Dash::tabBox(
@@ -65,7 +65,7 @@ generate_pca_plots <- function(ns, input, output, dataset){
   #' run analysis
   result <- reactive({
     result <- mixOmics::pca(dataset$data, ncomp = input$ncomp,
-                                logratio = input$logratio, scale = input$scale)
+                            scale = input$scale)
   })
   
   #' plot functions
