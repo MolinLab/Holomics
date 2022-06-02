@@ -56,8 +56,8 @@ mod_DIABLO_server <- function(id){
     hide("switchRow")
     
     dataset <- reactiveValues()
-    network <<- reactiveValues()
-    network.tuned <<- reactiveValues()
+    diabloNetwork <<- reactiveValues()
+    diabloNetwork.tuned <<- reactiveValues()
     nodes <<- reactiveValues()
     nodes.tuned <<- reactiveValues()
     useTunedDiabloVals <<- reactiveVal(FALSE)
@@ -145,8 +145,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
       visNetworkProxy(ns("Network")) %>%
         visSetSelection(nodesId = input$nodeNames)
     }
-    runjs(paste0("Shiny.setInputValue('", ns('clicked_node'), "'input$nodeNames"))
-    
+    runjs(paste0("Shiny.setInputValue('", ns('clicked_node'), "', '", input$nodeNames, "')"))
   })
   
   observeEvent(input$nodeNames.tuned, {
@@ -157,8 +156,8 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
       visNetworkProxy(ns("Network.tuned")) %>%
         visSetSelection(nodesId = input$nodeNames.tuned)
     }
-    runjs(paste0("Shiny.setInputValue('", ns('clicked_node.tuned'), "'input$nodeNames.tuned"))
-  })
+    runjs(paste0("Shiny.setInputValue('", ns('clicked_node.tuned'), "', '", input$nodeNames.tuned, "')"))
+    })
   
   #' Observe node clicked
   observeEvent(input$clicked_node, {
@@ -282,7 +281,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   })
   
   network.reactive <- reactive ({
-    network.reactive <- network
+    network.reactive <- diabloNetwork
   })
   
   comp.indiv.tuned <- getCompIndivReactive(input, tuned = TRUE)
@@ -299,7 +298,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   })
   
   network.tuned.reactive <- reactive ({
-    network.tuned.reactive <- network.tuned
+    network.tuned.reactive <- diabloNetwork.tuned
   })
   
   
@@ -439,8 +438,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     if(!is.null(diablo.result()) & length(dataset$data) > 1){
       networkResult = diabloGenerateNetwork(ns, "", diablo.result, dataset, input$cutoffNetwork, input$fullName)
       nodes$data <- networkResult$data
-      network$mixNetwork <<- networkResult$mixNetwork
-      network$visNetwork <<- networkResult$visNetwork
+      diabloNetwork$mixNetwork <<- networkResult$mixNetwork
+      diabloNetwork$visNetwork <<- networkResult$visNetwork
     }
   })
   
@@ -484,8 +483,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
     if(!is.null(diablo.result.tuned()) & length(dataset$data) > 1){
       networkResult = diabloGenerateNetwork(ns, ".tuned", diablo.result.tuned, dataset, input$cutoffNetwork.tuned, input$fullName.tuned)
       nodes.tuned$data <- networkResult$data
-      network.tuned$mixNetwork <<- networkResult$mixNetwork
-      network.tuned$visNetwork <<- networkResult$visNetwork
+      diabloNetwork.tuned$mixNetwork <<- networkResult$mixNetwork
+      diabloNetwork.tuned$visNetwork <<- networkResult$visNetwork
     }
   })
   
