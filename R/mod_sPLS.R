@@ -13,9 +13,8 @@ mod_sPLS_ui <- function(id){
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
       bs4Dash::column(width = 6,
-                      getDatasetComponent(ns("dataset1"), "Select first dataset:", width = "150"),
-                      getDatasetComponent(ns("dataset2"), "Select second dataset:", 
-                                  selected = "me", width = "fit-content"),
+                      uiOutput(ns("dataSelection1")),
+                      uiOutput(ns("dataSelection2")),
                       style = "display: flex; column-gap: 1rem"
       )
     ),
@@ -46,32 +45,32 @@ mod_sPLS_ui <- function(id){
 #' PLS Server Functions
 #'
 #' @noRd
-mod_sPLS_server <- function(id){
+mod_sPLS_server <- function(id, data){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
     hide("tunedCol")
     hide("switchRow")
     
-    dataset <- reactiveValues()
+    selection <- reactiveValues()
     useTunedsPLSVals <<- reactiveVal(FALSE)
     tunedsPLSVals <<- reactiveValues(ncomp = 2, keepX = NULL)
     
-    render_spls_ui_components(ns, input, output, dataset)
+    render_spls_ui_components(ns, input, output, selection)
     
-    observe_spls_ui_components(ns, input, output, dataset)
+    observe_spls_ui_components(ns, input, output, data, selection)
     
-    run_spls_analysis(ns, input, output, dataset)
+    run_spls_analysis(ns, input, output, selection)
     
-    generate_spls_plots(ns, input, output, dataset)
+    generate_spls_plots(ns, input, output, selection)
     
-    generate_spls_error_messages(ns, input, output, dataset)
+    generate_spls_error_messages(ns, input, output, selection)
     
   })
 }
 
 #' Render Ui functions
-render_spls_ui_components <- function(ns, input, output, dataset){
+render_spls_ui_components <- function(ns, input, output, selection){
   
   renderIndivComps(ns, input, output, TRUE, tunedsPLSVals)
   
@@ -85,19 +84,35 @@ render_spls_ui_components <- function(ns, input, output, dataset){
 }
 
 #'Observe different ui components
-observe_spls_ui_components <- function(ns, input, output, dataset){
+observe_spls_ui_components <- function(ns, input, output, data, selection){
+  
+  #' Observe data  
+  observeEvent(data$data, {
+    output$dataSelection1 <- renderUI({
+      choices <- generateDatasetChoices(data$data)
+      getDatasetComponent(ns("selection1"), "Select first dataset:", choices = choices, width = "150")
+    })
+    
+    output$dataSelection2 <- renderUI({
+      choices <- generateDatasetChoices(data$data)
+      getDatasetComponent(ns("selection2"), "Select second dataset:", choices = choices,
+                          selected = "me", width = "fit-content")
+    })
+  })
+
+  
   #' Observe change of data selection
-  observeEvent(input$dataset1, {
-    dataset$data1 <- getDataset(input$dataset1)
+  observeEvent(input$selection1, {
+    selection$data1 <- data$data[[input$selection1]]
   })
   
-  observeEvent(input$dataset2, {
-    dataset$data2 <- getDataset(input$dataset2)
+  observeEvent(input$selection2, {
+    selection$data2 <- data$data[[input$selection2]]
   })
   
   #' Observe change of data
   observeDataset <- reactive({
-    list(dataset$data1, dataset$data2)
+    list(selection$data1, selection$data2)
   })
   
   observeEvent(observeDataset(), {
@@ -110,7 +125,7 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
   #' Observe tune button
   observeEvent(input$tune, {
     tryCatch({
-      tune_values(dataset)
+      tune_values(selection)
       
       if (!is.null(tunedsPLSVals)){
         show("switchRow")
@@ -134,7 +149,7 @@ observe_spls_ui_components <- function(ns, input, output, dataset){
 }
 
 #' Tune the ncomp and keepX parameter for the given dataset
-tune_values <- function(dataset){
+tune_values <- function(selection){
   withProgress(message = 'Tuning parameters .... Please wait!', value = 1/4, {
     
     #tune ncomp
@@ -144,8 +159,8 @@ tune_values <- function(dataset){
     
     incProgress(1/4)
     
-    X <- dataset$data1
-    Y <- dataset$data2
+    X <- selection$data1
+    Y <- selection$data2
     
     #tune keepX
     set.seed(30)
@@ -179,18 +194,18 @@ tune_values <- function(dataset){
 }
 
 #' Run analysis
-run_spls_analysis <- function(ns, input, output, dataset){
+run_spls_analysis <- function(ns, input, output, selection){
   spls.result <<- reactive({
-    X <- dataset$data1
-    Y <- dataset$data2
+    X <- selection$data1
+    Y <- selection$data2
     spls.result <- mixOmics::spls(X, Y,
                              ncomp = input$ncomp, scale = input$scale)
   })
   
   spls.result.tuned <<- reactive({
     if (useTunedsPLSVals()){
-      X <- dataset$data1
-      Y <- dataset$data2
+      X <- selection$data1
+      Y <- selection$data2
       spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedsPLSVals$ncomp, 
                                keepX = tunedsPLSVals$keepX, keepY = tunedsPLSVals$keepY)
     }
@@ -198,7 +213,7 @@ run_spls_analysis <- function(ns, input, output, dataset){
 }
 
 #' Generate the error messages
-generate_spls_error_messages <- function(ns, input, output, dataset){
+generate_spls_error_messages <- function(ns, input, output, selection){
   output$arrow.error <- renderText({
     return (splsCheckNcomp(input))
   })
@@ -209,7 +224,7 @@ generate_spls_error_messages <- function(ns, input, output, dataset){
 }
 
 #' Business logic functions
-generate_spls_plots <- function(ns, input, output, dataset){
+generate_spls_plots <- function(ns, input, output, selection){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)

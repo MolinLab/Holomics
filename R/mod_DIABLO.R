@@ -17,7 +17,7 @@ mod_DIABLO_ui <- function(id){
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
       bs4Dash::column(width = 6, style = "display: flex; column-gap: 1rem",
-                      getDatasetComponent(ns("dataset"), "Select the datasets: ", multiple = TRUE),
+                      uiOutput(ns("dataSelection")),
                       textOutput(ns("dataset.error"))
       )
     ),
@@ -48,14 +48,14 @@ mod_DIABLO_ui <- function(id){
 #' DIABLO Server Functions
 #'
 #' @noRd
-mod_DIABLO_server <- function(id){
+mod_DIABLO_server <- function(id, data){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
     hide("tunedCol")
     hide("switchRow")
     
-    dataset <- reactiveValues()
+    selection <- reactiveValues()
     diabloNetwork <<- reactiveValues()
     diabloNetwork.tuned <<- reactiveValues()
     nodes <<- reactiveValues()
@@ -63,21 +63,21 @@ mod_DIABLO_server <- function(id){
     useTunedDiabloVals <<- reactiveVal(FALSE)
     tunedDiabloVals <<- reactiveValues(ncomp = 2, keepX = NULL)
     
-    render_diablo_ui_components(ns, input, output, dataset)
+    render_diablo_ui_components(ns, input, output, selection)
     
-    observe_diablo_ui_components(ns, session, input, output, dataset)
+    observe_diablo_ui_components(ns, session, input, output, data, selection)
     
-    run_diablo_analysis(ns, input, output, dataset)
+    run_diablo_analysis(ns, input, output, selection)
     
-    generate_diablo_plots(ns, input, output, dataset)
+    generate_diablo_plots(ns, input, output, selection)
     
-    generate_diablo_error_messages(ns, input, output, dataset)
+    generate_diablo_error_messages(ns, input, output, selection)
     
   })
 }
 
 #' Render Ui components
-render_diablo_ui_components <- function(ns, input, output, dataset){
+render_diablo_ui_components <- function(ns, input, output, selection){
   renderIndivComps(ns, input, output, TRUE, tunedDiabloVals)
   
   renderVarComps(ns, input, output, TRUE, tunedDiabloVals)
@@ -111,25 +111,28 @@ render_diablo_ui_components <- function(ns, input, output, dataset){
 }
 
 #'Observe different ui components
-observe_diablo_ui_components <- function(ns, session, input, output, dataset){
+observe_diablo_ui_components <- function(ns, session, input, output, data, selection){
+  
+  observeEvent(data$data, {
+    output$dataSelection <- renderUI({
+      choices <- generateDatasetChoices(data$data)
+      getDatasetComponent(ns("selection"), "Select the datasets: ", choices = choices, multiple = TRUE)
+    })
+  })
+  
   
   #' Observe data input change
-  observeEvent(input$dataset, {
+  observeEvent(input$selection, {
     data <- list()
-    for (d in strsplit(input$dataset, " ")){
-      if(d == "t"){
-        data[["Transcriptomic"]] <- Holomics::data.transcriptomic_small
-      } else if (d == "me"){
-        data[["Metabolomic"]] <- Holomics::data.metabolomic_small
-      } else if (d == "mi"){
-        data[["Microbiomic"]] <- Holomics::data.microbiomic_small
-      }
+    for (d in strsplit(input$selection, " ")){
+      selection$data <- data$data[[input$selection]]
+      data[[input$selection]] <- data$data[[input$selection]]
     }
-    dataset$data <- data
+    selection$data <- data
   })
   
   #' Observe data change
-  observeEvent(dataset$data, {
+  observeEvent(selection$data, {
     output$tune.switch <- renderUI({})
     useTunedDiabloVals(FALSE)
     hide("tunedCol")
@@ -170,9 +173,9 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
   
   #' Observe tune button
   observeEvent(input$tune, {
-    if (!is.null(input$dataset)){
+    if (!is.null(input$selection)){
       tryCatch({
-        tune_diablo_values(dataset)
+        tune_diablo_values(selection)
         if (!is.null(tunedDiabloVals)){
           show("switchRow")
           output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
@@ -196,8 +199,8 @@ observe_diablo_ui_components <- function(ns, session, input, output, dataset){
 }
 
 #' Tune the ncomp and keepX parameter for the given dataset
-tune_diablo_values <- function(dataset){
-  X <- dataset$data
+tune_diablo_values <- function(selection){
+  X <- selection$data
   if (!is.null(X)){
     withProgress(message = 'Tuning parameters .... Please wait!', value = 1/3, {
       Y <- sampleClasses
@@ -213,8 +216,8 @@ tune_diablo_values <- function(dataset){
       incProgress(1/3)
       
       #tune keepX
-      test.keepX = dataset$data
-      for (i in 1 : length(names(dataset$data))){
+      test.keepX = selection$data
+      for (i in 1 : length(names(selection$data))){
         test.keepX[[i]] = c(5:9, seq(10, 18, 2), seq(20,30,5))
       }
       
@@ -235,9 +238,9 @@ tune_diablo_values <- function(dataset){
 }
 
 #' Run analysis
-run_diablo_analysis <- function(ns, input, output, dataset){
+run_diablo_analysis <- function(ns, input, output, selection){
   diablo.result <<- reactive({
-    X <- dataset$data
+    X <- selection$data
     Y <- sampleClasses
     if (!is.null(X)){
       design <- matrix(0.1, ncol = length(X), nrow = length(X),
@@ -251,7 +254,7 @@ run_diablo_analysis <- function(ns, input, output, dataset){
   
   diablo.result.tuned <<- reactive({
     if (useTunedDiabloVals()){
-      X <- dataset$data
+      X <- selection$data
       Y <- sampleClasses
       if (!is.null(X)){
         design <- matrix(0.1, ncol = length(X), nrow = length(X),
@@ -265,7 +268,7 @@ run_diablo_analysis <- function(ns, input, output, dataset){
 }
 
 #' Business logic functions
-generate_diablo_plots <- function(ns, input, output, dataset){
+generate_diablo_plots <- function(ns, input, output, selection){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
@@ -312,7 +315,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   plot.var <- function(){
     if(!is.null(diablo.result()) & input$ncomp >= 2){
       plotVar(diablo.result(), comp.var(), input$var.names,
-              pch = seq(1, length(dataset$data), 1), legend = TRUE)
+              pch = seq(1, length(selection$data), 1), legend = TRUE)
     }
   }
   
@@ -324,7 +327,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   }
   
   plot.img <- function(){
-    if(!is.null(diablo.result()) & length(dataset$data) > 1){
+    if(!is.null(diablo.result()) & length(selection$data) > 1){
       mixOmics::cimDiablo(diablo.result(), comp = comp.img(), margin=c(8,20), legend.position = "right",
                           size.legend = 1)
     }    
@@ -337,13 +340,13 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   }
   
   plot.diablo <- function(){
-    if(!is.null(diablo.result()) & length(dataset$data) > 1){
+    if(!is.null(diablo.result()) & length(selection$data) > 1){
       mixOmics::plotDiablo(diablo.result(), ncomp = comp.diablo())
     }
   }
   
   plot.circos <- function(){
-    if(!is.null(diablo.result()) & length(dataset$data) > 1){
+    if(!is.null(diablo.result()) & length(selection$data) > 1){
       mixOmics::circosPlot(diablo.result(), cutoff = input$cutoffCircos, line = TRUE,
                            size.labels =1.5, size.variables = .85)
     }
@@ -360,7 +363,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   plot.var.tuned <- function(){
     if(!is.null(diablo.result.tuned()) & tunedDiabloVals$ncomp >= 2){
       plotVar(diablo.result.tuned(), comp.var.tuned(), input$var.names.tuned,
-              pch = seq(1, length(dataset$data), 1), legend = TRUE)
+              pch = seq(1, length(selection$data), 1), legend = TRUE)
     }
   }
   
@@ -372,7 +375,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   }
   
   plot.img.tuned <- function(){
-    if(!is.null(diablo.result.tuned()) & length(dataset$data) > 1){
+    if(!is.null(diablo.result.tuned()) & length(selection$data) > 1){
       mixOmics::cimDiablo(diablo.result.tuned(), comp = comp.img.tuned(), margin=c(8,20), legend.position = "right",
                           size.legend = 1)
     }    
@@ -385,13 +388,13 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   }
   
   plot.diablo.tuned <- function(){
-    if(!is.null(diablo.result.tuned()) & length(dataset$data) > 1){
+    if(!is.null(diablo.result.tuned()) & length(selection$data) > 1){
       mixOmics::plotDiablo(diablo.result.tuned(), ncomp = comp.diablo.tuned())
     }
   }
   
   plot.circos.tuned <- function(){
-    if(!is.null(diablo.result.tuned()) & length(dataset$data) > 1){
+    if(!is.null(diablo.result.tuned()) & length(selection$data) > 1){
       mixOmics::circosPlot(diablo.result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
                            size.labels =1.5, size.variables = .85)
     }
@@ -435,8 +438,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   #' Network plot
   output$Network <- renderVisNetwork({
-    if(!is.null(diablo.result()) & length(dataset$data) > 1){
-      networkResult = diabloGenerateNetwork(ns, "", diablo.result, dataset, input$cutoffNetwork, input$fullName)
+    if(!is.null(diablo.result()) & length(selection$data) > 1){
+      networkResult = diabloGenerateNetwork(ns, "", diablo.result, selection, input$cutoffNetwork, input$fullName)
       nodes$data <- networkResult$data
       diabloNetwork$mixNetwork <<- networkResult$mixNetwork
       diabloNetwork$visNetwork <<- networkResult$visNetwork
@@ -480,8 +483,8 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   
   #' Network plot tuned
   output$Network.tuned <- renderVisNetwork({
-    if(!is.null(diablo.result.tuned()) & length(dataset$data) > 1){
-      networkResult = diabloGenerateNetwork(ns, ".tuned", diablo.result.tuned, dataset, input$cutoffNetwork.tuned, input$fullName.tuned)
+    if(!is.null(diablo.result.tuned()) & length(selection$data) > 1){
+      networkResult = diabloGenerateNetwork(ns, ".tuned", diablo.result.tuned, selection, input$cutoffNetwork.tuned, input$fullName.tuned)
       nodes.tuned$data <- networkResult$data
       diabloNetwork.tuned$mixNetwork <<- networkResult$mixNetwork
       diabloNetwork.tuned$visNetwork <<- networkResult$visNetwork
@@ -493,7 +496,7 @@ generate_diablo_plots <- function(ns, input, output, dataset){
   )
   
   output$keepX.tuned <- renderText(
-    paste("Variables of dataset ", names(dataset$data), ": ",  tunedDiabloVals$keepX)
+    paste("Variables of dataset ", names(selection$data), ": ",  tunedDiabloVals$keepX)
   )
   
   #' Download handler
@@ -517,79 +520,79 @@ generate_diablo_plots <- function(ns, input, output, dataset){
 }
 
 #' Generate the error messages
-generate_diablo_error_messages <- function(ns, input, output, dataset){
+generate_diablo_error_messages <- function(ns, input, output, selection){
   output$dataset.error <- renderText({
     ifelse (is.null(input$dataset), "Please select a dataset!", "")
   })
   
   output$indiv.error <- renderText({
-    return (diabloCheckOneDatasetNcomp(dataset, input))
+    return (diabloCheckOneDatasetNcomp(selection, input))
   })
   
   output$var.error <- renderText({
-    return (diabloCheckOneDatasetNcomp(dataset, input))
+    return (diabloCheckOneDatasetNcomp(selection, input))
   })
   
   output$load.error <- renderText({
-    return(diabloCheckOneDatasetNcomp(dataset, ncompCheck = FALSE))
+    return(diabloCheckOneDatasetNcomp(selection, ncompCheck = FALSE))
   })
   
   output$img.error <- renderText({
-    return(diabloCheckTwoDatasets(dataset))
+    return(diabloCheckTwoDatasets(selection))
   })
   
   output$arrow.error <- renderText({
-    return (diabloCheckOneDatasetNcomp(dataset, input))
+    return (diabloCheckOneDatasetNcomp(selection, input))
     
   })
   
   output$diablo.error <- renderText({
-    return(diabloCheckTwoDatasets(dataset))
+    return(diabloCheckTwoDatasets(selection))
     
   })
   
   output$circos.error <- renderText({
-    return(diabloCheckTwoDatasets(dataset))
+    return(diabloCheckTwoDatasets(selection))
     
   })
   
   output$network.error <- renderText({
-    return(diabloCheckTwoDatasets(dataset))
+    return(diabloCheckTwoDatasets(selection))
   })
   
   #tuned
   output$indiv.error.tuned <- renderText({
-    return (diabloCheckOneDatasetNcomp(dataset, input, tuned = TRUE))
+    return (diabloCheckOneDatasetNcomp(selection, input, tuned = TRUE))
   })
   
   output$var.error.tuned <- renderText({
-    return (diabloCheckOneDatasetNcomp(dataset, input, tuned = TRUE))
+    return (diabloCheckOneDatasetNcomp(selection, input, tuned = TRUE))
   })
   
   output$load.error.tuned <- renderText({
-    return(diabloCheckOneDatasetNcomp(dataset, ncompCheck = FALSE))
+    return(diabloCheckOneDatasetNcomp(selection, ncompCheck = FALSE))
   })
   
   output$img.error.tuned <- renderText({
-    return(diabloCheckTwoDatasets(dataset))
+    return(diabloCheckTwoDatasets(selection))
   })
   
   output$arrow.error.tuned <- renderText({
-    return (diabloCheckOneDatasetNcomp(dataset, input, tuned = TRUE))
+    return (diabloCheckOneDatasetNcomp(selection, input, tuned = TRUE))
     
   })
   
   output$diablo.error.tuned <- renderText({
-    return(diabloCheckTwoDatasets(dataset))
+    return(diabloCheckTwoDatasets(selection))
     
   })
   
   output$circos.error.tuned <- renderText({
-    return(diabloCheckTwoDatasets(dataset))
+    return(diabloCheckTwoDatasets(selection))
     
   })
   
   output$network.error.tuned <- renderText({
-    return(diabloCheckTwoDatasets(dataset))
+    return(diabloCheckTwoDatasets(selection))
   })
 }

@@ -1,21 +1,16 @@
-#' getDataset 
-#'
 #' @description A utils function, which gets the dataset according to the selection
 #'
 #' @return dataframe with the data
 #'
 #' @noRd
-#' Return 
-getDatasetComponent <- function(id, label, selected = NULL, multiple = FALSE, width = NULL){
+getDatasetComponent <- function(id, label, choices, selected = NULL, multiple = FALSE, width = NULL){
   return(
     selectInput(id, label,
-                choices = c("Transcriptomic"= "t", "Metabolomic"= "me", "Microbiomic" = "mi"), 
-                multiple = multiple, width = width, selected = selected)
+                choices = choices, multiple = multiple, 
+                width = width, selected = selected)
   )
 }
 
-#' utils_ui 
-#'
 #' @description A utils function to get the block with the analysis parameters.
 #'
 #' @return bootstrap box with the parameter components
@@ -32,7 +27,6 @@ getAnalysisParametersComponent <- function(ns){
     )  
   )
 }
-
 
 #' @description A utils function to get the block with the
 #' tune button and tune swith
@@ -217,7 +211,6 @@ getArrowPlot <- function(ns, postfix = ""){
     )
   )
 }
-
 
 #' @description A utils function to render the 
 #' components for the sample plot

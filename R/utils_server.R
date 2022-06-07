@@ -3,7 +3,6 @@
 #' @return dataframe with the data
 #'
 #' @noRd
-#' Return 
 getDataset <- function(selection){
   if(selection == "t"){
     return (Holomics::data.transcriptomic_small)
@@ -12,6 +11,22 @@ getDataset <- function(selection){
   } else if (selection == "mi"){
     return (Holomics::data.microbiomic_small)
   }
+}
+
+#' @description A utils function, generates the list for the
+#' datase choices
+#'
+#' @return named list
+#'
+#' @noRd
+generateDatasetChoices <- function(data){
+  choices = list()
+  if (length(data) > 0){
+    for (i in 1:length(data)){
+      choices[[names(data)[i]]] = names(data)[i]
+    }
+  }
+  return (choices)
 }
 
 #' @description A utils function, which converts two list to a matrix

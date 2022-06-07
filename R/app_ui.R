@@ -15,7 +15,7 @@ app_ui <- function(request) {
       
       ## Header 
       bs4Dash::dashboardHeader(
-        title = tags$img(src='www/logo_hell.png', width="80%", style="display: block; margin: auto;")
+        title = tags$img(src='www/logo.png', width="80%", style="display: block; margin: auto;")
       ),
       
       
@@ -24,13 +24,7 @@ app_ui <- function(request) {
         bs4Dash::sidebarMenu(
           
           bs4Dash::menuItem("Home", tabName = "home", icon = icon("home")),
-          # bs4Dash::menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
-          # bs4Dash::menuItem("Preprocessing", tabName = "preprocessing", icon = icon("wrench"), startExpanded = FALSE,
-          #                   bs4Dash::menuSubItem("Impute values", tabName = "impute_vals"),
-          #                   bs4Dash::menuSubItem("Normalization", tabName = "normalization"),
-          #                   bs4Dash::menuSubItem("Outlier Detection", tabName = "outliers"),
-          #                   bs4Dash::menuSubItem("Filtration", tabName = "filtration")
-          # ),
+          bs4Dash::menuItem("Upload data", tabName = "upload", icon = icon("upload")),
           bs4Dash::menuItem("Single 'omics", tabName = "singleOmics", icon = icon("window-minimize")),
           bs4Dash::menuItem("Multi 'omics", tabName = "multiOmics", icon = icon("layer-group"), startExpanded = FALSE,
                             bs4Dash::menuSubItem("sPLS", tabName = "sPLS"),
@@ -47,7 +41,7 @@ app_ui <- function(request) {
                              column(width = 10,
                                     includeMarkdown(app_sys("app/www/01-home.md"))) # create and change to app/www/home.md
                            )),
-          bs4Dash::tabItem(tabName = "upload", h2("Upload Data Module")),
+          bs4Dash::tabItem(tabName = "upload", mod_Upload_ui("upload")),
           bs4Dash::tabItem(tabName = "singleOmics", mod_SingleOmics_ui("singleOmics")),
           bs4Dash::tabItem(tabName = "sPLS", mod_sPLS_ui("sPLS")),
           bs4Dash::tabItem(tabName = "DIABLO", mod_DIABLO_ui("DIABLO"))

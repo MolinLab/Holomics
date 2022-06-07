@@ -85,7 +85,7 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
   color: white;
 }
 
-#downloadDIABLO-DIABLO\.Network,  #downloadDIABLO-DIABLO\.Network\.tuned{
+#downloadDIABLO-Network,  #downloadDIABLO-Network\.tuned{
   font-weight: 400;
   border: 1px solid transparent;
   padding: .375rem .75rem !important;
@@ -119,9 +119,14 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
   color: white;
 }
 
-/* Checkboxes */
-.checkbox-primary input[type="checkbox"]:checked + label::before, .checkbox-primary input[type="radio"]:checked + label::before{
+/* Checkboxes and radio buttons */
+.checkbox-primary input[type="checkbox"]:checked + label::before, .checkbox-primary input[type="radio"]:checked + label::before,
+.radio-primary input[type="radio"]:checked + label::after, .radio-primary input[type="radio"] + label::after{
   background-color: var(--green);
+  border-color: var(--green);
+}
+
+.radio-primary input[type="radio"]:checked + label::before, .radio-primary input[type="radio"] + label::before{
   border-color: var(--green);
 }
 

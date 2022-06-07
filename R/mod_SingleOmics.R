@@ -12,7 +12,9 @@ mod_SingleOmics_ui <- function(id){
   tagList(
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
-      getDatasetComponent(ns("dataset"), "Select dataset:")
+      bs4Dash::column(width = 12,
+        uiOutput(ns("dataSelection"))
+      )
     ),
     fluidRow(
       bs4Dash::column( width = 6,
@@ -30,16 +32,19 @@ mod_SingleOmics_ui <- function(id){
 #' PCA Server Functions
 #'
 #' @noRd 
-mod_SingleOmics_server <- function(id, dataset){
+mod_SingleOmics_server <- function(id, data, selection){
   moduleServer(id, function(input, output, session){
-    observeEvent(input$dataset, {
-      if(input$dataset == "t"){
-        dataset$data <- Holomics::data.transcriptomic
-      } else if (input$dataset == "me"){
-        dataset$data <- Holomics::data.metabolomic
-      } else if (input$dataset == "mi"){
-        dataset$data <- Holomics::data.microbiomic
-      }
+    ns <- session$ns
+    
+    observeEvent(data$data, {
+      output$dataSelection <- renderUI({
+        choices <- generateDatasetChoices(data$data)
+        getDatasetComponent(ns("selection"), "Select dataset:", choices)
+      })
+    })
+  
+    observeEvent(input$selection, {
+      selection$data <- data$data[[input$selection]]
     })
   })
 }
