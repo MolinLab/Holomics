@@ -85,7 +85,7 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
   color: white;
 }
 
-#downloadDIABLO-DIABLO\.Network,  #downloadDIABLO-DIABLO\.Network\.tuned{
+#downloadDIABLO-Network,  #downloadDIABLO-Network\.tuned{
   font-weight: 400;
   border: 1px solid transparent;
   padding: .375rem .75rem !important;
