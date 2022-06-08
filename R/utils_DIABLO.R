@@ -64,8 +64,8 @@ diabloGetUi <- function(ns, postfix = ""){
 #' @return number of components
 #'
 #' @noRd
-diabloGetNcomp <- function(input, tuned){
-  return (ifelse(tuned, tunedDiabloVals$ncomp, input$ncomp))
+diabloGetNcomp <- function(input, tuned, tunedVals){
+  return (ifelse(tuned, tunedVals$ncomp, input$ncomp))
 }
 
 
@@ -90,11 +90,11 @@ diabloCheckTwoDatasets <- function(dataset){
 #'  else empty string
 #'  
 #' @noRd
-diabloCheckOneDatasetNcomp <- function(dataset, input, ncompCheck = TRUE, tuned = FALSE){
+diabloCheckOneDatasetNcomp <- function(dataset, input, ncompCheck = TRUE, tuned = FALSE, tunedVals = NULL){
   if(length(dataset$data) < 1){
     return("You have to select at least one dataset!")
   } else if(ncompCheck){
-    return(diabloCheckNcomp(input, tuned))
+    return(diabloCheckNcomp(input, tuned, tunedVals))
   } else {
     return("")
   }
@@ -107,8 +107,8 @@ diabloCheckOneDatasetNcomp <- function(dataset, input, ncompCheck = TRUE, tuned 
 #'  else empty string
 #'  
 #' @noRd
-diabloCheckNcomp <- function(input, tuned){
-  if(diabloGetNcomp(input, tuned) < 2){
+diabloCheckNcomp <- function(input, tuned, tunedVals){
+  if(diabloGetNcomp(input, tuned, tunedVals) < 2){
     return("There need to be at least two components to render this plot!")
   } else {
     return("")
