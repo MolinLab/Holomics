@@ -55,8 +55,8 @@ splsGetUi <- function(ns, postfix = ""){
 #' @return number of components
 #'
 #' @noRd
-splsGetNcomp <- function(input, tuned = FALSE){
-  return (ifelse(tuned, tunedsPLSVals$ncomp, input$ncomp))
+splsGetNcomp <- function(input, tuned = FALSE, tunedVals){
+  return (ifelse(tuned, tunedVals$ncomp, input$ncomp))
 }
 
 #' @description A utils function, which checks if at least two components 
@@ -66,8 +66,8 @@ splsGetNcomp <- function(input, tuned = FALSE){
 #'  else empty string
 #'  
 #' @noRd
-splsCheckNcomp <- function(input, tuned = FALSE){
-  if(splsGetNcomp(input, tuned) < 2){
+splsCheckNcomp <- function(input, tuned = FALSE, tunedVals = NULL){
+  if(splsGetNcomp(input, tuned, tunedVals) < 2){
     return("There need to be at least two components to render this plot!")
   } else {
     return("")
