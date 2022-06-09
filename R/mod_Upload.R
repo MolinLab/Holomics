@@ -31,11 +31,11 @@ mod_Upload_server <- function(id, data, classes){
     
     tables <- reactiveValues(data = initDataMatrix(), classes = initClassMatrix())
     output$dataTable <- DT::renderDataTable({
-      tables$data
+      DT::datatable(tables$data, options = list(dom = "t"))
     })
     
     output$classTable <- DT::renderDataTable({
-      tables$classes
+      DT::datatable(tables$classes, options = list(dom = "t"))
     })
 
     #switch between data and classes form
@@ -103,7 +103,13 @@ mod_Upload_server <- function(id, data, classes){
     
     observeEvent(input$deleteDataRows, {
       if(!is.null(input$dataTable_rows_selected)){
-        tables$data <- tables$data[-as.numeric(input$dataTable_rows_selected),]
+        selRows = as.numeric(input$dataTable_rows_selected)
+        for (row in selRows){
+          name = tables$data[row]
+          data$data[[name]] = NULL
+        }
+        
+        tables$data <- removeRowsFromMatrix(tables$data, selRows)
       }
     })
     
@@ -137,7 +143,19 @@ mod_Upload_server <- function(id, data, classes){
     
     observeEvent(input$deleteClass, {
       classes$data <- list()
-      tables$data <- initDataMatrix()
+      tables$classes <- initClassMatrix()
+    })
+    
+    observeEvent(input$deleteClassRows, {
+      if(!is.null(input$classTable_rows_selected)){
+        selRows = as.numeric(input$classTable_rows_selected)
+        for (row in selRows){
+          name = tables$classes[row]
+          classes$data[[name]] = NULL
+        }
+        
+        tables$classes <- removeRowsFromMatrix(tables$classes, selRows)
+      }
     })
     
   })

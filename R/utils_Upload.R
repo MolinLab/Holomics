@@ -25,17 +25,20 @@ getDataUploadUI <- function(ns){
                    awesomeCheckbox(ns("inverted"), "Has inverted format")
           ),
           fluidRow(
-            bs4Dash::column(width = 1,
-                            actionButton(ns("saveData"), "Save")
-            ),
-            bs4Dash::column(width = 2,
-                            actionButton(ns("deleteData"), "Delete all")
-            )
+            actionButton(ns("saveData"), "Save")
           )
         ),
         bs4Dash::column(width = 6,
-                        DT::dataTableOutput(ns("dataTable"))
-                        # actionButton(ns("deleteDataRows"), "Delete selected datasets")
+                        fluidRow(
+                          DT::dataTableOutput(ns("dataTable"))
+                        ),
+                        fluidRow(
+                          bs4Dash::column(width = 12,
+                                          actionButton(ns("deleteDataRows"), "Delete selected datasets"),
+                                          actionButton(ns("deleteData"), "Delete all"), 
+                                          style = "display: flex; column-gap: 1rem; margin-top: 1rem"
+                          )
+                        )
         )
       )
     )
@@ -63,16 +66,20 @@ getClassUploadUI <- function(ns){
             awesomeCheckbox(ns("colorCode"), "Includes color code")
           ),
           fluidRow(
-            bs4Dash::column(width = 1,
-                            actionButton(ns("saveClass"), "Save")
-            ),
-            bs4Dash::column(width = 2,
-                            actionButton(ns("deleteClass"), "Delete all")
-            )
+            actionButton(ns("saveClass"), "Save")
           )
         ),
         bs4Dash::column(width = 6,
-                        DT::dataTableOutput(ns("classTable"))
+                        fluidRow(
+                          DT::dataTableOutput(ns("classTable"))
+                        ),
+                        fluidRow(
+                          bs4Dash::column(width = 12,
+                                          actionButton(ns("deleteClassRows"), "Delete selected datasets"),
+                                          actionButton(ns("deleteClass"), "Delete all"), 
+                                          style = "display: flex; column-gap: 1rem; margin-top: 1rem"
+                          )
+                        )
         )
       )
     )
@@ -180,4 +187,28 @@ filterByMAD <- function(data){
   t_data = t(data)
   data_filtered <- as.data.frame(t(CancerSubtypes::FSbyMAD(t_data, cut.type = "topk", value = 10000)))
   return (data_filtered)
+}
+
+
+#' @description A utils function, that removes the given rows
+#' from the given matrix
+#' 
+#' @return filtered data
+#' 
+#' @noRd
+removeRowsFromMatrix <- function(matrix, rows){
+  if (length(rows) == nrow(matrix)){
+    matrix <- initClassMatrix()
+  } else {
+    newMatrix <- as.matrix(matrix[-rows,])
+    
+    #if the new matrix would have only one row, the new matrix must be transposed
+    if(nrow(matrix) - length(rows) == 1){
+      matrix <- t(newMatrix)
+    } else {
+      matrix <- newMatrix
+    }
+  }
+  
+  return (matrix)
 }
