@@ -18,7 +18,7 @@ mod_DIABLO_ui <- function(id){
     fluidRow(
       bs4Dash::column(width = 6, style = "display: flex; column-gap: 1rem",
                       uiOutput(ns("dataSelection")),
-                      textOutput(ns("dataset.error"))
+                      textOutput(ns("selection.error"))
       )
     ),
     fluidRow(
@@ -117,6 +117,14 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, selec
       choices <- generateDatasetChoices(data$data)
       getDatasetComponent(ns("selection"), "Select the datasets: ", choices = choices, multiple = TRUE)
     })
+  })
+  
+  observeEvent(input$selection, {
+    list <- list()
+    for (s in strsplit(input$selection, " ")){
+      list[[s]] <- data$data[[s]]
+    }
+    selection$data <- list
   })
   
   #' Observe data change
@@ -505,8 +513,8 @@ generate_diablo_plots <- function(ns, input, output, selection, result, result.t
 
 #' Generate the error messages
 generate_diablo_error_messages <- function(ns, input, output, selection, tunedVals){
-  output$dataset.error <- renderText({
-    ifelse (is.null(input$dataset), "Please select a dataset!", "")
+  output$selection.error <- renderText({
+    ifelse (is.null(input$selection), "Please select a dataset!", "")
   })
   
   output$indiv.error <- renderText({
