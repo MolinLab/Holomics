@@ -13,10 +13,13 @@ mod_Upload_ui <- function(id){
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     h1("Data upload"),
     fluidRow(
-      bs4Dash::column(width = 12,
+      bs4Dash::column(width = 5, style = "margin-left: 1rem",
                       awesomeRadio(ns("type"), "Data type", inline = TRUE,
                                    choices = c("Omics data" = "data", "Labels/Classes" = "labels")),
                       uiOutput(ns("inputFields"))
+      ),
+      bs4Dash::column(width = 6,
+                      uiOutput(ns("table"))
       )
     )
   )
@@ -31,11 +34,11 @@ mod_Upload_server <- function(id, data, classes){
     
     tables <- reactiveValues(data = initDataMatrix(), classes = initClassMatrix())
     output$dataTable <- DT::renderDataTable({
-      DT::datatable(tables$data, options = list(dom = "t"))
+      DT::datatable(tables$data, options = list(dom = "tp", pageLength = 5))
     })
     
     output$classTable <- DT::renderDataTable({
-      DT::datatable(tables$classes, options = list(dom = "t"))
+      DT::datatable(tables$classes, options = list(dom = "tp", pageLength = 5))
     })
 
     #switch between data and classes form
@@ -48,6 +51,11 @@ mod_Upload_server <- function(id, data, classes){
         output$datafileField <- renderUI({
           fileInput(ns("dataFile"), "Choose a xlsx file", accept = c(".xlsx"))
         })
+        
+        output$table <- renderUI({
+          getDataTable(ns)
+        })
+        
       } else if (input$type == "labels") {
         output$inputFields <- renderUI({
           getClassUploadUI(ns)
@@ -55,6 +63,10 @@ mod_Upload_server <- function(id, data, classes){
         
         output$classfileField <- renderUI({
           fileInput(ns("classFile"), "Choose a xlsx file", accept = c(".xlsx"))
+        })
+        
+        output$table <- renderUI({
+          getClassTable(ns)
         })
       }
     })
@@ -96,12 +108,12 @@ mod_Upload_server <- function(id, data, classes){
       }
     })
     
-    observeEvent(input$deleteData, {
+    observeEvent(input$deleteAllData, {
       data$data <- list()
       tables$data <- initDataMatrix()
     })
     
-    observeEvent(input$deleteDataRows, {
+    observeEvent(input$deleteSelectedData, {
       if(!is.null(input$dataTable_rows_selected)){
         selRows = as.numeric(input$dataTable_rows_selected)
         for (row in selRows){
@@ -141,12 +153,12 @@ mod_Upload_server <- function(id, data, classes){
       }
     })
     
-    observeEvent(input$deleteClass, {
+    observeEvent(input$deleteAllClass, {
       classes$data <- list()
       tables$classes <- initClassMatrix()
     })
     
-    observeEvent(input$deleteClassRows, {
+    observeEvent(input$deleteSelectedClass, {
       if(!is.null(input$classTable_rows_selected)){
         selRows = as.numeric(input$classTable_rows_selected)
         for (row in selRows){

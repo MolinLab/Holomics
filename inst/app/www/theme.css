@@ -79,8 +79,9 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
   color: var(--green);
 }
 
-/* Save plot buttons and tune buttons */
-.shiny-download-link, .shiny-download-link:hover, button[id*='-tune'], button[id*='-tune']:hover{
+/* Save plot buttons, delete and tune buttons */
+.shiny-download-link, .shiny-download-link:hover, button[id*='-tune'], button[id*='-tune']:hover, 
+button[id*='upload-'], button[id*='upload-']:hover{
   background-color: var(--green);
   color: white;
 }
@@ -105,11 +106,6 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
 }
 
 /* Card header */
-.card .card-header .nav-pills .nav-link:not(.active):hover{
-  /*! color: var(--green) !important; */
-  /*! border-top: 3px solid var(--grey) !important; */
-}
-
 .card .card-header .nav-pills .nav-item .nav-link {
   color: black;
 }
@@ -158,6 +154,11 @@ div[id*='-tune.switch'] > div {
 /* Progress bar */
 .progress-bar{
   background-color: var(--green);
+}
+
+/* Upload file input */
+div[id*="fileField"] > div{
+  margin-bottom: 0;
 }
 
 /* Footer link */

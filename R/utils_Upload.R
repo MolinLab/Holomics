@@ -1,17 +1,13 @@
-library(shinyjs)
-
-
 #' @description A utils function that defines the UI 
-#' of the data upload
+#' of the data upload input fields
 #'
 #' @return div with the components
 #'
 #' @noRd
 getDataUploadUI <- function(ns){
   return(
-    tags$div(
       fluidRow(
-        bs4Dash::column(width = 6,
+        bs4Dash::column(width = 12,
           fluidRow(style = "margin-left: 0;",
             uiOutput(ns("datafileField"))
           ),
@@ -24,21 +20,35 @@ getDataUploadUI <- function(ns){
           fluidRow(style = "margin-left: 0;",
                    awesomeCheckbox(ns("inverted"), "Has inverted format")
           ),
-          fluidRow(
+          fluidRow(style = "margin-left: 0;",
             actionButton(ns("saveData"), "Save")
           )
+        )
+      ) 
+    )
+}
+
+#' @description A utils function that defines the UI 
+#' of the classes/label upload input fields
+#'
+#' @return div with the components
+#'
+#' @noRd
+getClassUploadUI <- function(ns){
+  return(
+    fluidRow(
+      bs4Dash::column(width = 12,
+        fluidRow(style = "margin-left: 0;",
+                 uiOutput(ns("classfileField"))
         ),
-        bs4Dash::column(width = 6,
-                        fluidRow(
-                          DT::dataTableOutput(ns("dataTable"))
-                        ),
-                        fluidRow(
-                          bs4Dash::column(width = 12,
-                                          actionButton(ns("deleteDataRows"), "Delete selected datasets"),
-                                          actionButton(ns("deleteData"), "Delete all"), 
-                                          style = "display: flex; column-gap: 1rem; margin-top: 1rem"
-                          )
-                        )
+        fluidRow(style = "margin-left: 0;",
+          textInput(ns("className"), "Data name")
+        ),
+        fluidRow(style = "margin-left: 0;",
+          awesomeCheckbox(ns("colorCode"), "Includes color code")
+        ),
+        fluidRow(style = "margin-left: 0;",
+                 actionButton(ns("saveClass"), "Save")
         )
       )
     )
@@ -46,41 +56,44 @@ getDataUploadUI <- function(ns){
 }
 
 #' @description A utils function that defines the UI 
-#' of the classes/label upload
+#' for the data table
 #'
 #' @return div with the components
 #'
 #' @noRd
-getClassUploadUI <- function(ns){
+getDataTable <- function(ns){
   return(
-    tags$div(
-      fluidRow(
-        bs4Dash::column(width = 6,
-          fluidRow(style = "margin-left: 0;",
-                   uiOutput(ns("classfileField"))
-          ),
-          fluidRow(style = "margin-left: 0;",
-            textInput(ns("className"), "Data name")
-          ),
-          fluidRow(style = "margin-left: 0;",
-            awesomeCheckbox(ns("colorCode"), "Includes color code")
-          ),
-          fluidRow(
-            actionButton(ns("saveClass"), "Save")
-          )
-        ),
-        bs4Dash::column(width = 6,
-                        fluidRow(
-                          DT::dataTableOutput(ns("classTable"))
-                        ),
-                        fluidRow(
-                          bs4Dash::column(width = 12,
-                                          actionButton(ns("deleteClassRows"), "Delete selected datasets"),
-                                          actionButton(ns("deleteClass"), "Delete all"), 
-                                          style = "display: flex; column-gap: 1rem; margin-top: 1rem"
-                          )
-                        )
-        )
+    fluidRow(
+      bs4Dash::column(width = 12,
+                      fluidRow(
+                        DT::dataTableOutput(ns("dataTable"))
+                      ),
+                      fluidRow(style = "margin-top: .5rem",
+                        actionButton(ns("deleteAllData"), "Delete all"),
+                        actionButton(ns("deleteSelectedData"), "Delete selected datasets")
+                      )
+      )
+    )
+  )
+}
+
+#' @description A utils function that defines the UI 
+#' for the data table
+#'
+#' @return div with the components
+#'
+#' @noRd
+getClassTable <- function(ns){
+  return(
+    fluidRow(
+      bs4Dash::column(width = 12,
+                      fluidRow(
+                        DT::dataTableOutput(ns("classTable"))
+                      ),
+                      fluidRow(style = "margin-top: .5rem",
+                        actionButton(ns("deleteAllClass"), "Delete all"), 
+                        actionButton(ns("deleteSelectedClass"), "Delete selected datasets")
+                      )
       )
     )
   )

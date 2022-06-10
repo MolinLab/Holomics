@@ -1,4 +1,4 @@
-#DIABLO-selection\.error{
+#DIABLO-dataSelection\.error{
   display: flex;
   align-items: center;
   color: red;
@@ -16,8 +16,14 @@ a[id*='.download']{
   margin-right: .5rem;
 }
 
-#downloadDIABLO-Network:before, #downloadDIABLO-Network\.tuned:before {
+#downloadDIABLO-Network:before, #downloadDIABLO-Network\.tuned:before, button[id*='upload-save']:before {
   content: "\f0c7";
+  font-family: 'Font Awesome 5 Free' !important;
+  margin-right: 2px;
+}
+
+button[id*='upload-delete']:before{
+  content: "\f2ed";
   font-family: 'Font Awesome 5 Free' !important;
   margin-right: 2px;
 }
