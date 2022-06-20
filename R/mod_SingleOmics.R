@@ -13,7 +13,10 @@ mod_SingleOmics_ui <- function(id){
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
       bs4Dash::column(width = 12,
-        uiOutput(ns("dataSelection"))
+        uiOutput(ns("dataSelComp")), 
+        uiOutput(ns("classSelComp")),
+        textOutput(ns("errorMsg")),
+        style = "display: flex; column-gap: 1rem"
       )
     ),
     fluidRow(
@@ -32,19 +35,53 @@ mod_SingleOmics_ui <- function(id){
 #' PCA Server Functions
 #'
 #' @noRd 
-mod_SingleOmics_server <- function(id, data, selection){
+mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelection){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
     observeEvent(data$data, {
-      output$dataSelection <- renderUI({
-        choices <- generateDatasetChoices(data$data)
-        getDatasetComponent(ns("selection"), "Select dataset:", choices)
+      output$dataSelComp <- renderUI({
+        choices <- generateChoices(data$data)
+        getSelectionComponent(ns("dataSelection"), "Select dataset:", choices, width = "150")
       })
     })
   
-    observeEvent(input$selection, {
-      selection$data <- data$data[[input$selection]]
+    observeEvent(input$dataSelection, {
+      dataSelection$data <- data$data[[input$dataSelection]]
+    })
+    
+    observeEvent(classes$data, {
+      output$classSelComp <- renderUI({
+        choices <- generateChoices(classes$data)
+        getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices, width = "150")
+      })
+    })
+    
+    observeEvent(input$classSelection, {
+      classSelection$data <- classes$data[[input$classSelection]]
+    })
+    
+
+    # Error message when selection is incompatible or  data or classes are missing
+    inputSelChange <- reactive({  #change of input values or selected values
+      list(data$data, classes$data, dataSelection$data, classSelection$data)
+    })
+    
+    observeEvent(inputSelChange(), {
+      output$errorMsg <- renderText({
+        dataCheck = checkMissingData(data$data, classes$data)
+        class <- classSelection$data
+        data <- dataSelection$data
+        
+        if (dataCheck$check){
+          dataCheck$msg
+        } else if (length(data) != 0 && nrow(class) != nrow(data)){
+          "The selected data and classes are incompatible due to their different amount of samples! 
+          Please change your selection!"
+        } else {
+          ""
+        }
+      })
     })
   })
 }

@@ -12,9 +12,11 @@ mod_sPLS_ui <- function(id){
   tagList(
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
-      bs4Dash::column(width = 6,
-                      uiOutput(ns("dataSelection1")),
-                      uiOutput(ns("dataSelection2")),
+      bs4Dash::column(width = 12,
+                      uiOutput(ns("dataSelComp1")),
+                      uiOutput(ns("dataSelComp2")),
+                      uiOutput(ns("classSelComp")),
+                      textOutput(ns("errorMsg")),
                       style = "display: flex; column-gap: 1rem"
       )
     ),
@@ -43,28 +45,27 @@ mod_sPLS_ui <- function(id){
 }
 
 #' PLS Server Functions
-#'
-#' @noRd
-mod_sPLS_server <- function(id, data){
+mod_sPLS_server <- function(id, data, classes){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
     hide("tunedCol")
     hide("switchRow")
     
-    selection <- reactiveValues()
+    dataSelection <- reactiveValues()
+    classSelection <- reactiveValues()
     useTunedVals <- reactiveVal(FALSE)
     tunedVals <- reactiveValues(ncomp = 2, keepX = NULL)
     
-    results <- run_spls_analysis(ns, input, output, selection, useTunedVals, tunedVals)
+    results <- run_spls_analysis(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals)
     
     render_spls_ui_components(ns, input, output, tunedVals)
     
-    observe_spls_ui_components(ns, input, output, data, selection, results$result, useTunedVals, tunedVals)
+    observe_spls_ui_components(ns, input, output, data, dataSelection, classes, classSelection, results$result, useTunedVals, tunedVals)
     
-    generate_spls_plots(ns, input, output, selection, results$result, results$resultTuned, tunedVals)
+    generate_spls_plots(ns, input, output, dataSelection, classSelection, results$result, results$resultTuned, tunedVals)
     
-    generate_spls_error_messages(ns, input, output, selection, tunedVals)
+    generate_spls_error_messages(input, output, data, classes, dataSelection, classSelection, tunedVals)
   })
 }
 
@@ -82,34 +83,46 @@ render_spls_ui_components <- function(ns, input, output, tunedVals){
 }
 
 #'Observe different ui components
-observe_spls_ui_components <- function(ns, input, output, data, selection, result, useTunedVals, tunedVals){
+observe_spls_ui_components <- function(ns, input, output, data, dataSelection, classes, classSelection, result, useTunedVals, tunedVals){
   
   #' Observe data  
   observeEvent(data$data, {
-    output$dataSelection1 <- renderUI({
-      choices <- generateDatasetChoices(data$data)
-      getDatasetComponent(ns("selection1"), "Select first dataset:", choices = choices, width = "150")
+    output$dataSelComp1 <- renderUI({
+      choices <- generateChoices(data$data)
+      getSelectionComponent(ns("dataSelection1"), "Select first dataset:", choices = choices, width = "150")
     })
     
-    output$dataSelection2 <- renderUI({
-      choices <- generateDatasetChoices(data$data)
-      getDatasetComponent(ns("selection2"), "Select second dataset:", choices = choices,
-                          selected = "me", width = "fit-content")
+    output$dataSelComp2 <- renderUI({
+      choices <- generateChoices(data$data)
+      getSelectionComponent(ns("dataSelection2"), "Select second dataset:", choices = choices, width = "fit-content")
+    })
+  })
+  
+  #' Observe classes
+  observeEvent(classes$data, {
+    output$classSelComp <- renderUI({
+      choices <- generateChoices(classes$data)
+      getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices = choices, width = "fit-content")
     })
   })
 
   #' Observe change of data selection
-  observeEvent(input$selection1, {
-    selection$data1 <- data$data[[input$selection1]]
+  observeEvent(input$dataSelection1, {
+    dataSelection$data1 <- data$data[[input$dataSelection1]]
   })
   
-  observeEvent(input$selection2, {
-    selection$data2 <- data$data[[input$selection2]]
+  observeEvent(input$dataSelection2, {
+    dataSelection$data2 <- data$data[[input$dataSelection2]]
+  })
+  
+  #' Observe change of class selection
+  observeEvent(input$classSelection, {
+    classSelection$data <- classes$data[[input$classSelection]]
   })
   
   #' Observe change of data
   observeDataset <- reactive({
-    list(selection$data1, selection$data2)
+    list(dataSelection$data1, dataSelection$data2)
   })
   
   observeEvent(observeDataset(), {
@@ -122,7 +135,7 @@ observe_spls_ui_components <- function(ns, input, output, data, selection, resul
   #' Observe tune button
   observeEvent(input$tune, {
     tryCatch({
-      tune_values(selection, result, tunedVals)
+      tune_values(dataSelection, result, tunedVals)
 
       if (!is.null(tunedVals)){
         show("switchRow")
@@ -146,7 +159,7 @@ observe_spls_ui_components <- function(ns, input, output, data, selection, resul
 }
 
 #' Tune the ncomp and keepX parameter for the given dataset
-tune_values <- function(selection, result, tunedVals){
+tune_values <- function(dataSelection, result, tunedVals){
   withProgress(message = 'Tuning parameters .... Please wait!', value = 1/4, {
     
     #tune ncomp
@@ -156,8 +169,8 @@ tune_values <- function(selection, result, tunedVals){
     
     incProgress(1/4)
     
-    X <- selection$data1
-    Y <- selection$data2
+    X <- dataSelection$data1
+    Y <- dataSelection$data2
     
     #tune keepX
     set.seed(30)
@@ -191,18 +204,24 @@ tune_values <- function(selection, result, tunedVals){
 }
 
 #' Run analysis
-run_spls_analysis <- function(ns, input, output, selection, useTunedVals, tunedVals){
+run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   spls.result <- reactive({
-    X <- selection$data1
-    Y <- selection$data2
+    req(dataSelection$data1)
+    req(dataSelection$data2)
+    req(nrow(classSelection$data) == nrow(dataSelection$data1) && nrow(classSelection$data) == nrow(dataSelection$data2))
+    X <- dataSelection$data1
+    Y <- dataSelection$data2
     spls.result <- mixOmics::spls(X, Y,
                                   ncomp = input$ncomp, scale = input$scale)
   })
   
   spls.result.tuned <- reactive({
     if (useTunedVals()){
-      X <- selection$data1
-      Y <- selection$data2
+      req(dataSelection$data1)
+      req(dataSelection$data2)
+      req(nrow(classSelection$data) == nrow(dataSelection$data1) && nrow(classSelection$data) == nrow(dataSelection$data2))
+      X <- dataSelection$data1
+      Y <- dataSelection$data2
       spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedVals$ncomp, 
                                           keepX = tunedVals$keepX, keepY = tunedVals$keepY)
     }
@@ -212,7 +231,32 @@ run_spls_analysis <- function(ns, input, output, selection, useTunedVals, tunedV
 }
 
 #' Generate the error messages
-generate_spls_error_messages <- function(ns, input, output, selection, tunedVals){
+generate_spls_error_messages <- function(input, output, data, classes, dataSelection, classSelection, tunedVals){
+  
+  # Error message when selection is incompatible or  data or classes are missing
+  inputSelChange <- reactive({
+    list(data$data, classes$data, dataSelection$data1, dataSelection$data2, classSelection$data)
+  })
+  
+  observeEvent(inputSelChange(), {
+    output$errorMsg <- renderText({
+      dataCheck = checkMissingData(data$data, classes$data)
+      class <- classSelection$data
+      data1 <- dataSelection$data1
+      data2 <- dataSelection$data2
+      
+      if (dataCheck$check){
+        dataCheck$msg
+      } else if ((length(data1) != 0 && nrow(class) != nrow(data1)) ||
+                 (length(data2) != 0 && nrow(class) != nrow(data2))){
+        "The selected data and classes are incompatible due to their different amount of samples! 
+            Please change your selection!"
+      } else {
+        ""
+      }
+    })
+  })
+  
   output$arrow.error <- renderText({
     return (splsCheckNcomp(input))
   })
@@ -223,7 +267,7 @@ generate_spls_error_messages <- function(ns, input, output, selection, tunedVals
 }
 
 #' Business logic functions
-generate_spls_plots <- function(ns, input, output, selection, result, resultTuned, tunedVals){
+generate_spls_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
@@ -254,7 +298,9 @@ generate_spls_plots <- function(ns, input, output, selection, result, resultTune
   
   #' generate output plots
   plot.indiv <- function(){
-    plotIndiv(result(), comp.indiv(), indNames = input$indiv.names, 
+    req(classSelection$data)
+    title = colnames(classSelection$data)[1]
+    plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
               repSpace = rep.space(), legendPosition = "bottom")
   }
   
@@ -274,7 +320,9 @@ generate_spls_plots <- function(ns, input, output, selection, result, resultTune
   
   plot.arrow <- function(){
     if(splsGetNcomp(input) >= 2){
-      plotArrow(result(), input$namesArrow)
+      req(classSelection$data)
+      title = colnames(classSelection$data)[1]
+      plotArrow(result(), classSelection$data[,1], title, input$namesArrow)
     }
   }
   
@@ -328,7 +376,9 @@ generate_spls_plots <- function(ns, input, output, selection, result, resultTune
   selVarTable.tuned <- reactive({
     if (!is.null(resultTuned())){
       req(input$sel.var.comp.tuned)
-      selectVar(resultTuned(), as.numeric(input$sel.var.comp.tuned), XY = TRUE)
+      req(classSelection$data)
+      title = colnames(classSelection$data)[1]
+      selectVar(resultTuned(), classSelection$data[,1], title, as.numeric(input$sel.var.comp.tuned), XY = TRUE)
     }
   })
   

@@ -19,7 +19,7 @@ getDataset <- function(selection){
 #' @return named list
 #'
 #' @noRd
-generateDatasetChoices <- function(data){
+generateChoices <- function(data){
   choices = list()
   if (length(data) > 0){
     for (i in 1:length(data)){
@@ -138,10 +138,10 @@ getCompImgReactive <- function(input, tuned = FALSE){
 #' @return sample plot
 #'
 #' @noRd
-plotIndiv <- function(result, comp, repSpace = NULL, indNames, legendPosition = "right") {
+plotIndiv <- function(result, classes, title, comp, repSpace = NULL, indNames, legendPosition = "right") {
   mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
-                      group = sampleClasses, ind.names = indNames,
-                      legend = TRUE, legend.title = classesLabel,
+                      group = classes, ind.names = indNames,
+                      legend = TRUE, legend.title = title,
                       legend.position = legendPosition)
 }
 
@@ -200,9 +200,9 @@ selectVar <- function(result, comp, XY = FALSE) {
 #' @return arrow plot
 #'
 #' @noRd
-plotArrow <- function(result, indNames) {
-  mixOmics::plotArrow(result, group = sampleClasses, ind.names = indNames,
-                      legend = TRUE, legend.title = classesLabel, legend.position = "bottom",
+plotArrow <- function(result, classes, title, indNames) {
+  mixOmics::plotArrow(result, group = classes, ind.names = indNames,
+                      legend = TRUE, legend.title = title, legend.position = "bottom",
                       X.label = "Dimension 1", Y.label = "Dimension 2")
 }
 
@@ -227,5 +227,29 @@ getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800,
         }
       }
     )
+  )
+}
+
+#' @description A utils function that returns the error
+#' message according to the missing data
+#'
+#' @return string
+#'
+#' @noRd
+checkMissingData <- function(data, classes){
+  if(length(data) == 0){
+    return(list(check = TRUE,
+                msg = "Please upload some data to be able to use the analysis!"))
+  } else if(length(classes) == 0){
+    return(list(check = TRUE,
+                msg = "Please upload some classes/label information to be able to use the analysis!"))
+  } else {
+    return(list(check = FALSE,
+                msg = "" ))
+  }
+}
+
+checkClassDataCompatibility <- function(class, data){
+  return (
   )
 }

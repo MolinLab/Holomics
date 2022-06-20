@@ -3,7 +3,7 @@
 #' @return dataframe with the data
 #'
 #' @noRd
-getDatasetComponent <- function(id, label, choices, selected = NULL, multiple = FALSE, width = NULL){
+getSelectionComponent <- function(id, label, choices, selected = NULL, multiple = FALSE, width = NULL){
   return(
     selectInput(id, label,
                 choices = choices, multiple = multiple, 

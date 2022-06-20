@@ -1,4 +1,4 @@
-#DIABLO-dataSelection\.error{
+div[id*='errorMsg']{
   display: flex;
   align-items: center;
   color: red;

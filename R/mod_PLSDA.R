@@ -42,13 +42,13 @@ mod_PLSDA_ui <- function(id){
 #' PLSDA Server Functions
 #'
 #' @noRd 
-mod_PLSDA_server <- function(id, dataset){
+mod_PLSDA_server <- function(id, dataset, classes){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
     render_plsda_ui_components(ns, input, output, dataset)
     
-    generate_plsda_plots(ns, input, output, dataset)
+    generate_plsda_plots(ns, input, output, dataset, classes)
     
   })
 }
@@ -65,20 +65,25 @@ render_plsda_ui_components <- function(ns, input, output, dataset){
 }
 
 #' Business logic functions
-generate_plsda_plots <- function(ns, input, output, dataset){
+generate_plsda_plots <- function(ns, input, output, dataset, classes){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
   
   #' run analysis
   result <- reactive({
-    result <- mixOmics::plsda(dataset$data, Y = sampleClasses,
+    req(dataset$data)
+    req(classes$data)
+    req(nrow(classes$data) == nrow(dataset$data))
+    result <- mixOmics::plsda(dataset$data, Y = classes$data[,1],
                                     ncomp = input$ncomp , scale = input$scale)
   })
   
   #' plot functions
   plot.indiv <- function(){
-    plotIndiv(result(), comp.indiv(), indNames = input$indiv.names)
+    req(classes$data)
+    title = colnames(classes$data)[1]
+    plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
   }
   
   plot.var <- function(){

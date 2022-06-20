@@ -33,13 +33,13 @@ mod_PCA_ui <- function(id){
 #' PCA Server Functions
 #'
 #' @noRd 
-mod_PCA_server <- function(id, dataset){
-  moduleServer( id, function(input, output, session){
+mod_PCA_server <- function(id, dataset, classes){
+  moduleServer(id, function(input, output, session){
     ns <- session$ns
     
     render_pca_ui_components(ns, input, output, dataset)
     
-    generate_pca_plots(ns, input, output, dataset)
+    generate_pca_plots(ns, input, output, dataset, classes)
     
   })
 }
@@ -57,15 +57,17 @@ render_pca_ui_components <- function(ns, input, output, dataset){
 }
 
 #' Business logic functions
-generate_pca_plots <- function(ns, input, output, dataset){
+generate_pca_plots <- function(ns, input, output, dataset, classes){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
   
   #' run analysis
   result <- reactive({
+    req(dataset$data)
+    req(nrow(classes$data) == nrow(dataset$data))
     result <- mixOmics::pca(dataset$data, ncomp = input$ncomp,
-                            scale = input$scale)
+                          scale = input$scale)
   })
   
   #' plot functions
@@ -74,7 +76,9 @@ generate_pca_plots <- function(ns, input, output, dataset){
   }
   
   plot.indiv <- function(){
-    plotIndiv(result(), comp.indiv(), indNames = input$indiv.names)
+    req(classes$data)
+    title = colnames(classes$data)[1]
+    plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
   }
   
   plot.var <- function(){

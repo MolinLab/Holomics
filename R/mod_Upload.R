@@ -121,7 +121,7 @@ mod_Upload_server <- function(id, data, classes){
           data$data[[name]] = NULL
         }
         
-        tables$data <- removeRowsFromMatrix(tables$data, selRows)
+        tables$data <- removeRowsFromMatrix(tables$data, selRows, initDataMatrix)
       }
     })
     
@@ -166,7 +166,7 @@ mod_Upload_server <- function(id, data, classes){
           classes$data[[name]] = NULL
         }
         
-        tables$classes <- removeRowsFromMatrix(tables$classes, selRows)
+        tables$classes <- removeRowsFromMatrix(tables$classes, selRows, initClassMatrix)
       }
     })
     

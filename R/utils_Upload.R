@@ -209,9 +209,9 @@ filterByMAD <- function(data){
 #' @return filtered data
 #' 
 #' @noRd
-removeRowsFromMatrix <- function(matrix, rows){
+removeRowsFromMatrix <- function(matrix, rows, initFct){
   if (length(rows) == nrow(matrix)){
-    matrix <- initClassMatrix()
+    matrix <- initFct()
   } else {
     newMatrix <- as.matrix(matrix[-rows,])
     

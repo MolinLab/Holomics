@@ -68,7 +68,6 @@ diabloGetNcomp <- function(input, tuned, tunedVals){
   return (ifelse(tuned, tunedVals$ncomp, input$ncomp))
 }
 
-
 #' @description A utils function, which checks if the datasets variable
 #' contains at least two datasets
 #'
@@ -113,6 +112,22 @@ diabloCheckNcomp <- function(input, tuned, tunedVals){
   } else {
     return("")
   }
+}
+
+#' @description A utils function that checks if 
+#' the selected data and class are compatible
+#'
+#' @return boolean
+#'  
+#' @noRd
+diabloCheckValidSelection <- function(data, class){
+  valid = TRUE
+  for (name in names(data)) {
+    if (length(data[[name]]) != 0 && nrow(class) != nrow(data[[name]])){
+      valid = FALSE
+    }
+  }
+  return(valid)
 }
 
 #' @description A utils function, which generates the visNetwork
