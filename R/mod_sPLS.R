@@ -174,7 +174,7 @@ tune_values <- function(dataSelection, result, tunedVals){
     
     #tune keepX
     set.seed(30)
-    list_keepX <- c(2:10, 15, 20)
+    list_keepX <- getTextKeepX(ncol(X))
     BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
     tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
                                   validation = "Mfold",
@@ -187,7 +187,7 @@ tune_values <- function(dataSelection, result, tunedVals){
     
     #tune keepY
     set.seed(30)
-    list_keepY <- c(2:10, 15, 20)
+    list_keepY <- getTextKeepX(ncol(Y))
     tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
                                   validation = "Mfold",
                                   test.keepY = list_keepY, 
