@@ -1,3 +1,5 @@
+library(shinyvalidate)
+
 #' upload UI Function
 #'
 #' @description A shiny Module.
@@ -32,13 +34,26 @@ mod_Upload_server <- function(id, data, classes){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
+    #Validators
+    ivData <- initDataValidator(session, data)
+    ivClass <- initClassValidator(session, classes)
+    
+    #tables showing the uploaded data
     tables <- reactiveValues(data = initDataMatrix(), classes = initClassMatrix())
     output$dataTable <- DT::renderDataTable({
-      DT::datatable(tables$data, options = list(dom = "tp", pageLength = 5))
+      DT::datatable(tables$data, options = list(dom = "tp", pageLength = 5, 
+                                                columnDefs = list(list(className = 'dt-body-right', targets = 2:4),
+                                                                  list(className = 'dt-body-center', targets = 0:1),
+                                                                  list(className = 'dt-center', targets = "_all"))
+                                                ))
     })
     
     output$classTable <- DT::renderDataTable({
-      DT::datatable(tables$classes, options = list(dom = "tp", pageLength = 5))
+      DT::datatable(tables$classes, options = list(dom = "tp", pageLength = 5, 
+                                                   columnDefs = list(list(className = 'dt-body-right', targets = 2:3),
+                                                                     list(className = 'dt-body-center', targets = 0:1),
+                                                                     list(className = 'dt-center', targets = "_all"))
+                                                   ))
     })
 
     #switch between data and classes form
@@ -73,38 +88,40 @@ mod_Upload_server <- function(id, data, classes){
     
     #data
     observeEvent(input$saveData, {
-      checkResult = checkFormInput(data$data, input$dataFile, input$dataName)
-      if (checkResult$valid){
-        df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE))
+      ivData$enable() #check input with validator
+      req(ivData$is_valid())
+      
+      df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE))
+      
+      if (ncol(df_data) == 0 || nrow(df_data) == 0){
+        shinyalert::shinyalert("Error!", "The input needs to have at least one row and one column!", type = "error")
+      # } else if(sum(duplicated(df_data[,1])) != 0){ #there are no duplicates in the first column
+      #   shinyalert::shinyalert("Error!", "The sample names cannot contain duplicates!", type = "error")
+      # } else {
+      }else{
+        rownames(df_data) <- df_data[,1]   #all rows, first column
+        df_data <- df_data[,-1]
         
-        if (ncol(df_data) == 0 || nrow(df_data) == 0){
-          shinyalert::shinyalert("Error!", "The input needs to have at least one row and one column!", type = "error")
-        } else {
-          rownames(df_data) <- df_data[,1]   #all rows, first column
-          df_data <- df_data[,-1]
-          
-          if(input$inverted){ #check for inverted file format
-            df_data <- t(df_data)
-          }
-          
-          if(input$isMicrobiome){ #check for microbiome data
-            df_data <- performMixMC(df_data)
-          }
-          
-          if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
-            df_data  <- filterByMAD(df_data)
-          }
-          
-          #save data and write to table
-          data$data[[input$dataName]] <- df_data
-          tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data), input$isMicrobiome))
-          
-          #reset UI
-          resetDataUI(session, output)
+        if(input$inverted){ #check for inverted file format
+          df_data <- t(df_data)
         }
         
-      } else {
-        shinyalert::shinyalert("Error!", checkResult$message, type = "error")
+        if(input$isMicrobiome){ #check for microbiome data
+          df_data <- performMixMC(df_data)
+        }
+        
+        if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
+          df_data  <- filterByMAD(df_data)
+        }
+        
+        #save data and write to table
+        data$data[[input$dataName]] <- df_data
+        tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data), input$isMicrobiome))
+        
+        #reset UI
+        resetDataUI(session, output)
+        ivData$disable()
+        ivData <- initDataValidator(session, data)
       }
     })
     
@@ -128,28 +145,28 @@ mod_Upload_server <- function(id, data, classes){
     
     #classes
     observeEvent(input$saveClass, {
-      checkResult = checkFormInput(classes$data, input$classFile, input$className)
-      if (checkResult$valid){
-        df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE))
-        
-        if(nrow(df_classes) == 0){
-          shinyalert::shinyalert("Error!", "The input needs to have at least one row!", type = "error")
-        } else if(input$colorCode && ncol(df_classes) != 2){
-          shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly two columns! 
-                                 One with the labels and the second with the color codes.", type = "error")
-        } else if (!input$colorCode && ncol(df_classes) != 1){
-          shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly one column with the labels!", 
-                                 type = "error")
-        } else {
-          #save classes and update table
-          classes$data[[input$className]] <- df_classes
-          tables$classes <- rbind(tables$classes, c(input$className, input$classFile$name, nrow(df_classes), input$colorCode))
-          
-          #reset UI
-          resetClassUI(session, output)
-        }
+      ivClass$enable() #check input with validator
+      req(ivClass$is_valid())
+      
+      df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE))
+      
+      if(nrow(df_classes) == 0){
+        shinyalert::shinyalert("Error!", "The input needs to have at least one row!", type = "error")
+      } else if(input$colorCode && ncol(df_classes) != 2){
+        shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly two columns! 
+                               One with the labels and the second with the color codes.", type = "error")
+      } else if (!input$colorCode && ncol(df_classes) != 1){
+        shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly one column with the labels!", 
+                               type = "error")
       } else {
-        shinyalert::shinyalert("Error!", checkResult$message, type = "error")
+        #save classes and update table
+        classes$data[[input$className]] <- df_classes
+        tables$classes <- rbind(tables$classes, c(input$className, input$classFile$name, nrow(df_classes), input$colorCode))
+        
+        #reset UI
+        resetClassUI(session, output)
+        ivClass$disable()
+        ivClass <- initClassValidator(session, classes)
       }
     })
     
@@ -169,6 +186,5 @@ mod_Upload_server <- function(id, data, classes){
         tables$classes <- removeRowsFromMatrix(tables$classes, selRows, initClassMatrix)
       }
     })
-    
   })
 }

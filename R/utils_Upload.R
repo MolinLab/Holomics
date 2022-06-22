@@ -99,30 +99,42 @@ getClassTable <- function(ns){
   )
 }
 
-#' @description A utils function that checks if the form inputs are valid
+#' @description A utils function that generates the input validator 
+#' for the data fields
 #'
-#' @return list containing a value that encapsulates if the form is valid
-#' and a second value with the error message
+#' @return input validator
 #'
 #' @noRd
-checkFormInput <- function(data, newFile, newName){
-  message = NULL
-  valid = TRUE
-  if (is.null(newFile)){
-    message = "You need to upload a xlsx file!"
-    valid = FALSE
-  } else if (newName == ""){
-    message = "You need to enter a name!"
-    valid = FALSE
-  } else if(grepl('[^[:alnum:]]', newName)){
-    message = "Please only use characters and digits for the name. No special characters!"
-    valid = FALSE
-  } else if (newName %in% names(data)){
-    message = "This name is already in use!"
-    valid = FALSE
-  }
-  
-  return (list(valid = valid, message = message))
+initDataValidator <- function(session, data){
+  iv <- InputValidator$new(session = session)
+  iv$add_rule("dataFile", sv_required(message = "You need to upload a xlsx file!"))
+  iv$add_rule("dataName", sv_required(message = "You need to enter a name!"))
+  iv$add_rule("dataName", sv_regex("^[a-zA-Z0-9]*$", "Please only use characters and digits for the name. No special characters!"))
+  iv$add_rule("dataName", function(value){
+    if(value %in% names(data$data)){
+      "This name is already in use!"
+    }
+  })
+  return (iv)
+}
+
+#' @description A utils function that generates the input validator 
+#' for the class fields
+#'
+#' @return input validator
+#'
+#' @noRd
+initClassValidator <- function(session, data){
+  iv <- InputValidator$new(session = session)
+  iv$add_rule("classFile", sv_required(message = "You need to upload a xlsx file!"))
+  iv$add_rule("className", sv_required(message = "You need to enter a name!"))
+  iv$add_rule("className", sv_regex("^[a-zA-Z0-9]*$", "Please only use characters and digits for the name. No special characters!"))
+  iv$add_rule("className", function(value){
+    if(value %in% names(data$data)){
+      "This name is already in use!"
+    }
+  })
+  return (iv)
 }
 
 #' @description A utils function initialises the matrix for the table containing

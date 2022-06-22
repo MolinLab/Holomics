@@ -138,11 +138,19 @@ getCompImgReactive <- function(input, tuned = FALSE){
 #' @return sample plot
 #'
 #' @noRd
-plotIndiv <- function(result, classes, title, comp, repSpace = NULL, indNames, legendPosition = "right") {
-  mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
-                      group = classes, ind.names = indNames,
-                      legend = TRUE, legend.title = title,
-                      legend.position = legendPosition)
+plotIndiv <- function(result, classes, title, comp, repSpace = NULL, indNames, col.per.group, legendPosition = "right") {
+  if (missing(col.per.group)){
+    mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
+                        group = classes, ind.names = indNames,
+                        legend = TRUE, legend.title = title,
+                        legend.position = legendPosition)
+  } else {
+    mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
+                        group = classes, ind.names = indNames,
+                        legend = TRUE, legend.title = title,
+                        legend.position = legendPosition, col.per.group = col.per.group)
+  }
+
 }
 
 #' @description adapter for the plotVar function of
@@ -200,10 +208,16 @@ selectVar <- function(result, comp, XY = FALSE) {
 #' @return arrow plot
 #'
 #' @noRd
-plotArrow <- function(result, classes, title, indNames) {
-  mixOmics::plotArrow(result, group = classes, ind.names = indNames,
-                      legend = TRUE, legend.title = title, legend.position = "bottom",
-                      X.label = "Dimension 1", Y.label = "Dimension 2")
+plotArrow <- function(result, classes, title, indNames, col.per.group) {
+  if (missing(col.per.group)){
+    mixOmics::plotArrow(result, group = classes, ind.names = indNames,
+                        legend = TRUE, legend.title = title, legend.position = "bottom",
+                        X.label = "Dimension 1", Y.label = "Dimension 2")
+  } else {
+    mixOmics::plotArrow(result, group = classes, ind.names = indNames,
+                        legend = TRUE, legend.title = title, legend.position = "bottom",
+                        X.label = "Dimension 1", Y.label = "Dimension 2", col.per.group = col.per.group)
+  }
 }
 
 #' @description A utils function, generates the download handler for either png
@@ -249,7 +263,17 @@ checkMissingData <- function(data, classes){
   }
 }
 
-checkClassDataCompatibility <- function(class, data){
-  return (
-  )
+#' @description A utils function the set colors of the group
+#'
+#' @return array with color codes
+#'
+#' @noRd
+getGroupColors <- function(data){
+  match <- match(unique(data[,1]), data[,1])
+  
+  colors <- c()
+  for (i in match){
+    colors <- c(colors, data[,2][i])
+  }
+  return (colors)
 }

@@ -2,8 +2,8 @@ Package: Holomics
 Title: An Amazing Shiny App
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Patrick",
-           family = "Woryna",
+    person(given = "Katharina",
+           family = "Munk",
            role = c("aut", "cre"),
            email = "patrick.woryna@gmail.com")
 Description: Shiny app for the integration of plant metagenomic, metabolomic and transcriptomic data.
@@ -27,7 +27,8 @@ Imports:
     rlang,
     shinyWidgets,
     shinyjs,
-    shinyalert
+    shinyalert,
+    shinyvalidate
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2

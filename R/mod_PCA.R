@@ -78,7 +78,12 @@ generate_pca_plots <- function(ns, input, output, dataset, classes){
   plot.indiv <- function(){
     req(classes$data)
     title = colnames(classes$data)[1]
-    plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
+    if (ncol(classes$data) == 2){
+      colors = getGroupColors(classes$data)
+      plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+    } else {
+      plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
+    }
   }
   
   plot.var <- function(){

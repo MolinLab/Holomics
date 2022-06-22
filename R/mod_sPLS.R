@@ -300,8 +300,14 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.indiv <- function(){
     req(classSelection$data)
     title = colnames(classSelection$data)[1]
-    plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
-              repSpace = rep.space(), legendPosition = "bottom")
+    if (ncol(classSelection$data) == 2){
+      colors = getGroupColors(classSelection$data)
+      plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
+                repSpace = rep.space(), legendPosition = "bottom", col.per.group = colors)
+    } else {
+      plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
+                repSpace = rep.space(), legendPosition = "bottom")    
+    }
   }
   
   plot.var <- function(){
@@ -322,7 +328,12 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     if(splsGetNcomp(input) >= 2){
       req(classSelection$data)
       title = colnames(classSelection$data)[1]
-      plotArrow(result(), classSelection$data[,1], title, input$namesArrow)
+      if (ncol(classSelection$data) == 2){
+        colors = getGroupColors(classSelection$data)
+        plotArrow(result(), classSelection$data[,1], title, input$namesArrow, col.per.group = colors)
+      } else {
+        plotArrow(result(), classSelection$data[,1], title, input$namesArrow)
+      }
     }
   }
   
@@ -369,7 +380,14 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   plot.arrow.tuned <- function(){
     if(!is.null(resultTuned()) & splsGetNcomp(input, tuned = TRUE, tunedVals) >= 2){
-      plotArrow(resultTuned(), input$namesArrow.tuned)
+      req(classSelection$data)
+      title = colnames(classSelection$data)[1]
+      if (ncol(classSelection$data) == 2){
+        colors = getGroupColors(classSelection$data)
+        plotArrow(resultTuned(), classSelection$data[,1], title, input$namesArrow.tuned, col.per.group = colors)
+      } else {
+        plotArrow(resultTuned(), classSelection$data[,1], title, input$namesArrow.tuned)
+      }
     }
   }
   
