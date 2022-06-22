@@ -215,7 +215,7 @@ tune_diablo_values <- function(dataset, result, tunedVals){
       #tune keepX
       test.keepX = dataset$data
       for (i in 1 : length(names(dataset$data))){
-        test.keepX[[i]] = c(5:9, seq(10, 18, 2), seq(20,30,5))
+        test.keepX[[i]] = getTextKeepX(ncol(dataset$data[[i]]))
       }
       
       set.seed(30)
