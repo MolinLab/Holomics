@@ -108,11 +108,11 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
 
   #' Observe change of data selection
   observeEvent(input$dataSelection1, {
-    dataSelection$data1 <- data$data[[input$dataSelection1]]
+    dataSelection$data1 <- data$data[[input$dataSelection1]]$filtered
   })
   
   observeEvent(input$dataSelection2, {
-    dataSelection$data2 <- data$data[[input$dataSelection2]]
+    dataSelection$data2 <- data$data[[input$dataSelection2]]$filtered
   })
   
   #' Observe change of class selection

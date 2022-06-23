@@ -176,9 +176,15 @@ plotVar <- function(result, comp, varNames, legend = FALSE, pch) {
 #' @return loadings plot
 #'
 #' @noRd
-plotLoadings <- function(result, comp, contrib = NULL, method = "mean") {
-  mixOmics::plotLoadings(result, comp = comp,
-                         contrib = contrib, method = method)
+plotLoadings <- function(result, comp, contrib = NULL, method = "mean", legend.color) {
+  if (missing(legend.color)){
+    mixOmics::plotLoadings(result, comp = comp,
+                           contrib = contrib, method = method)
+  } else {
+    mixOmics::plotLoadings(result, comp = comp,
+                           contrib = contrib, method = method, legend.color = legend.color)
+  }
+
 }
 
 #' @description adapter for the selectVar function of
@@ -238,6 +244,9 @@ getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800,
           dev.off()
         }else if (type == "csv"){
           write.csv2(contentfct(), file)
+        } else if (type == "xlsx"){
+          df <- contentfct()
+          openxlsx::write.xlsx(df, file, rowNames = TRUE, colNames = TRUE)
         }
       }
     )

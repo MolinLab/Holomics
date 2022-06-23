@@ -64,9 +64,9 @@ generate_pca_plots <- function(ns, input, output, dataset, classes){
   
   #' run analysis
   result <- reactive({
-    req(dataset$data)
-    req(nrow(classes$data) == nrow(dataset$data))
-    result <- mixOmics::pca(dataset$data, ncomp = input$ncomp,
+    req(dataset$data$filtered)
+    req(nrow(classes$data) == nrow(dataset$data$filtered))
+    result <- mixOmics::pca(dataset$data$filtered, ncomp = input$ncomp,
                           scale = input$scale)
   })
   

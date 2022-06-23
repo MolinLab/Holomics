@@ -124,7 +124,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   observeEvent(input$dataSelection, {
     list <- list()
     for (s in strsplit(input$dataSelection, " ")){
-      list[[s]] <- data$data[[s]]
+      list[[s]] <- data$data[[s]]$filtered
     }
     dataSelection$data <- list
   })

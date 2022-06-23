@@ -71,7 +71,7 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
       output$errorMsg <- renderText({
         dataCheck = checkMissingData(data$data, classes$data)
         class <- classSelection$data
-        data <- dataSelection$data
+        data <- dataSelection$data$filtered
         
         if (dataCheck$check){
           dataCheck$msg

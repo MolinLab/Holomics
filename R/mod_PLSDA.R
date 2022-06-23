@@ -30,6 +30,7 @@ mod_PLSDA_ui <- function(id){
                              fluidRow(
                                bs4Dash::column(width = 12,
                                                plotOutput(ns("Load")),
+                                               downloadButton(ns("Filter.download"), "Filter by loadings"),
                                                downloadButton(ns("Load.download"), "Save plot"))
                              )
                     ),
@@ -72,10 +73,10 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes){
   
   #' run analysis
   result <- reactive({
-    req(dataset$data)
+    req(dataset$data$filtered)
     req(classes$data)
-    req(nrow(classes$data) == nrow(dataset$data))
-    result <- mixOmics::plsda(dataset$data, Y = classes$data[,1],
+    req(nrow(classes$data) == nrow(dataset$data$filtered))
+    result <- mixOmics::plsda(dataset$data$filtered, Y = classes$data[,1],
                                     ncomp = input$ncomp , scale = input$scale)
   })
   
@@ -97,8 +98,14 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes){
   
   plot.load <- function(){
     req(input$load.comp)
-    plotLoadings(result(), as.numeric(input$load.comp),
-                 contrib = input$load.cont, method = input$load.method)
+    if (ncol(classes$data) == 2){
+      colors = getGroupColors(classes$data)
+      plotLoadings(result(), as.numeric(input$load.comp),
+                   contrib = input$load.cont, method = input$load.method, legend.color = colors)
+    } else {
+      plotLoadings(result(), as.numeric(input$load.comp),
+                   contrib = input$load.cont, method = input$load.method)    
+    }
   }
   
   table.selVar <- function(){
@@ -126,10 +133,48 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes){
     table.selVar()
   )
   
+  # observeEvent(input$Filter.download, {
+  #   filterByLoadings()
+  # })
+  
+  #' Filter function
+  filterByLoadings <- function(){
+    req(dataset$data$filtered)
+    req(classes$data)
+    
+    Y <- classes$data[,1]
+    
+    result <- mixOmics::plsda(dataset$data$filtered, Y = Y,
+                              ncomp = input$ncomp , scale = input$scale)
+    grid.keepX <- getTextKeepX(ncol(dataset$data$filtered))
+    set.seed(30)
+    tune.splsda.result <- mixOmics::tune.splsda(dataset$data$filtered,Y = Y, ncomp = input$ncomp,
+                                      test.keepX = grid.keepX, scale = input$scale,
+                                      validation = c('Mfold'),
+                                      folds = min(table(Y)),
+                                      dist = 'max.dist',
+                                      nrepeat = 50,
+                                      progressBar = TRUE)
+    ncomp <- tune.splsda.result$choice.ncomp$ncomp
+    keepX <- tune.splsda.result$choice.keepX[1:ncomp]
+
+    splsda.result <- mixOmics::splsda(dataset$data$filtered, Y = Y, ncomp = ncomp, keepX = keepX, scale = input$scale)
+
+    sel_feature <- c()
+    for (comp in 1:ncomp){
+      loadings <- mixOmics::plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
+      sel_feature <- c(sel_feature, rownames(loadings))
+    }
+    
+    feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
+    result <- dataset$data$unfiltered[, feature_cols]
+    return(result)
+  }
   
   #' Download handler
   output$Indiv.download <- getDownloadHandler("PLS-DA_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS-DA_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedVariables.csv", table.selVar, type = "csv")
+  output$Filter.download <- getDownloadHandler("Filtered.xlsx", filterByLoadings, type = "xlsx")
 }
