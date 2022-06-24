@@ -95,9 +95,8 @@ mod_Upload_server <- function(id, data, classes){
       
       if (ncol(df_data) == 0 || nrow(df_data) == 0){
         shinyalert::shinyalert("Error!", "The input needs to have at least one row and one column!", type = "error")
-      # } else if(sum(duplicated(df_data[,1])) != 0){ #there are no duplicates in the first column
-      #   shinyalert::shinyalert("Error!", "The sample names cannot contain duplicates!", type = "error")
-      # } else {
+      } else if(sum(duplicated(df_data[,1])) != 0){ #there should not be duplicates in the first column
+        shinyalert::shinyalert("Error!", "The sample names cannot contain duplicates!", type = "error")
       }else{
         rownames(df_data) <- df_data[,1]   #all rows, first column
         df_data <- df_data[,-1]
