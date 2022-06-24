@@ -43,13 +43,13 @@ mod_PLSDA_ui <- function(id){
 #' PLSDA Server Functions
 #'
 #' @noRd 
-mod_PLSDA_server <- function(id, dataset, classes){
+mod_PLSDA_server <- function(id, dataset, classes, multiDataset){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
     render_plsda_ui_components(ns, input, output, dataset)
     
-    generate_plsda_plots(ns, input, output, dataset, classes)
+    generate_plsda_plots(ns, input, output, dataset, classes, multiDataset)
     
   })
 }
@@ -66,7 +66,7 @@ render_plsda_ui_components <- function(ns, input, output, dataset){
 }
 
 #' Business logic functions
-generate_plsda_plots <- function(ns, input, output, dataset, classes){
+generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDataset){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
@@ -133,10 +133,6 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes){
     table.selVar()
   )
   
-  # observeEvent(input$Filter.download, {
-  #   filterByLoadings()
-  # })
-  
   #' Filter function
   filterByLoadings <- function(){
     req(dataset$data$filtered)
@@ -168,6 +164,8 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes){
     
     feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
     result <- dataset$data$unfiltered[, feature_cols]
+    multiDataset$data[[paste0(dataset$name, "_small")]] <- list(filtered = result, unfiltered = result)
+    
     return(result)
   }
   
@@ -176,5 +174,5 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes){
   output$Var.download <- getDownloadHandler("PLS-DA_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedVariables.csv", table.selVar, type = "csv")
-  output$Filter.download <- getDownloadHandler("Filtered.xlsx", filterByLoadings, type = "xlsx")
+  output$Filter.download <- getDownloadHandler(paste0(dataset$name, "_small.xlsx"), filterByLoadings, type = "xlsx")
 }

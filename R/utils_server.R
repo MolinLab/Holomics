@@ -184,7 +184,7 @@ plotLoadings <- function(result, comp, contrib = NULL, method = "mean", legend.c
     mixOmics::plotLoadings(result, comp = comp,
                            contrib = contrib, method = method, legend.color = legend.color)
   }
-
+  
 }
 
 #' @description adapter for the selectVar function of

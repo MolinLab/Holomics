@@ -48,6 +48,7 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
   
     observeEvent(input$dataSelection, {
       dataSelection$data <- data$data[[input$dataSelection]]
+      dataSelection$name <- input$dataSelection
     })
     
     observeEvent(classes$data, {

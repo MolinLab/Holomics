@@ -30,26 +30,26 @@ mod_Upload_ui <- function(id){
 #' upload Server Functions
 #'
 #' @noRd 
-mod_Upload_server <- function(id, data, classes){
+mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiClasses){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
     #Validators
-    ivData <- initDataValidator(session, data)
-    ivClass <- initClassValidator(session, classes)
+    ivData <- initDataValidator(session, c(names(singleData$data), names(multiData$data)))
+    ivClass <- initClassValidator(session, c(names(singleClasses$data), names(multiClasses$data)))
     
-    #tables showing the uploaded data
+    # tables showing the uploaded data
     tables <- reactiveValues(data = initDataMatrix(), classes = initClassMatrix())
     output$dataTable <- DT::renderDataTable({
-      DT::datatable(tables$data, options = list(dom = "tp", pageLength = 5, 
+      DT::datatable(tables$data, options = list(dom = "tp", pageLength = 5,
                                                 columnDefs = list(list(className = 'dt-body-right', targets = 2:4),
                                                                   list(className = 'dt-body-center', targets = 0:1),
                                                                   list(className = 'dt-center', targets = "_all"))
                                                 ))
     })
-    
+
     output$classTable <- DT::renderDataTable({
-      DT::datatable(tables$classes, options = list(dom = "tp", pageLength = 5, 
+      DT::datatable(tables$classes, options = list(dom = "tp", pageLength = 5,
                                                    columnDefs = list(list(className = 'dt-body-right', targets = 2:3),
                                                                      list(className = 'dt-body-center', targets = 0:1),
                                                                      list(className = 'dt-center', targets = "_all"))
@@ -116,27 +116,38 @@ mod_Upload_server <- function(id, data, classes){
         }
         
         #save data and write to table
-        data$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+        if (!is.null(singleData)){
+          singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+        }
+        
+        if (!is.null(multiData)){
+          multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+        }
+        
         tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data), input$isMicrobiome))
         
         #reset UI
         resetDataUI(session, output)
         ivData$disable()
-        ivData <- initDataValidator(session, data)
+        ivData <- initDataValidator(session, c(names(singleData$data), names(multiData$data)))
       }
     })
     
+    #' Delete all uploaded omics data
     observeEvent(input$deleteAllData, {
-      data$data <- list()
+      singleData$data <- list()
+      multiData$data <- list()
       tables$data <- initDataMatrix()
     })
     
+    #' Delete selected omics data
     observeEvent(input$deleteSelectedData, {
       if(!is.null(input$dataTable_rows_selected)){
         selRows = as.numeric(input$dataTable_rows_selected)
         for (row in selRows){
           name = tables$data[row]
-          data$data[[name]] = NULL
+          singleData$data[[name]] = NULL
+          multiData$data[[name]] = NULL
         }
         
         tables$data <- removeRowsFromMatrix(tables$data, selRows, initDataMatrix)
@@ -161,18 +172,27 @@ mod_Upload_server <- function(id, data, classes){
                                type = "error")
       } else {
         #save classes and update table
-        classes$data[[input$className]] <- df_classes
+        if(!is.null(singleClasses)){
+          singleClasses$data[[input$className]] <- df_classes
+        }
+        
+        if(!is.null(multiClasses)){
+          multiClasses$data[[input$className]] <- df_classes
+        }
+        
         tables$classes <- rbind(tables$classes, c(input$className, input$classFile$name, nrow(df_classes), input$colorCode))
         
         #reset UI
         resetClassUI(session, output)
         ivClass$disable()
-        ivClass <- initClassValidator(session, classes)
+        ivClass <- initClassValidator(session, c(names(singleClasses$data), names(multiClasses$data)))
       }
     })
     
+    #' Delete all uploaded classes/labels
     observeEvent(input$deleteAllClass, {
-      classes$data <- list()
+      singleClasses$data <- list()
+      multiClasses$data <- list()
       tables$classes <- initClassMatrix()
     })
     
@@ -181,7 +201,8 @@ mod_Upload_server <- function(id, data, classes){
         selRows = as.numeric(input$classTable_rows_selected)
         for (row in selRows){
           name = tables$classes[row]
-          classes$data[[name]] = NULL
+          singleClasses$data[[name]] = NULL
+          multiClasses$data[[name]] = NULL
         }
         
         tables$classes <- removeRowsFromMatrix(tables$classes, selRows, initClassMatrix)
