@@ -143,7 +143,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       Y <- classes$data[,1]
       result <- mixOmics::plsda(dataset$data$filtered, Y = Y,
                                 ncomp = input$ncomp , scale = input$scale)
-      grid.keepX <- getTextKeepX(ncol(dataset$data$filtered))
+      grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
       set.seed(30)
       tune.splsda.result <- mixOmics::tune.splsda(dataset$data$filtered,Y = Y, ncomp = input$ncomp,
                                         test.keepX = grid.keepX, scale = input$scale,

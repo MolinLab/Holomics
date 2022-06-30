@@ -104,6 +104,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         
         if(input$inverted){ #check for inverted file format
           df_data <- t(df_data)
+          unfiltered_data <- df_data
         }
         
         if(input$isMicrobiome){ #check for microbiome data
@@ -112,7 +113,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         
         if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
           df_data  <- filterByMAD(df_data)
-          unfiltered_data <- filterByMAD(unfiltered_data)  #also the unfiltered data can only contain 10.000 features
+          unfiltered_data <- df_data  #also the unfiltered data can only contain 10.000 features
         }
         
         #save data and write to table

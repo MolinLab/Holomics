@@ -295,7 +295,7 @@ getGroupColors <- function(data){
 #' @return array 
 #'
 #' @noRd
-getTextKeepX <- function(max){
+getTestKeepX <- function(max){
   keepX <- c()
   if (max >= 50){
     max <- 50
