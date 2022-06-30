@@ -109,7 +109,7 @@ initDataValidator <- function(session, names){
   iv <- InputValidator$new(session = session)
   iv$add_rule("dataFile", sv_required(message = "You need to upload a xlsx file!"))
   iv$add_rule("dataName", sv_required(message = "You need to enter a name!"))
-  iv$add_rule("dataName", sv_regex("^[a-zA-Z0-9]*$", "Please only use characters and digits for the name. No special characters!"))
+  iv$add_rule("dataName", sv_regex("^[a-zA-Z0-9_]*$", "Please only use characters, underscore or digits for the name."))
   iv$add_rule("dataName", function(value){
     if(value %in% names){
       "This name is already in use!"
@@ -128,7 +128,7 @@ initClassValidator <- function(session, data){
   iv <- InputValidator$new(session = session)
   iv$add_rule("classFile", sv_required(message = "You need to upload a xlsx file!"))
   iv$add_rule("className", sv_required(message = "You need to enter a name!"))
-  iv$add_rule("className", sv_regex("^[a-zA-Z0-9]*$", "Please only use characters and digits for the name. No special characters!"))
+  iv$add_rule("className", sv_regex("^[a-zA-Z0-9_]*$", "Please only use characters, underscore or digits for the name."))
   iv$add_rule("className", function(value){
     if(value %in% names(data$data)){
       "This name is already in use!"
