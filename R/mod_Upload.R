@@ -86,10 +86,13 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       }
     })
     
-    #data
+    #save data
     observeEvent(input$saveData, {
       ivData$enable() #check input with validator
       req(ivData$is_valid())
+      
+      #disable button so the user cannot click it again while the following pipeling is running
+      shinyjs::disable("saveData")
       
       df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE))
       
@@ -132,6 +135,9 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         ivData$disable()
         ivData <- initDataValidator(session, c(names(singleData$data), names(multiData$data)))
       }
+
+      #enable button again
+      shinyjs::enable("saveData")      
     })
     
     #' Delete all uploaded omics data
@@ -156,10 +162,13 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     })
     
     
-    #classes
+    #save classes
     observeEvent(input$saveClass, {
       ivClass$enable() #check input with validator
       req(ivClass$is_valid())
+      
+      #disable button so the user cannot click it again while the following pipeling is running
+      shinyjs::disable("saveClass")
       
       df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE))
       
@@ -188,6 +197,9 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         ivClass$disable()
         ivClass <- initClassValidator(session, c(names(singleClasses$data), names(multiClasses$data)))
       }
+      
+      #enable button again
+      shinyjs::enable("saveClass")
     })
     
     #' Delete all uploaded classes/labels
@@ -197,6 +209,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       tables$classes <- initClassMatrix()
     })
     
+    #' Delete selected, uploaded classes/labels
     observeEvent(input$deleteSelectedClass, {
       if(!is.null(input$classTable_rows_selected)){
         selRows = as.numeric(input$classTable_rows_selected)
@@ -211,3 +224,4 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     })
   })
 }
+
