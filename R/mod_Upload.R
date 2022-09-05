@@ -96,8 +96,9 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       
       df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE))
       
-      if (ncol(df_data) == 0 || nrow(df_data) == 0){
-        shinyalert::shinyalert("Error!", "The input needs to have at least one row and one column!", type = "error")
+      #Three cols because one is the row names and at least two with variable data
+      if (ncol(df_data) < 3 || nrow(df_data) < 1){
+        shinyalert::shinyalert("Error!", "The input needs to have at least one row and three columns!", type = "error")
       } else if(sum(duplicated(df_data[,1])) != 0){ #there should not be duplicates in the first column
         shinyalert::shinyalert("Error!", "The sample names cannot contain duplicates!", type = "error")
       }else{
