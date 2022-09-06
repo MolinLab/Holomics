@@ -250,6 +250,8 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals)
 #' Run analysis
 run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   diablo.result <- reactive({
+    req(dataSelection$data)
+    req(classSelection$data)
     req(diabloCheckValidSelection(dataSelection$data, classSelection$data))
     X <- dataSelection$data
     Y <- classSelection$data[,1]  #only first column contains label information
@@ -265,6 +267,8 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
   
   diablo.result.tuned <- reactive({
     if (useTunedVals()){
+      req(dataSelection$data)
+      req(classSelection$data)
       req(diabloCheckValidSelection(dataSelection$data, classSelection$data))
       X <- dataSelection$data
       Y <- classSelection$data[,1]  #only first column contains label information

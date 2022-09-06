@@ -253,25 +253,6 @@ getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800,
   )
 }
 
-#' @description A utils function that returns the error
-#' message according to the missing data
-#'
-#' @return string
-#'
-#' @noRd
-checkMissingData <- function(data, classes){
-  if(length(data) == 0){
-    return(list(check = TRUE,
-                msg = "Please upload some data to be able to use the analysis!"))
-  } else if(length(classes) == 0){
-    return(list(check = TRUE,
-                msg = "Please upload some classes/label information to be able to use the analysis!"))
-  } else {
-    return(list(check = FALSE,
-                msg = "" ))
-  }
-}
-
 #' @description A utils function the set colors of the group
 #'
 #' @return array with color codes
