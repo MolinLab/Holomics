@@ -250,6 +250,8 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals)
 #' Run analysis
 run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   diablo.result <- reactive({
+    req(dataSelection$data)
+    req(classSelection$data)
     req(diabloCheckValidSelection(dataSelection$data, classSelection$data))
     X <- dataSelection$data
     Y <- classSelection$data[,1]  #only first column contains label information
@@ -265,6 +267,8 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
   
   diablo.result.tuned <- reactive({
     if (useTunedVals()){
+      req(dataSelection$data)
+      req(classSelection$data)
       req(diabloCheckValidSelection(dataSelection$data, classSelection$data))
       X <- dataSelection$data
       Y <- classSelection$data[,1]  #only first column contains label information
@@ -581,18 +585,21 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
 generate_diablo_error_messages <- function(input, output, data, classes, dataSelection, classSelection, tunedVals){
   # Error message when selection is incompatible or  data or classes are missing
   inputSelChange <- reactive({
-    list(data$data, classes$data, dataSelection$data, classSelection$data)
+    list(dataSelection$data, classSelection$data)
   })
   
   observeEvent(inputSelChange(), {
     output$errorMsg <- renderText({
-      dataCheck = checkMissingData(data$data, classes$data)
-      class <- classSelection$data
-      data <- dataSelection$data
-
-      if (dataCheck$check){
-        dataCheck$msg
+      if(length(data$data) == 0){
+        "Please upload some data to be able to use the analysis!"
+      } else if(length(classes$data) == 0){
+        "Please upload some classes/label information to be able to use the analysis!"
       } else {
+        class <- classSelection$data
+        data <- dataSelection$data
+  
+        req(data)
+        req(class)
         if (!diabloCheckValidSelection(data, class)){
         "The selected data and classes are incompatible due to their different amount of samples! 
             Please change your selection!"

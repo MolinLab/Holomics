@@ -65,22 +65,27 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
 
     # Error message when selection is incompatible or  data or classes are missing
     inputSelChange <- reactive({  #change of input values or selected values
-      list(data$data, classes$data, dataSelection$data, classSelection$data)
+      list(dataSelection$data, classSelection$data)
     })
     
     observeEvent(inputSelChange(), {
       output$errorMsg <- renderText({
-        dataCheck = checkMissingData(data$data, classes$data)
-        class <- classSelection$data
-        data <- dataSelection$data$filtered
-        
-        if (dataCheck$check){
-          dataCheck$msg
-        } else if (length(data) != 0 && nrow(class) != nrow(data)){
-          "The selected data and classes are incompatible due to their different amount of samples! 
-          Please change your selection!"
+        if(length(data$data) == 0){
+          "Please upload some data to be able to use the analysis!"
+        } else if(length(classes$data) == 0){
+          "Please upload some classes/label information to be able to use the analysis!"
         } else {
-          ""
+          class <- classSelection$data
+          data <- dataSelection$data$filtered
+          
+          req(data)
+          req(class)
+          if (length(data) != 0 && nrow(class) != nrow(data)){
+            "The selected data and classes are incompatible due to their different amount of samples! 
+            Please change your selection!"
+          } else {
+            ""
+          }
         }
       })
     })

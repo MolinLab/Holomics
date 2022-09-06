@@ -240,19 +240,25 @@ generate_spls_error_messages <- function(input, output, data, classes, dataSelec
   
   observeEvent(inputSelChange(), {
     output$errorMsg <- renderText({
-      dataCheck = checkMissingData(data$data, classes$data)
-      class <- classSelection$data
-      data1 <- dataSelection$data1
-      data2 <- dataSelection$data2
-      
-      if (dataCheck$check){
-        dataCheck$msg
-      } else if ((length(data1) != 0 && nrow(class) != nrow(data1)) ||
-                 (length(data2) != 0 && nrow(class) != nrow(data2))){
-        "The selected data and classes are incompatible due to their different amount of samples! 
-            Please change your selection!"
+      if(length(data$data) == 0){
+        "Please upload some data to be able to use the analysis!"
+      } else if(length(classes$data) == 0){
+        "Please upload some classes/label information to be able to use the analysis!"
       } else {
-        ""
+        class <- classSelection$data
+        data1 <- dataSelection$data1
+        data2 <- dataSelection$data2
+        
+        req(data1)
+        req(data2)
+        req(class)
+        if ((length(data1) != 0 && nrow(class) != nrow(data1)) ||
+                   (length(data2) != 0 && nrow(class) != nrow(data2))){
+          "The selected data and classes are incompatible due to their different amount of samples! 
+              Please change your selection!"
+        } else {
+          ""
+        }
       }
     })
   })
