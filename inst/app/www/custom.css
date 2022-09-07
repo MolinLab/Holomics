@@ -4,6 +4,10 @@ div[id*='errorMsg']{
   color: red;
 }
 
+div[id*='parameters.error']{
+  color: red;
+}
+
 #DIABLO-nodes, #DIABLO-nodes\.tuned{
   width: 30%;
 }

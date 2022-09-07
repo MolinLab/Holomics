@@ -132,6 +132,24 @@ getCompImgReactive <- function(input, tuned = FALSE){
   )
 }
 
+#' @description checks if the number of components
+#' is compatible with the dataset, which means that 
+#' the components need to be lower or equal the number of
+#' variables (cols) and samples (rows) the dataset has
+#'
+#' @return error message
+#'
+#' @noRd
+checkDataNcompCompatibility <- function(data, ncomp){
+  if(ncol(data) < ncomp){
+    return("You cannot use more components than the dataset has variables!")
+  } else if(nrow(data) < ncomp){
+    return("You cannot use more components than the dataset has samples!")
+  } else {
+    return("")
+  }
+}
+
 #' @description adapter for the plotIndiv function of
 #' the mixOmics package
 #'

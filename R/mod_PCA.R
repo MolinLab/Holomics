@@ -66,38 +66,57 @@ generate_pca_plots <- function(ns, input, output, dataset, classes){
   result <- reactive({
     req(dataset$data$filtered)
     req(nrow(classes$data) == nrow(dataset$data$filtered))
-    result <- mixOmics::pca(dataset$data$filtered, ncomp = input$ncomp,
-                          scale = input$scale)
+    
+    msg <- checkDataNcompCompatibility(dataset$data$filtered, input$ncomp) 
+    output$parameters.error <- renderText(msg)
+    
+    if(msg == ""){
+      result <- mixOmics::pca(dataset$data$filtered, ncomp = input$ncomp,
+                              scale = input$scale)
+    } else {
+      result <- NULL
+    }
+
   })
   
   #' plot functions
   plot.scree <- function() {
-    plot(result())
+    if(!is.null(result())){
+      plot(result())
+    }
   }
   
   plot.indiv <- function(){
-    req(classes$data)
-    title = colnames(classes$data)[1]
-    if (ncol(classes$data) == 2){
-      colors = getGroupColors(classes$data)
-      plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
-    } else {
-      plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
+    if(!is.null(result())){
+      req(classes$data)
+      title = colnames(classes$data)[1]
+      if (ncol(classes$data) == 2){
+        colors = getGroupColors(classes$data)
+        plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+      } else {
+        plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
+      }
     }
   }
   
   plot.var <- function(){
-    plotVar(result(), comp.var(), input$var.names)
+    if(!is.null(result())){
+      plotVar(result(), comp.var(), input$var.names)
+    }
   }
   
   plot.load <- function(){
-    req(input$load.comp)
-    plotLoadings(result(), as.numeric(input$load.comp))
+    if(!is.null(result())){
+      req(input$load.comp)
+      plotLoadings(result(), as.numeric(input$load.comp))
+    }
   }
   
   table.selVar <- function(){
-    req(input$sel.var.comp)
-    selectVar(result(), as.numeric(input$sel.var.comp))
+    if(!is.null(result())){
+      req(input$sel.var.comp)
+      selectVar(result(), as.numeric(input$sel.var.comp))
+    }
   }
   
   #'output plots

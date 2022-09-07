@@ -211,8 +211,19 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
     req(nrow(classSelection$data) == nrow(dataSelection$data1) && nrow(classSelection$data) == nrow(dataSelection$data2))
     X <- dataSelection$data1
     Y <- dataSelection$data2
-    spls.result <- mixOmics::spls(X, Y,
-                                  ncomp = input$ncomp, scale = input$scale)
+    
+    msg <- checkDataNcompCompatibility(X, input$ncomp)
+    if (msg == ""){
+      msg <- checkDataNcompCompatibility(Y, input$ncomp)
+    }
+    output$parameters.error <- renderText(msg)
+    
+    if(msg == ""){
+      spls.result <- mixOmics::spls(X, Y,
+                                    ncomp = input$ncomp, scale = input$scale)
+    } else {
+      spls.result <- NULL
+    }
   })
   
   spls.result.tuned <- reactive({
@@ -305,47 +316,59 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   #' generate output plots
   plot.indiv <- function(){
     req(classSelection$data)
-    title = colnames(classSelection$data)[1]
-    if (ncol(classSelection$data) == 2){
-      colors = getGroupColors(classSelection$data)
-      plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
-                repSpace = rep.space(), legendPosition = "bottom", col.per.group = colors)
-    } else {
-      plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
-                repSpace = rep.space(), legendPosition = "bottom")    
+    if(!is.null(result())){
+      title = colnames(classSelection$data)[1]
+      if (ncol(classSelection$data) == 2){
+        colors = getGroupColors(classSelection$data)
+        plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
+                  repSpace = rep.space(), legendPosition = "bottom", col.per.group = colors)
+      } else {
+        plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
+                  repSpace = rep.space(), legendPosition = "bottom")    
+      }
     }
   }
   
   plot.var <- function(){
-    plotVar(result(), comp.var(), input$var.names,
+    if(!is.null(result())){
+      plotVar(result(), comp.var(), input$var.names,
             pch = c(1,2), legend = TRUE)
+    }
   }
   
   plot.load <- function(){
     req(input$load.comp)
-    plotLoadings(result(), as.numeric(input$load.comp))
+    if(!is.null(result())){
+      plotLoadings(result(), as.numeric(input$load.comp))
+    }
   }
   
   plot.img <- function(){
-    mixOmics::cim(result(), comp = comp.img(), margin=c(8,10))
+    if(!is.null(result())){
+      mixOmics::cim(result(), comp = comp.img(), margin=c(8,10))
+    }
   }
   
   plot.arrow <- function(){
-    if(splsGetNcomp(input) >= 2){
-      req(classSelection$data)
-      title = colnames(classSelection$data)[1]
-      if (ncol(classSelection$data) == 2){
-        colors = getGroupColors(classSelection$data)
-        plotArrow(result(), classSelection$data[,1], title, input$namesArrow, col.per.group = colors)
-      } else {
-        plotArrow(result(), classSelection$data[,1], title, input$namesArrow)
+    if(!is.null(result())){
+      if(splsGetNcomp(input) >= 2){
+        req(classSelection$data)
+        title = colnames(classSelection$data)[1]
+        if (ncol(classSelection$data) == 2){
+          colors = getGroupColors(classSelection$data)
+          plotArrow(result(), classSelection$data[,1], title, input$namesArrow, col.per.group = colors)
+        } else {
+          plotArrow(result(), classSelection$data[,1], title, input$namesArrow)
+        }
       }
     }
   }
   
   selVarTable <- reactive({
     req(input$sel.var.comp)
-    selectVar(result(), as.numeric(input$sel.var.comp), XY = TRUE)
+    if(!is.null(result())){
+      selectVar(result(), as.numeric(input$sel.var.comp), XY = TRUE)
+    }
   })
   
   table.selVarX <- function(){

@@ -22,7 +22,8 @@ getAnalysisParametersComponent <- function(ns){
                  fluidRow(style = "column-gap: 1rem", 
                           numericInput(ns("ncomp"), "Number of components", value = 3, 
                                        min = 1, max = 15, step = 1, width = "45%"),
-                          awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%")
+                          awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%"),
+                          textOutput(ns("parameters.error"))
                  )
     )  
   )

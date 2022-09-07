@@ -256,12 +256,26 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
     X <- dataSelection$data
     Y <- classSelection$data[,1]  #only first column contains label information
     if (!is.null(X)){
-      design <- matrix(0.1, ncol = length(X), nrow = length(X),
-                       dimnames = list(names(X), names(X)))
-      diag(design) <- 0
-      result <- mixOmics::block.splsda(X, Y,
-                                       ncomp = input$ncomp , scale = input$scale,
-                                       design = design)
+      msg <- ""
+      for (x in X){
+        if(msg != ""){
+          break
+        }
+        msg <- checkDataNcompCompatibility(x, input$ncomp) 
+      }
+      
+      output$parameters.error <- renderText(msg)
+      
+      if(msg == ""){
+        design <- matrix(0.1, ncol = length(X), nrow = length(X),
+                         dimnames = list(names(X), names(X)))
+        diag(design) <- 0
+        result <- mixOmics::block.splsda(X, Y,
+                                         ncomp = input$ncomp , scale = input$scale,
+                                         design = design)
+      } else {
+        result <- NULL
+      }
     }
   })
   

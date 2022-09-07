@@ -76,41 +76,58 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     req(dataset$data$filtered)
     req(classes$data)
     req(nrow(classes$data) == nrow(dataset$data$filtered))
-    result <- mixOmics::plsda(dataset$data$filtered, Y = classes$data[,1],
-                                    ncomp = input$ncomp , scale = input$scale)
+    
+    msg <- checkDataNcompCompatibility(dataset$data$filtered, input$ncomp) 
+    output$parameters.error <- renderText(msg)
+    
+    if(msg == ""){
+      result <- mixOmics::plsda(dataset$data$filtered, Y = classes$data[,1],
+                                ncomp = input$ncomp , scale = input$scale)
+    } else {
+      result <- NULL
+    }
   })
   
   #' plot functions
   plot.indiv <- function(){
     req(classes$data)
-    title = colnames(classes$data)[1]
-    if (ncol(classes$data) == 2){
-      colors = getGroupColors(classes$data)
-      plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
-    } else {
-      plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
+    if (!is.null(result())){
+      title = colnames(classes$data)[1]
+      if (ncol(classes$data) == 2){
+        colors = getGroupColors(classes$data)
+        plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+      } else {
+        plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
+      }
     }
   }
   
   plot.var <- function(){
-    plotVar(result(), comp.var(), input$var.names)
+    if (!is.null(result())){
+      plotVar(result(), comp.var(), input$var.names)
+    }
   }
   
   plot.load <- function(){
+    req(classes$data)
     req(input$load.comp)
-    if (ncol(classes$data) == 2){
-      colors = getGroupColors(classes$data)
-      plotLoadings(result(), as.numeric(input$load.comp),
-                   contrib = input$load.cont, method = input$load.method, legend.color = colors)
-    } else {
-      plotLoadings(result(), as.numeric(input$load.comp),
-                   contrib = input$load.cont, method = input$load.method)    
+    if (!is.null(result())){
+      if (ncol(classes$data) == 2){
+        colors = getGroupColors(classes$data)
+        plotLoadings(result(), as.numeric(input$load.comp),
+                     contrib = input$load.cont, method = input$load.method, legend.color = colors)
+      } else {
+        plotLoadings(result(), as.numeric(input$load.comp),
+                     contrib = input$load.cont, method = input$load.method)    
+      }
     }
   }
   
   table.selVar <- function(){
     req(input$sel.var.comp)
-    selectVar(result(), as.numeric(input$sel.var.comp))
+    if (!is.null(result())){
+      selectVar(result(), as.numeric(input$sel.var.comp))
+    }
   }
   
   #'Sample plot
