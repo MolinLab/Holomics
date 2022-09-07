@@ -365,10 +365,11 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     if(!is.null(result()) & length(dataSelection$data) > 1){
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        mixOmics::cimDiablo(result(), comp = comp.img(), margin=c(8,20), legend.position = "right",
+        comp.img <- checkCompNcompCombination(result()$ncomp, comp.img())
+        mixOmics::cimDiablo(result(), comp = comp.img, margin=c(8,20), legend.position = "right",
                             size.legend = 1, color.Y = colors)
       } else {
-        mixOmics::cimDiablo(result(), comp = comp.img(), margin=c(8,20), legend.position = "right",
+        mixOmics::cimDiablo(result(), comp = comp.img, margin=c(8,20), legend.position = "right",
                             size.legend = 1)
       }
     }    
@@ -391,9 +392,10 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     if(!is.null(result()) & length(dataSelection$data) > 1){
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        mixOmics::plotDiablo(result(), ncomp = comp.diablo(), col.per.group = colors)
+        comp.diablo <- checkCompNcompCombination(result()$ncomp, comp.diablo())
+        mixOmics::plotDiablo(result(), ncomp = comp.diablo, col.per.group = colors)
       } else {
-        mixOmics::plotDiablo(result(), ncomp = comp.diablo())
+        mixOmics::plotDiablo(result(), ncomp = comp.diablo)
       }
     }
   }
@@ -436,10 +438,11 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned(), margin=c(8,20), legend.position = "right",
+        comp.img.tuned <- checkCompNcompCombination(result.tuned()$ncomp, comp.img.tuned())
+        mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, margin=c(8,20), legend.position = "right",
                             size.legend = 1, color.Y = colors)
       } else {
-        mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned(), margin=c(8,20), legend.position = "right",
+        mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, margin=c(8,20), legend.position = "right",
                             size.legend = 1)
       }
     }    
@@ -462,9 +465,11 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        mixOmics::plotDiablo(result.tuned(), ncomp = comp.diablo.tuned(), col.per.group = colors)
+        comp.diablo.tuned <- checkCompNcompCombination(result.tuned()$ncomp, comp.diablo.tuned())
+        
+        mixOmics::plotDiablo(result.tuned(), ncomp = comp.diablo.tuned, col.per.group = colors)
       } else {
-        mixOmics::plotDiablo(result.tuned(), ncomp = comp.diablo.tuned())
+        mixOmics::plotDiablo(result.tuned(), ncomp = comp.diablo.tuned)
       }
     }
   }

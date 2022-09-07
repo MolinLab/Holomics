@@ -345,7 +345,8 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   plot.img <- function(){
     if(!is.null(result())){
-      mixOmics::cim(result(), comp = comp.img(), margin=c(8,10))
+      comp.img <- checkCompNcompCombination(result()$ncomp, comp.img())
+      mixOmics::cim(result(), comp = comp.img, margin=c(8,10))
     }
   }
   

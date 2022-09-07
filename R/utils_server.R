@@ -150,6 +150,22 @@ checkDataNcompCompatibility <- function(data, ncomp){
   }
 }
 
+#' @description checks if the selected ncomp is not 
+#' lower than any element in the comp vector. If so
+#' every value above will be set to ncomp to avoid an
+#' error message when plotting
+#'
+#' @return numeric vector
+#'
+#' @noRd
+checkCompNcompCombination <- function(ncomp, comp){
+  newComp <- comp
+  while(any(ncomp < max(newComp))){
+    newComp[which.max(newComp)] = ncomp
+  }
+  return(newComp)
+}
+
 #' @description adapter for the plotIndiv function of
 #' the mixOmics package
 #'
@@ -157,6 +173,8 @@ checkDataNcompCompatibility <- function(data, ncomp){
 #'
 #' @noRd
 plotIndiv <- function(result, classes, title, comp, repSpace = NULL, indNames, col.per.group, legendPosition = "right") {
+  comp <- checkCompNcompCombination(result$ncomp, comp)
+  
   if (missing(col.per.group)){
     mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                         group = classes, ind.names = indNames,
@@ -178,6 +196,8 @@ plotIndiv <- function(result, classes, title, comp, repSpace = NULL, indNames, c
 #'
 #' @noRd
 plotVar <- function(result, comp, varNames, legend = FALSE, pch) {
+  comp <- checkCompNcompCombination(result$ncomp, comp)
+  
   if (!missing(pch)){
     mixOmics::plotVar(result, comp = comp,
                       var.names = varNames, pch = pch,
@@ -195,6 +215,8 @@ plotVar <- function(result, comp, varNames, legend = FALSE, pch) {
 #'
 #' @noRd
 plotLoadings <- function(result, comp, contrib = NULL, method = "mean", legend.color) {
+  comp <- checkCompNcompCombination(result$ncomp, comp)
+  
   if (missing(legend.color)){
     mixOmics::plotLoadings(result, comp = comp,
                            contrib = contrib, method = method)
@@ -214,6 +236,8 @@ plotLoadings <- function(result, comp, contrib = NULL, method = "mean", legend.c
 #'
 #' @noRd
 selectVar <- function(result, comp, XY = FALSE) {
+  comp <- checkCompNcompCombination(result$ncomp, comp)
+  
   selVar <- mixOmics::selectVar(result, comp = comp)
   if (XY){
     return ( 
