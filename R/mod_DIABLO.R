@@ -379,11 +379,22 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     if(!is.null(result()) & input$ncomp >= 2){
       req(classSelection$data)
       title = colnames(classSelection$data)[1]
+      
+      result <- result()
+      newNames <- c()
+      for (name in names(result$variates)){
+        if (grepl("\\s+", name)){ #check that no dataset has whitespace as their name
+          name <- gsub(" ", "", name)
+        }
+        newNames <- cbind(newNames, name)
+      }
+      names(result$variates) <- newNames
+      
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        plotArrow(result(), classSelection$data[,1], title, input$namesArrow, col.per.group = colors)
+        plotArrow(result, classSelection$data[,1], title, input$namesArrow, col.per.group = colors)
       } else {
-        plotArrow(result(), classSelection$data[,1], title, input$namesArrow)
+        plotArrow(result, classSelection$data[,1], title, input$namesArrow)
       }
     }
   }
@@ -452,6 +463,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     if(!is.null(result.tuned()) & tunedVals$ncomp >= 2){
       req(classSelection$data)
       title = colnames(classSelection$data)[1]
+      
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
         plotArrow(result.tuned(), classSelection$data[,1], title, input$namesArrow.tuned, col.per.group = colors)
