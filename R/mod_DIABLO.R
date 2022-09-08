@@ -363,9 +363,9 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.img <- function(){
     if(!is.null(result()) & length(dataSelection$data) > 1){
+      comp.img <- checkCompNcompCombination(result()$ncomp, comp.img())
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        comp.img <- checkCompNcompCombination(result()$ncomp, comp.img())
         mixOmics::cimDiablo(result(), comp = comp.img, margin=c(8,20), legend.position = "right",
                             size.legend = 1, color.Y = colors)
       } else {
@@ -401,12 +401,12 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.diablo <- function(){
     if(!is.null(result()) & length(dataSelection$data) > 1){
+      comp <- checkCompNcompCombination(result()$ncomp, comp.diablo())
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        comp.diablo <- checkCompNcompCombination(result()$ncomp, comp.diablo())
-        mixOmics::plotDiablo(result(), ncomp = comp.diablo, col.per.group = colors)
+        mixOmics::plotDiablo(result(), ncomp = comp, col.per.group = colors)
       } else {
-        mixOmics::plotDiablo(result(), ncomp = comp.diablo)
+        mixOmics::plotDiablo(result(), ncomp = comp)
       }
     }
   }
@@ -447,9 +447,9 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.img.tuned <- function(){
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
+      comp.img.tuned <- checkCompNcompCombination(result.tuned()$ncomp, comp.img.tuned())
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        comp.img.tuned <- checkCompNcompCombination(result.tuned()$ncomp, comp.img.tuned())
         mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, margin=c(8,20), legend.position = "right",
                             size.legend = 1, color.Y = colors)
       } else {
@@ -475,13 +475,12 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.diablo.tuned <- function(){
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
+      comp <- checkCompNcompCombination(result.tuned()$ncomp, comp.diablo.tuned())
       if (ncol(classSelection$data) == 2){
         colors = getGroupColors(classSelection$data)
-        comp.diablo.tuned <- checkCompNcompCombination(result.tuned()$ncomp, comp.diablo.tuned())
-        
-        mixOmics::plotDiablo(result.tuned(), ncomp = comp.diablo.tuned, col.per.group = colors)
+        mixOmics::plotDiablo(result.tuned(), ncomp = comp, col.per.group = colors)
       } else {
-        mixOmics::plotDiablo(result.tuned(), ncomp = comp.diablo.tuned)
+        mixOmics::plotDiablo(result.tuned(), ncomp = comp)
       }
     }
   }
