@@ -105,16 +105,11 @@ getClassTable <- function(ns){
 #' @return input validator
 #'
 #' @noRd
-initDataValidator <- function(session, names){
+initDataValidator <- function(session){
   iv <- InputValidator$new(session = session)
   iv$add_rule("dataFile", sv_required(message = "You need to upload a xlsx file!"))
   iv$add_rule("dataName", sv_required(message = "You need to enter a name!"))
   iv$add_rule("dataName", sv_regex("^[a-zA-Z0-9_ ]*$", "Please only use characters, space, underscore or digits for the name."))
-  iv$add_rule("dataName", function(value){
-    if(value %in% names){
-      "This name is already in use!"
-    }
-  })
   return (iv)
 }
 
@@ -124,17 +119,22 @@ initDataValidator <- function(session, names){
 #' @return input validator
 #'
 #' @noRd
-initClassValidator <- function(session, data){
+initClassValidator <- function(session){
   iv <- InputValidator$new(session = session)
   iv$add_rule("classFile", sv_required(message = "You need to upload a xlsx file!"))
   iv$add_rule("className", sv_required(message = "You need to enter a name!"))
   iv$add_rule("className", sv_regex("^[a-zA-Z0-9_ ]*$", "Please only use characters, space, underscore or digits for the name."))
-  iv$add_rule("className", function(value){
-    if(value %in% names(data$data)){
-      "This name is already in use!"
-    }
-  })
   return (iv)
+}
+
+#' @description A utils function that checks if a 
+#' given name is in the list of names
+#'
+#' @return boolean
+#'
+#' @noRd
+isValidName <- function(name, names){
+  return(!(name %in% names))
 }
 
 #' @description A utils function initialises the matrix for the table containing

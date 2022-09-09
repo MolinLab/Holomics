@@ -35,8 +35,8 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     ns <- session$ns
     
     #Validators
-    ivData <- initDataValidator(session, c(names(singleData$data), names(multiData$data)))
-    ivClass <- initClassValidator(session, c(names(singleClasses$data), names(multiClasses$data)))
+    ivData <- initDataValidator(session)
+    ivClass <- initClassValidator(session)
     
     # tables showing the uploaded data
     tables <- reactiveValues(data = initDataMatrix(), classes = initClassMatrix())
@@ -94,47 +94,53 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       #disable button so the user cannot click it again while the following pipeling is running
       shinyjs::disable("saveData")
       
-      df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE))
-      
-      #Three cols because one is the row names and at least two with variable data
-      if (ncol(df_data) < 3 || nrow(df_data) < 1){
-        shinyalert::shinyalert("Error!", "The input needs to have at least one row and three columns!", type = "error")
-      } else if(sum(duplicated(df_data[,1])) != 0){ #there should not be duplicates in the first column
-        shinyalert::shinyalert("Error!", "The sample names cannot contain duplicates!", type = "error")
-      }else{
-        rownames(df_data) <- df_data[,1]   #all rows, first column
-        df_data <- df_data[,-1]
-        unfiltered_data <- df_data
+      #additional validation of the name
+      if(!isValidName(input$dataName, c(names(singleData$data), names(multiData$data)))){
+        shinyalert::shinyalert("Error!", "This name is already in use, please choose another one!",
+                               type = "error")
+      } else {
+        df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE))
         
-        if(input$inverted){ #check for inverted file format
-          df_data <- t(df_data)
+        #Three cols because one is the row names and at least two with variable data
+        if (ncol(df_data) < 3 || nrow(df_data) < 1){
+          shinyalert::shinyalert("Error!", "The input needs to have at least one row and three columns!", type = "error")
+        } else if(sum(duplicated(df_data[,1])) != 0){ #there should not be duplicates in the first column
+          shinyalert::shinyalert("Error!", "The sample names cannot contain duplicates!", type = "error")
+        }else{
+          rownames(df_data) <- df_data[,1]   #all rows, first column
+          df_data <- df_data[,-1]
           unfiltered_data <- df_data
+          
+          if(input$inverted){ #check for inverted file format
+            df_data <- t(df_data)
+            unfiltered_data <- df_data
+          }
+          
+          if(input$isMicrobiome){ #check for microbiome data
+            df_data <- performMixMC(df_data)
+          }
+          
+          if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
+            df_data  <- filterByMAD(df_data)
+            unfiltered_data <- df_data  #also the unfiltered data can only contain 10.000 features
+          }
+          
+          #save data and write to table
+          if (!is.null(singleData)){
+            singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+          }
+          
+          if (!is.null(multiData)){
+            multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+          }
+          
+          tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data), input$isMicrobiome))
+          
+          #reset UI
+          resetDataUI(session, output)
+          ivData$disable()
+          ivData <- initDataValidator(session)
         }
-        
-        if(input$isMicrobiome){ #check for microbiome data
-          df_data <- performMixMC(df_data)
-        }
-        
-        if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
-          df_data  <- filterByMAD(df_data)
-          unfiltered_data <- df_data  #also the unfiltered data can only contain 10.000 features
-        }
-        
-        #save data and write to table
-        if (!is.null(singleData)){
-          singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
-        }
-        
-        if (!is.null(multiData)){
-          multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
-        }
-        
-        tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data), input$isMicrobiome))
-        
-        #reset UI
-        resetDataUI(session, output)
-        ivData$disable()
-        ivData <- initDataValidator(session, c(names(singleData$data), names(multiData$data)))
       }
 
       #enable button again
@@ -171,33 +177,38 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       #disable button so the user cannot click it again while the following pipeling is running
       shinyjs::disable("saveClass")
       
-      df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE))
-      
-      if(nrow(df_classes) == 0){
-        shinyalert::shinyalert("Error!", "The input needs to have at least one row!", type = "error")
-      } else if(input$colorCode && ncol(df_classes) != 2){
-        shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly two columns! 
-                               One with the labels and the second with the color codes.", type = "error")
-      } else if (!input$colorCode && ncol(df_classes) != 1){
-        shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly one column with the labels!", 
+      if(!isValidName(input$className,  c(names(singleClasses$data), names(multiClasses$data)))){
+        shinyalert::shinyalert("Error!", "This name is already in use, please choose another one!", 
                                type = "error")
       } else {
-        #save classes and update table
-        if(!is.null(singleClasses)){
-          singleClasses$data[[input$className]] <- df_classes
+        df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE))
+        
+        if(nrow(df_classes) == 0){
+          shinyalert::shinyalert("Error!", "The input needs to have at least one row!", type = "error")
+        } else if(input$colorCode && ncol(df_classes) != 2){
+          shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly two columns! 
+                                 One with the labels and the second with the color codes.", type = "error")
+        } else if (!input$colorCode && ncol(df_classes) != 1){
+          shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly one column with the labels!", 
+                                 type = "error")
+        } else {
+          #save classes and update table
+          if(!is.null(singleClasses)){
+            singleClasses$data[[input$className]] <- df_classes
+          }
+          
+          if(!is.null(multiClasses)){
+            multiClasses$data[[input$className]] <- df_classes
+          }
+          
+          tables$classes <- rbind(tables$classes, c(input$className, input$classFile$name, nrow(df_classes), input$colorCode))
+          
+          #reset UI
+          resetClassUI(session, output)
+          ivClass$disable()
+          ivClass <- initClassValidator(session)
         }
-        
-        if(!is.null(multiClasses)){
-          multiClasses$data[[input$className]] <- df_classes
-        }
-        
-        tables$classes <- rbind(tables$classes, c(input$className, input$classFile$name, nrow(df_classes), input$colorCode))
-        
-        #reset UI
-        resetClassUI(session, output)
-        ivClass$disable()
-        ivClass <- initClassValidator(session, c(names(singleClasses$data), names(multiClasses$data)))
-      }
+      }  
       
       #enable button again
       shinyjs::enable("saveClass")
