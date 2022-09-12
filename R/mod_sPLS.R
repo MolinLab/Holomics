@@ -89,11 +89,35 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
   observeEvent(data$data, {
     output$dataSelComp1 <- renderUI({
       choices <- generateChoices(data$data)
+      choice = ""
+      if (length(choices) != 0L) 
+        choice <- choices[[1]]
+      
+      selection <- isolate(input$dataSelection1)
+      
+      #same choice name as before but the data is not necessarily the same!
+      #observeEvent of input$dataSelection will not be triggered
+      if(!is.null(selection) && selection == choice){
+        dataSelection$data1 <- data$data[[choice]]$filtered
+      }
+      
       getSelectionComponent(ns("dataSelection1"), "Select first dataset:", choices = choices, width = "150")
     })
     
     output$dataSelComp2 <- renderUI({
       choices <- generateChoices(data$data)
+      choice = ""
+      if (length(choices) != 0L) 
+        choice <- choices[[1]]
+      
+      selection <- isolate(input$dataSelection2)
+      
+      #same choice name as before but the data is not necessarily the same!
+      #observeEvent of input$dataSelection will not be triggered
+      if(!is.null(selection) && selection == choice){
+        dataSelection$data2 <- data$data[[choice]]$filtered
+      }
+      
       getSelectionComponent(ns("dataSelection2"), "Select second dataset:", choices = choices, width = "fit-content")
     })
   })
@@ -102,6 +126,18 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
   observeEvent(classes$data, {
     output$classSelComp <- renderUI({
       choices <- generateChoices(classes$data)
+      choice = ""
+      if (length(choices) != 0L) 
+        choice <- choices[[1]]
+      
+      selection <- isolate(input$classSelection)
+      
+      #same choice name as before but the data is not necessarily the same!
+      #observeEvent of input$dataSelection will not be triggered
+      if(!is.null(selection) && selection == choice){
+        classSelection$data <- classes$data[[choice]]
+      }
+      
       getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices = choices, width = "fit-content")
     })
   })

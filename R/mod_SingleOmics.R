@@ -41,7 +41,19 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
     
     observeEvent(data$data, {
       output$dataSelComp <- renderUI({
+        choice <- ""
         choices <- generateChoices(data$data)
+        if (length(choices) != 0L) 
+          choice <- choices[[1]]
+        
+        selection <- isolate(input$dataSelection)
+        
+        #same choice name as before but the data is not necessarily the same!
+        #observeEvent of input$dataSelection will not be triggered
+        if(!is.null(selection) && selection == choice){
+          dataSelection$data <- data$data[[choice]]
+        }
+        
         getSelectionComponent(ns("dataSelection"), "Select dataset:", choices, width = "150")
       })
     })
@@ -54,6 +66,18 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
     observeEvent(classes$data, {
       output$classSelComp <- renderUI({
         choices <- generateChoices(classes$data)
+        choice = ""
+        if (length(choices) != 0L) 
+          choice <- choices[[1]]
+        
+        selection <- isolate(input$classSelection)
+        
+        #same choice name as before but the data is not necessarily the same!
+        #observeEvent of input$dataSelection will not be triggered
+        if(!is.null(selection) && selection == choice){
+          classSelection$data <- classes$data[[choice]]
+        }
+        
         getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices, width = "150")
       })
     })

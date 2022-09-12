@@ -133,6 +133,18 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   observeEvent(classes$data, {
     output$classSelComp <- renderUI({
       choices <- generateChoices(classes$data)
+      choice = ""
+      if (length(choices) != 0L) 
+        choice <- choices[[1]]
+      
+      selection <- isolate(input$classSelection)
+      
+      #same choice name as before but the data is not necessarily the same!
+      #observeEvent of input$dataSelection will not be triggered
+      if(!is.null(selection) && selection == choice){
+        classSelection$data <- classes$data[[choice]]
+      }
+      
       getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices = choices, width = "fit-content")
     })
   })
