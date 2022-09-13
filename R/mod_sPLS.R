@@ -419,8 +419,15 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   #tuned
   plot.indiv.tuned <- function(){
     if (!is.null(resultTuned())){
-      plotIndiv(resultTuned(), comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
-                repSpace = rep.space.tuned(), legendPosition = "bottom")
+      title = colnames(classSelection$data)[1]
+      if (ncol(classSelection$data) == 2){
+        colors = getGroupColors(classSelection$data)
+        plotIndiv(resultTuned(), classSelection$data[,1], title, comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+                  repSpace = rep.space.tuned(), legendPosition = "bottom", col.per.group = colors)
+      } else {
+        plotIndiv(resultTuned(), classSelection$data[,1], title, comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+                  repSpace = rep.space.tuned(), legendPosition = "bottom")    
+      }
     }
   }
   
@@ -462,7 +469,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
       req(input$sel.var.comp.tuned)
       req(classSelection$data)
       title = colnames(classSelection$data)[1]
-      selectVar(resultTuned(), classSelection$data[,1], title, as.numeric(input$sel.var.comp.tuned), XY = TRUE)
+      selectVar(resultTuned(), as.numeric(input$sel.var.comp.tuned), XY = TRUE)
     }
   })
   

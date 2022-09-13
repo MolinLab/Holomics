@@ -438,8 +438,16 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   #tuned
   plot.indiv.tuned <- function(){
     if(!is.null(result.tuned()) & tunedVals$ncomp >= 2){
-      plotIndiv(result.tuned(), comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
-                repSpace = rep.space.tuned(), legendPosition = "bottom")
+      req(classSelection$data)
+      title = colnames(classSelection$data)[1]
+      if (ncol(classSelection$data) == 2){
+        colors = getGroupColors(classSelection$data)
+        plotIndiv(result.tuned(), classSelection$data[,1], title, comp.indiv.tuned(), 
+                  indNames = input$indiv.names.tuned, legendPosition = "bottom", col.per.group = colors)
+      } else {
+        plotIndiv(result.tuned(), classSelection$data[,1], title, comp.indiv.tuned(), 
+                  indNames = input$indiv.names.tuned, legendPosition = "bottom")
+      }
     }
   }
   
@@ -499,8 +507,14 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.circos.tuned <- function(){
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
-      mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
-                           size.labels =1.5, size.variables = .85)
+      if (ncol(classSelection$data) == 2){
+        colors = getGroupColors(classSelection$data)
+        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
+                             size.labels =1.5, size.variables = .85, color.Y = colors)
+      } else {
+        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
+                             size.labels =1.5, size.variables = .85)
+      }
     }
   }
   
