@@ -186,12 +186,17 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         if(nrow(df_classes) == 0){
           shinyalert::shinyalert("Error!", "The input needs to have at least one row!", type = "error")
         } else if(input$colorCode && ncol(df_classes) != 2){
-          shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly two columns! 
-                                 One with the labels and the second with the color codes.", type = "error")
+            shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly two columns! 
+                                   One with the labels and the second with the color codes.", type = "error")
+        } else if(input$colorCode && !all(areValidColors(df_classes[,2]))){
+            shinyalert::shinyalert("Error!", "There are invalid colors in the file you want to upload!", type = "error")
+        } else if(input$colorCode && (length(df_classes[,1]) != length(df_classes[,2]) || any(is.na(df_classes[,2])))){
+          shinyalert::shinyalert("Error!", "The number of given classes and colors need to be the same!", type = "error")
         } else if (!input$colorCode && ncol(df_classes) != 1){
           shinyalert::shinyalert("Error!", "According to your selection, you need to provide exactly one column with the labels!", 
                                  type = "error")
         } else {
+          
           #save classes and update table
           if(!is.null(singleClasses)){
             singleClasses$data[[input$className]] <- df_classes

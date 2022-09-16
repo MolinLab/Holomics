@@ -237,3 +237,16 @@ removeRowsFromMatrix <- function(matrix, rows, initFct){
   
   return (matrix)
 }
+
+#' @description A utils function, that checks if the given 
+#' color is actually a rgb color
+#' 
+#' @return boolean
+#' 
+#' @noRd
+areValidColors <- function(color) {
+  sapply(color, function(c) {
+    tryCatch(is.matrix(col2rgb(c)), 
+             error = function(e) FALSE)
+  })
+}
