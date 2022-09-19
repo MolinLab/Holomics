@@ -9,34 +9,40 @@
 #' @importFrom shiny NS tagList 
 mod_PLSDA_ui <- function(id){
   ns <- NS(id)
-  tagList(    fluidRow(
-    getAnalysisParametersComponent(ns)
-  ),
-  fluidRow(
-    bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                    getSamplePlot(ns),
-                    getVariablePlot(ns),
-                    tabPanel("Loading plot",
-                             fluidRow(
-                               bs4Dash::column(width = 12,
-                                               uiOutput(ns("load.comp")),
-                                               selectInput(ns("load.cont"), "Contribution:", width = "100",
-                                                           choices = c("minimal" = "min", "maximal" = "max")),
-                                               selectInput(ns("load.method"), "Method:", width = "100",
-                                                           choices = c("mean" = "mean", "median" = "median")),
-                                               style = "display: flex; column-gap: 1rem"             
+  tagList(    
+    fluidRow(
+      getAnalysisParametersComponent(ns)
+    ),
+    fluidRow(
+      bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                      getSamplePlot(ns),
+                      getVariablePlot(ns),
+                      tabPanel("Loading plot",
+                               fluidRow(
+                                 bs4Dash::column(width = 12,
+                                                 uiOutput(ns("load.comp")),
+                                                 selectInput(ns("load.cont"), "Contribution:", width = "100",
+                                                             choices = c("minimal" = "min", "maximal" = "max")),
+                                                 selectInput(ns("load.method"), "Method:", width = "100",
+                                                             choices = c("mean" = "mean", "median" = "median")),
+                                                 style = "display: flex; column-gap: 1rem"             
+                                 )
+                               ),
+                               fluidRow(
+                                 bs4Dash::column(width = 12,
+                                                 plotOutput(ns("Load")),
+                                                 downloadButton(ns("Load.download"), "Save plot"))
                                )
-                             ),
-                             fluidRow(
-                               bs4Dash::column(width = 12,
-                                               plotOutput(ns("Load")),
-                                               downloadButton(ns("Load.download"), "Save plot"),
-                                               downloadButton(ns("Filter.download"), "Filter by loadings"))
-                             )
-                    ),
-                    getSelectedVarsPlot(ns)
+                      ),
+                      getSelectedVarsPlot(ns),
+                      tabPanel("Filtering",
+                               fluidRow(),
+                               fluidRow(
+                                 downloadButton(ns("Filter.download"), "Filter by loadings")
+                               )
+                      )
+      )
     )
-  )
   )
 }
 
