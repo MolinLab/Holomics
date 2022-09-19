@@ -21,6 +21,10 @@ getDataUploadUI <- function(ns){
                    awesomeCheckbox(ns("inverted"), "Has inverted format")
           ),
           fluidRow(style = "margin-left: 0;",
+                   awesomeCheckboxGroup(ns("omicsAnalysis"), "use for ... omics analysis",
+                                        choices = c("single", "multi"))
+          ),
+          fluidRow(style = "margin-left: 0;",
             actionButton(ns("saveData"), "Save")
           )
         )
@@ -110,6 +114,7 @@ initDataValidator <- function(session){
   iv$add_rule("dataFile", sv_required(message = "You need to upload a xlsx file!"))
   iv$add_rule("dataName", sv_required(message = "You need to enter a name!"))
   iv$add_rule("dataName", sv_regex("^[a-zA-Z0-9_ ]*$", "Please only use characters, space, underscore or digits for the name."))
+  iv$add_rule("omicsAnalysis", sv_required(message = "You need to select at least one type of analysis!"))
   return (iv)
 }
 
@@ -144,8 +149,8 @@ isValidName <- function(name, names){
 #'
 #' @noRd
 initDataMatrix <- function(){
-  matrix <- matrix(nrow = 0, ncol = 5)
-  colnames(matrix) <- c("Name", "Filename", "Number of samples", "Number of features", "Is microbiome data")
+  matrix <- matrix(nrow = 0, ncol = 6)
+  colnames(matrix) <- c("Name", "Filename", "No. of samples", "No. of features", "Is microbiome data", "For ...-omics analysis")
   return (matrix)
 }
 
@@ -157,7 +162,7 @@ initDataMatrix <- function(){
 #' @noRd
 initClassMatrix <- function(){
   matrix <- matrix(nrow = 0, ncol = 4)
-  colnames(matrix) <- c("Name", "Filename", "Number of samples", "Contains color code")
+  colnames(matrix) <- c("Name", "Filename", "No. of samples", "Contains color code")
   return (matrix)
 }
 
@@ -173,6 +178,7 @@ resetDataUI <- function(session, output){
   updateTextInput(session, "dataName", value = "")
   updateAwesomeCheckbox(session, "isMicrobiome", value = FALSE)
   updateAwesomeCheckbox(session, "inverted", value = FALSE)
+  updateAwesomeCheckboxGroup(session, "omicsAnalysis", selected = "NULL")
 }
 
 #' @description A utils function, to reset the UI components of the data form

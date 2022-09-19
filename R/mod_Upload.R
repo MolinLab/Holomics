@@ -126,15 +126,29 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
           }
           
           #save data and write to table
-          if (!is.null(singleData)){
-            singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+          analysisText = ""
+          
+          if("single" %in% input$omicsAnalysis){
+            if (!is.null(singleData)){
+              singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+            }
+            analysisText = "single"
+            
           }
           
-          if (!is.null(multiData)){
-            multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+          if("multi" %in% input$omicsAnalysis){
+            if (!is.null(multiData)){
+              multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+            }
+            
+            analysisText = ifelse(analysisText == "", "multi", "both")
           }
           
-          tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data), input$isMicrobiome))
+          
+          
+          
+          tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, 
+                                              nrow(df_data), ncol(df_data), input$isMicrobiome, analysisText))
           
           #reset UI
           resetDataUI(session, output)
