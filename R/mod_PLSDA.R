@@ -184,7 +184,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       
       feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
       result <- dataset$data$unfiltered[, feature_cols]
-      multiDataset$data[[paste0(dataset$name, "_small")]] <- list(filtered = result, unfiltered = result)
+      multiDataset$data[[paste0(dataset$name, "_filtered")]] <- list(filtered = result, unfiltered = result)
       
       incProgress(1/3)
     })
@@ -203,7 +203,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
   output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedVariables.csv", table.selVar, type = "csv")
   output$Filter.download <-     downloadHandler(
     filename = function() {
-      paste0(dataName(), "_small.xlsx")
+      paste0(dataName(), "_filtered.xlsx")
     },
     content = function(file){
         df <- filterByLoadings()
