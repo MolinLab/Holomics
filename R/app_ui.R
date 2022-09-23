@@ -15,7 +15,8 @@ app_ui <- function(request) {
       
       ## Header 
       bs4Dash::dashboardHeader(
-        title = tags$img(src='www/logo.png', width="80%", style="display: block; margin: auto;")
+        title = tags$img(src='www/logo.png', width="80%", style="display: block; margin: auto;"),
+        controlbarIcon = icon("table-cells")
       ),
       
       
@@ -23,12 +24,12 @@ app_ui <- function(request) {
       bs4Dash::dashboardSidebar(
         bs4Dash::sidebarMenu(
           
-          bs4Dash::menuItem("Home", tabName = "home", icon = icon("home")),
+          bs4Dash::menuItem("Home", tabName = "home", icon = icon("house")),
           bs4Dash::menuItem("Upload data", tabName = "upload", icon = icon("upload")),
-          bs4Dash::menuItem("Single 'omics", tabName = "singleOmics", icon = icon("window-minimize")),
-          bs4Dash::menuItem("Multi 'omics", tabName = "multiOmics", icon = icon("layer-group"), startExpanded = FALSE,
-                            bs4Dash::menuSubItem("sPLS", tabName = "sPLS"),
-                            bs4Dash::menuSubItem("DIABLO", tabName = "DIABLO"))
+          bs4Dash::menuItem("Single-omics", tabName = "singleOmics", icon = icon("window-minimize")),
+          bs4Dash::menuItem("Multi-omics", tabName = "multiOmics", icon = icon("layer-group"), startExpanded = FALSE,
+                            bs4Dash::menuSubItem("sPLS", tabName = "sPLS", icon = icon("angles-right")),
+                            bs4Dash::menuSubItem("DIABLO", tabName = "DIABLO", icon = icon("angles-right")))
         )
       ),
       
@@ -91,6 +92,6 @@ golem_add_external_resources <- function(){
     
     tags$link(rel = "stylesheet", type ="text/css", href="www/custom.css"),
     tags$link(rel = "stylesheet", type ="text/css", href="www/theme.css")
-  )
+      )
 }
 
