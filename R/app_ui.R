@@ -27,9 +27,8 @@ app_ui <- function(request) {
           bs4Dash::menuItem("Home", tabName = "home", icon = icon("house")),
           bs4Dash::menuItem("Upload data", tabName = "upload", icon = icon("upload")),
           bs4Dash::menuItem("Single-omics", tabName = "singleOmics", icon = icon("window-minimize")),
-          bs4Dash::menuItem("Multi-omics", tabName = "multiOmics", icon = icon("layer-group"), startExpanded = FALSE,
-                            bs4Dash::menuSubItem("sPLS", tabName = "sPLS", icon = icon("angles-right")),
-                            bs4Dash::menuSubItem("DIABLO", tabName = "DIABLO", icon = icon("angles-right")))
+          bs4Dash::menuItem("Pairwise", tabName = "sPLS", icon = icon("layer-group")),
+          bs4Dash::menuItem("Multi-omics", tabName = "DIABLO", icon = icon("layer-group"))
         )
       ),
       

@@ -111,7 +111,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
           df_data <- df_data[,-1]
           unfiltered_data <- df_data
           
-          if(input$inverted){ #check for inverted file format
+          if(input$transposed){ #check for transposed file format
             df_data <- t(df_data)
             unfiltered_data <- df_data
           }

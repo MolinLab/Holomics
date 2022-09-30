@@ -35,7 +35,7 @@ mod_PLSDA_ui <- function(id){
                                )
                       ),
                       getSelectedVarsPlot(ns),
-                      tabPanel("Filtering",
+                      tabPanel("Filtering for multi-omics",
                                fluidRow(),
                                fluidRow(
                                  downloadButton(ns("Filter.download"), "Filter by loadings")

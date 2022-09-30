@@ -18,10 +18,10 @@ getDataUploadUI <- function(ns){
             awesomeCheckbox(ns("isMicrobiome"), "Is microbiome data")
           ), 
           fluidRow(style = "margin-left: 0;",
-                   awesomeCheckbox(ns("inverted"), "Has inverted format")
+                   awesomeCheckbox(ns("transposed"), "Has transposed format")
           ),
           fluidRow(style = "margin-left: 0;",
-                   awesomeCheckboxGroup(ns("omicsAnalysis"), "use for ... omics analysis",
+                   awesomeCheckboxGroup(ns("omicsAnalysis"), "Use for ... omics analysis",
                                         choices = c("single", "multi"))
           ),
           fluidRow(style = "margin-left: 0;",
@@ -177,7 +177,7 @@ resetDataUI <- function(session, output){
   })
   updateTextInput(session, "dataName", value = "")
   updateAwesomeCheckbox(session, "isMicrobiome", value = FALSE)
-  updateAwesomeCheckbox(session, "inverted", value = FALSE)
+  updateAwesomeCheckbox(session, "transposed", value = FALSE)
   updateAwesomeCheckboxGroup(session, "omicsAnalysis", selected = "NULL")
 }
 
