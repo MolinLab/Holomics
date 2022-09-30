@@ -1,5 +1,4 @@
 library(visNetwork)
-library(shinyjs)
 library(shinyWidgets)
 
 #' DIABLO UI Function
@@ -53,8 +52,8 @@ mod_DIABLO_server <- function(id, data, classes){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    hide("tunedCol")
-    hide("switchRow")
+    shinyjs::hide("tunedCol")
+    shinyjs::hide("switchRow")
     
     dataSelection <- reactiveValues()
     classSelection <- reactiveValues()
@@ -157,8 +156,8 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   observeEvent(dataSelection$data, {
     output$tune.switch <- renderUI({})
     useTunedVals(FALSE)
-    hide("tunedCol")
-    hide("switchRow")
+    shinyjs::hide("tunedCol")
+    shinyjs::hide("switchRow")
   })
   
   #' Observe node name selection
@@ -170,7 +169,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
       visNetworkProxy(ns("Network")) %>%
         visSetSelection(nodesId = input$nodeNames)
     }
-    runjs(paste0("Shiny.setInputValue('", ns('clicked_node'), "', '", input$nodeNames, "')"))
+    shinyjs::runjs(paste0("Shiny.setInputValue('", ns('clicked_node'), "', '", input$nodeNames, "')"))
   })
   
   observeEvent(input$nodeNames.tuned, {
@@ -181,7 +180,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
       visNetworkProxy(ns("Network.tuned")) %>%
         visSetSelection(nodesId = input$nodeNames.tuned)
     }
-    runjs(paste0("Shiny.setInputValue('", ns('clicked_node.tuned'), "', '", input$nodeNames.tuned, "')"))
+    shinyjs::runjs(paste0("Shiny.setInputValue('", ns('clicked_node.tuned'), "', '", input$nodeNames.tuned, "')"))
   })
   
   #' Observe node clicked
@@ -199,7 +198,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
       tryCatch({
         tune_diablo_values(dataSelection, classSelection, result, tunedVals)
         if (!is.null(tunedVals)){
-          show("switchRow")
+          shinyjs::show("switchRow")
           output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
         }
       }, error = function(cond){
@@ -213,9 +212,9 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   observeEvent(input$tuneSwitch,{
     useTunedVals(input$tuneSwitch)
     if(input$tuneSwitch){
-      show("tunedCol")
+      shinyjs::show("tunedCol")
     }else{
-      hide("tunedCol")
+      shinyjs::hide("tunedCol")
     }
   })
 }

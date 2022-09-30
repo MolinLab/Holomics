@@ -49,8 +49,8 @@ mod_sPLS_server <- function(id, data, classes){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
-    hide("tunedCol")
-    hide("switchRow")
+    shinyjs::hide("tunedCol")
+    shinyjs::hide("switchRow")
     
     dataSelection <- reactiveValues()
     classSelection <- reactiveValues()
@@ -164,8 +164,8 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
   observeEvent(observeDataset(), {
     output$tune.switch <- renderUI({})
     useTunedVals(FALSE)
-    hide("tunedCol")
-    hide("switchRow")
+    shinyjs::hide("tunedCol")
+    shinyjs::hide("switchRow")
   })
   
   #' Observe tune button
@@ -174,7 +174,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
       tune_values(dataSelection, result, tunedVals)
 
       if (!is.null(tunedVals)){
-        show("switchRow")
+        shinyjs::show("switchRow")
         output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
       }
     }, error = function(cond){
@@ -187,9 +187,9 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
   observeEvent(input$tuneSwitch,{
     useTunedVals(input$tuneSwitch)
     if(input$tuneSwitch){
-      show("tunedCol")
+      shinyjs::show("tunedCol")
     } else {
-      hide("tunedCol")
+      shinyjs::hide("tunedCol")
     }
   })
 }
