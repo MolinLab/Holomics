@@ -308,3 +308,14 @@ renderImgComp <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
     })
   } 
 }
+
+#' @description A utils function that returns
+#' a shiny alert of the type error with a 
+#' custom message
+#'
+#' @noRd
+getShinyErrorAlert <- function(message){
+  return(
+    shinyalert::shinyalert("Error!", message, type = "error")
+  )
+}

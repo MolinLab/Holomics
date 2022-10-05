@@ -263,9 +263,9 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
   diablo.result <- reactive({
     req(dataSelection$data)
     req(classSelection$data)
-    req(diabloCheckValidSelection(dataSelection$data, classSelection$data))
+    req(diabloCheckValidSelection(dataSelection$data, classSelection$data)$valid)
     X <- dataSelection$data
-    Y <- classSelection$data[,1]  #only first column contains label information
+    Y <- classSelection$data[,2]  #only second column contains label information
     if (!is.null(X)){
       msg <- ""
       for (x in X){
@@ -294,9 +294,9 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
     if (useTunedVals()){
       req(dataSelection$data)
       req(classSelection$data)
-      req(diabloCheckValidSelection(dataSelection$data, classSelection$data))
+      req(diabloCheckValidSelection(dataSelection$data, classSelection$data)$valid)
       X <- dataSelection$data
-      Y <- classSelection$data[,1]  #only first column contains label information
+      Y <- classSelection$data[,2]  #only second column contains label information
       if (!is.null(X)){
         design <- matrix(0.1, ncol = length(X), nrow = length(X),
                          dimnames = list(names(X), names(X)))
@@ -346,13 +346,13 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.indiv <- function(){
     if(!is.null(result()) & input$ncomp >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[1]
-      if (ncol(classSelection$data) == 2){
+      title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), 
+        plotIndiv(result(), classSelection$data[,2], title, comp.indiv(), 
                   indNames = input$indiv.names, legendPosition = "bottom", col.per.group = colors)
       } else {
-        plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), 
+        plotIndiv(result(), classSelection$data[,2], title, comp.indiv(), 
                   indNames = input$indiv.names, legendPosition = "bottom")
       }
     }
@@ -375,7 +375,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.img <- function(){
     if(!is.null(result()) & length(dataSelection$data) > 1){
       comp.img <- checkCompNcompCombination(result()$ncomp, comp.img())
-      if (ncol(classSelection$data) == 2){
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::cimDiablo(result(), comp = comp.img, margin=c(8,20), legend.position = "right",
                             size.legend = 1, color.Y = colors)
@@ -389,7 +389,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.arrow <- function(){
     if(!is.null(result()) & input$ncomp >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[1]
+      title = colnames(classSelection$data)[2]
       
       result <- result()
       newNames <- c()
@@ -401,11 +401,11 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       }
       names(result$variates) <- newNames
       
-      if (ncol(classSelection$data) == 2){
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(result, classSelection$data[,1], title, input$namesArrow, col.per.group = colors)
+        plotArrow(result, classSelection$data[,2], title, input$namesArrow, col.per.group = colors)
       } else {
-        plotArrow(result, classSelection$data[,1], title, input$namesArrow)
+        plotArrow(result, classSelection$data[,2], title, input$namesArrow)
       }
     }
   }
@@ -413,7 +413,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.diablo <- function(){
     if(!is.null(result()) & length(dataSelection$data) > 1){
       comp <- checkCompNcompCombination(result()$ncomp, comp.diablo())
-      if (ncol(classSelection$data) == 2){
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::plotDiablo(result(), ncomp = comp, col.per.group = colors)
       } else {
@@ -424,7 +424,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.circos <- function(){
     if(!is.null(result()) & length(dataSelection$data) > 1){
-      if (ncol(classSelection$data) == 2){
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = TRUE,
                              size.labels =1.5, size.variables = .85, color.Y = colors)
@@ -438,13 +438,13 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.indiv.tuned <- function(){
     if(!is.null(result.tuned()) & tunedVals$ncomp >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[1]
-      if (ncol(classSelection$data) == 2){
+      title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotIndiv(result.tuned(), classSelection$data[,1], title, comp.indiv.tuned(), 
+        plotIndiv(result.tuned(), classSelection$data[,2], title, comp.indiv.tuned(), 
                   indNames = input$indiv.names.tuned, legendPosition = "bottom", col.per.group = colors)
       } else {
-        plotIndiv(result.tuned(), classSelection$data[,1], title, comp.indiv.tuned(), 
+        plotIndiv(result.tuned(), classSelection$data[,2], title, comp.indiv.tuned(), 
                   indNames = input$indiv.names.tuned, legendPosition = "bottom")
       }
     }
@@ -467,7 +467,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.img.tuned <- function(){
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
       comp.img.tuned <- checkCompNcompCombination(result.tuned()$ncomp, comp.img.tuned())
-      if (ncol(classSelection$data) == 2){
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, margin=c(8,20), legend.position = "right",
                             size.legend = 1, color.Y = colors)
@@ -481,13 +481,13 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.arrow.tuned <- function(){
     if(!is.null(result.tuned()) & tunedVals$ncomp >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[1]
+      title = colnames(classSelection$data)[2]
       
-      if (ncol(classSelection$data) == 2){
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(result.tuned(), classSelection$data[,1], title, input$namesArrow.tuned, col.per.group = colors)
+        plotArrow(result.tuned(), classSelection$data[,2], title, input$namesArrow.tuned, col.per.group = colors)
       } else {
-        plotArrow(result.tuned(), classSelection$data[,1], title, input$namesArrow.tuned)
+        plotArrow(result.tuned(), classSelection$data[,2], title, input$namesArrow.tuned)
       }
     }
   }
@@ -495,7 +495,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.diablo.tuned <- function(){
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
       comp <- checkCompNcompCombination(result.tuned()$ncomp, comp.diablo.tuned())
-      if (ncol(classSelection$data) == 2){
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::plotDiablo(result.tuned(), ncomp = comp, col.per.group = colors)
       } else {
@@ -506,7 +506,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.circos.tuned <- function(){
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
-      if (ncol(classSelection$data) == 2){
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
                              size.labels =1.5, size.variables = .85, color.Y = colors)
@@ -655,9 +655,10 @@ generate_diablo_error_messages <- function(input, output, data, classes, dataSel
   
         req(data)
         req(class)
-        if (!diabloCheckValidSelection(data, class)){
-        "The selected data and classes are incompatible due to their different amount of samples! 
-            Please change your selection!"
+        selectionCheck = diabloCheckValidSelection(data, class)
+        print(selectionCheck)
+        if (!selectionCheck$valid){
+          selectionCheck$msg
         } else {
           ""
         }

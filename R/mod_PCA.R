@@ -66,6 +66,7 @@ generate_pca_plots <- function(ns, input, output, dataset, classes){
   result <- reactive({
     req(dataset$data$filtered)
     req(nrow(classes$data) == nrow(dataset$data$filtered))
+    req(identical(classes$data[,1], rownames(dataset$data$filtered)))
     
     msg <- checkDataNcompCompatibility(dataset$data$filtered, input$ncomp) 
     output$parameters.error <- renderText(msg)
@@ -89,12 +90,12 @@ generate_pca_plots <- function(ns, input, output, dataset, classes){
   plot.indiv <- function(){
     if(!is.null(result())){
       req(classes$data)
-      title = colnames(classes$data)[1]
-      if (ncol(classes$data) == 2){
+      title = colnames(classes$data)[2]
+      if (ncol(classes$data) == 3){
         colors = getGroupColors(classes$data)
-        plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+        plotIndiv(result(), classes$data[,2], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
       } else {
-        plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
+        plotIndiv(result(), classes$data[,2], title, comp.indiv(), indNames = input$indiv.names)
       }
     }
   }

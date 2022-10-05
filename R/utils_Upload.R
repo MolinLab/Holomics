@@ -132,6 +132,43 @@ initClassValidator <- function(session){
   return (iv)
 }
 
+#' @description A utils function that checks if the 
+#' given classes data is valid 
+#'
+#' @return list with an alert and a valid attribute
+#'
+#' @noRd
+checkClassesInput <- function(data, colorCodeChecked){
+  alert = ""
+  
+  if(nrow(data) == 0){
+    alert = getShinyErrorAlert("The input needs to have at least one row!")
+  } else if(any(is.na(data))){
+    alert = getShinyErrorAlert("Every cell of the necessary columns and rows needs to have a value!")
+  } else if (alert == ""){
+    if(colorCodeChecked){
+      if (ncol(data) != 3){
+        alert = getShinyErrorAlert("According to your selection, you need to provide exactly three columns! 
+                                       The first with the sample names, the second with the labels/classes 
+                                       and the third with the color codes.")
+      } else if(!all(areValidColors(data[,3]))){
+        alert = getShinyErrorAlert("There are invalid colors in the file you want to upload!")
+      } else if(length(data[,1]) != length(data[,3]) || length(data[,2]) != length(data[,3])){
+        alert = getShinyErrorAlert("The number of samples, classes/labels and colors need to be the same!")
+      }
+    } else {
+      if(ncol(data) != 2){
+        alert = getShinyErrorAlert("According to your selection, you need to provide exactly two columns!
+                                   The first with the sample names and the second with the labels/classes.")
+      } else if(length(data[,1]) != length(data[,2])){
+        alert = getShinyErrorAlert("The number of samples and classes/labels need to be the same!")
+      }
+    }
+  }
+  
+  return(list(valid = ifelse(alert == "", TRUE, FALSE), alert = alert))
+}
+
 #' @description A utils function that checks if a 
 #' given name is in the list of names
 #'

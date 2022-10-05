@@ -122,12 +122,19 @@ diabloCheckNcomp <- function(input, tuned, tunedVals){
 #' @noRd
 diabloCheckValidSelection <- function(data, class){
   valid = TRUE
+  msg = ""
   for (name in names(data)) {
     if (length(data[[name]]) != 0 && nrow(class) != nrow(data[[name]])){
+      msg = "The selected data and classes are incompatible due to their different amount of samples! 
+            Please change your selection!"
+      valid = FALSE
+    } else if(!identical(class[,1], rownames(data[[name]]))){
+      msg = "The selected data and classes are incompatible as they do not contain the same sample(name)s! 
+            Please change your selection!"
       valid = FALSE
     }
   }
-  return(valid)
+  return(list(valid = valid, msg = msg))
 }
 
 #' @description A utils function, which generates the visNetwork

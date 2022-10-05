@@ -82,12 +82,13 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     req(dataset$data$filtered)
     req(classes$data)
     req(nrow(classes$data) == nrow(dataset$data$filtered))
+    req(identical(classes$data[,1], rownames(dataset$data$filtered)))
     
     msg <- checkDataNcompCompatibility(dataset$data$filtered, input$ncomp) 
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
-      result <- mixOmics::plsda(dataset$data$filtered, Y = classes$data[,1],
+      result <- mixOmics::plsda(dataset$data$filtered, Y = classes$data[,2],
                                 ncomp = input$ncomp , scale = input$scale)
     } else {
       result <- NULL
@@ -98,12 +99,12 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
   plot.indiv <- function(){
     req(classes$data)
     if (!is.null(result())){
-      title = colnames(classes$data)[1]
-      if (ncol(classes$data) == 2){
+      title = colnames(classes$data)[2]
+      if (ncol(classes$data) == 3){
         colors = getGroupColors(classes$data)
-        plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+        plotIndiv(result(), classes$data[,2], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
       } else {
-        plotIndiv(result(), classes$data[,1], title, comp.indiv(), indNames = input$indiv.names)
+        plotIndiv(result(), classes$data[,2], title, comp.indiv(), indNames = input$indiv.names)
       }
     }
   }
@@ -118,7 +119,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     req(classes$data)
     req(input$load.comp)
     if (!is.null(result())){
-      if (ncol(classes$data) == 2){
+      if (ncol(classes$data) == 3){
         colors = getGroupColors(classes$data)
         plotLoadings(result(), as.numeric(input$load.comp),
                      contrib = input$load.cont, method = input$load.method, legend.color = colors)
@@ -163,7 +164,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     
     withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
         
-      Y <- classes$data[,1]
+      Y <- classes$data[,2]
       result <- mixOmics::plsda(dataset$data$filtered, Y = Y,
                                 ncomp = input$ncomp , scale = input$scale)
       grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))

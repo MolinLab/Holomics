@@ -101,11 +101,14 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
         } else {
           class <- classSelection$data
           data <- dataSelection$data$filtered
-          
+
           req(data)
           req(class)
           if (length(data) != 0 && nrow(class) != nrow(data)){
             "The selected data and classes are incompatible due to their different amount of samples! 
+            Please change your selection!"
+          } else if(!identical(class[,1], rownames(data))){
+            "The selected data and classes are incompatible as they do not contain the same sample(name)s! 
             Please change your selection!"
           } else {
             ""

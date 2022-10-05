@@ -245,6 +245,8 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
     req(dataSelection$data1)
     req(dataSelection$data2)
     req(nrow(classSelection$data) == nrow(dataSelection$data1) && nrow(classSelection$data) == nrow(dataSelection$data2))
+    req(identical(classSelection$data[,1], rownames(dataSelection$data1)) && 
+          identical(classSelection$data[,1], rownames(dataSelection$data2)))
     X <- dataSelection$data1
     Y <- dataSelection$data2
     
@@ -267,6 +269,8 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
       req(dataSelection$data1)
       req(dataSelection$data2)
       req(nrow(classSelection$data) == nrow(dataSelection$data1) && nrow(classSelection$data) == nrow(dataSelection$data2))
+      req(identical(classSelection$data[,1], rownames(dataSelection$data1)) && 
+            identical(classSelection$data[,1], rownames(dataSelection$data2)))
       X <- dataSelection$data1
       Y <- dataSelection$data2
       spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedVals$ncomp, 
@@ -303,6 +307,10 @@ generate_spls_error_messages <- function(input, output, data, classes, dataSelec
                    (length(data2) != 0 && nrow(class) != nrow(data2))){
           "The selected data and classes are incompatible due to their different amount of samples! 
               Please change your selection!"
+        } else if(!identical(class[,1], rownames(data1)) && 
+                          !identical(class[,1], rownames(data2))){
+          "The selected data and classes are incompatible as they do not contain the same sample(name)s! 
+            Please change your selection!"
         } else {
           ""
         }
@@ -353,13 +361,13 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.indiv <- function(){
     req(classSelection$data)
     if(!is.null(result())){
-      title = colnames(classSelection$data)[1]
-      if (ncol(classSelection$data) == 2){
+      title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
+        plotIndiv(result(), classSelection$data[,2], title, comp.indiv(), indNames = input$indiv.names, 
                   repSpace = rep.space(), legendPosition = "bottom", col.per.group = colors)
       } else {
-        plotIndiv(result(), classSelection$data[,1], title, comp.indiv(), indNames = input$indiv.names, 
+        plotIndiv(result(), classSelection$data[,2], title, comp.indiv(), indNames = input$indiv.names, 
                   repSpace = rep.space(), legendPosition = "bottom")    
       }
     }
@@ -390,12 +398,12 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     if(!is.null(result())){
       if(splsGetNcomp(input) >= 2){
         req(classSelection$data)
-        title = colnames(classSelection$data)[1]
-        if (ncol(classSelection$data) == 2){
+        title = colnames(classSelection$data)[2]
+        if (ncol(classSelection$data) == 3){
           colors = getGroupColors(classSelection$data)
-          plotArrow(result(), classSelection$data[,1], title, input$namesArrow, col.per.group = colors)
+          plotArrow(result(), classSelection$data[,2], title, input$namesArrow, col.per.group = colors)
         } else {
-          plotArrow(result(), classSelection$data[,1], title, input$namesArrow)
+          plotArrow(result(), classSelection$data[,2], title, input$namesArrow)
         }
       }
     }
@@ -419,13 +427,13 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   #tuned
   plot.indiv.tuned <- function(){
     if (!is.null(resultTuned())){
-      title = colnames(classSelection$data)[1]
-      if (ncol(classSelection$data) == 2){
+      title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotIndiv(resultTuned(), classSelection$data[,1], title, comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+        plotIndiv(resultTuned(), classSelection$data[,2], title, comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
                   repSpace = rep.space.tuned(), legendPosition = "bottom", col.per.group = colors)
       } else {
-        plotIndiv(resultTuned(), classSelection$data[,1], title, comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+        plotIndiv(resultTuned(), classSelection$data[,2], title, comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
                   repSpace = rep.space.tuned(), legendPosition = "bottom")    
       }
     }
@@ -454,12 +462,12 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.arrow.tuned <- function(){
     if(!is.null(resultTuned()) & splsGetNcomp(input, tuned = TRUE, tunedVals) >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[1]
-      if (ncol(classSelection$data) == 2){
+      title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(resultTuned(), classSelection$data[,1], title, input$namesArrow.tuned, col.per.group = colors)
+        plotArrow(resultTuned(), classSelection$data[,2], title, input$namesArrow.tuned, col.per.group = colors)
       } else {
-        plotArrow(resultTuned(), classSelection$data[,1], title, input$namesArrow.tuned)
+        plotArrow(resultTuned(), classSelection$data[,2], title, input$namesArrow.tuned)
       }
     }
   }
@@ -468,7 +476,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     if (!is.null(resultTuned())){
       req(input$sel.var.comp.tuned)
       req(classSelection$data)
-      title = colnames(classSelection$data)[1]
+      title = colnames(classSelection$data)[2]
       selectVar(resultTuned(), as.numeric(input$sel.var.comp.tuned), XY = TRUE)
     }
   })
