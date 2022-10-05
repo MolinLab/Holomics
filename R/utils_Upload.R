@@ -253,7 +253,20 @@ performMixMC <- function(data){
 #' @noRd
 filterByMAD <- function(data){
   t_data = t(data)
-  data_filtered <- as.data.frame(t(CancerSubtypes::FSbyMAD(t_data, cut.type = "topk", value = 10000)))
+  
+  mads <- apply(t_data, 1, mad)
+  feature_num <- length(mads)
+  index <- sort(mads, decreasing = TRUE, index.return=TRUE)
+  limit = 10000
+    
+  if(limit>nrow(t_data)) {
+    limit=nrow(t_data)
+  }
+
+  index=index$ix[1:limit]
+  filtered=t_data[index,]
+  
+  data_filtered <- as.data.frame(t(filtered))
   return (data_filtered)
 }
 
