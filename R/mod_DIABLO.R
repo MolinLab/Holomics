@@ -656,7 +656,6 @@ generate_diablo_error_messages <- function(input, output, data, classes, dataSel
         req(data)
         req(class)
         selectionCheck = diabloCheckValidSelection(data, class)
-        print(selectionCheck)
         if (!selectionCheck$valid){
           selectionCheck$msg
         } else {
