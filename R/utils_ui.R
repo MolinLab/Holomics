@@ -20,7 +20,7 @@ getAnalysisParametersComponent <- function(ns){
   return(
     bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
                  fluidRow(style = "column-gap: 1rem", 
-                          numericInput(ns("ncomp"), "Number of components", value = 3, 
+                          numericInput(ns("ncomp"), "Number of components", value = 9, 
                                        min = 1, max = 15, step = 1, width = "45%"),
                           awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%"),
                           textOutput(ns("parameters.error"))
