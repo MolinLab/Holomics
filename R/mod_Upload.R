@@ -64,7 +64,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         })
         
         output$datafileField <- renderUI({
-          fileInput(ns("dataFile"), "Choose a xlsx file", accept = c(".xlsx"))
+          fileInput(ns("dataFile"), "Choose a xlsx or csv file", accept = c(".xlsx, .csv"))
         })
         
         output$table <- renderUI({
@@ -77,7 +77,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         })
         
         output$classfileField <- renderUI({
-          fileInput(ns("classFile"), "Choose a xlsx file", accept = c(".xlsx"))
+          fileInput(ns("classFile"), "Choose a xlsx csv file", accept = c(".xlsx, .csv"))
         })
         
         output$table <- renderUI({
@@ -98,7 +98,14 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       if(!isValidName(input$dataName, c(names(singleData$data), names(multiData$data)))){
         getShinyErrorAlert("This name is already in use, please choose another one!")
       } else {
-        df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE))
+        
+        ext <- tools::file_ext(input$dataFile$name)
+        
+        switch(ext,
+          xlsx = df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE)),
+          csv = df_data <- read.csv(input$dataFile$datapath),
+          validate("Invalid file format!")
+        )
         
         #Three cols because one is the row names and at least two with variable data
         if (ncol(df_data) < 3 || nrow(df_data) < 1){
@@ -190,7 +197,14 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       if(!isValidName(input$className,  c(names(singleClasses$data), names(multiClasses$data)))){
         getShinyErrorAlert("This name is already in use, please choose another one!")
       } else {
-        df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE))
+        
+        ext <- tools::file_ext(input$classFile$name)
+        
+        switch(ext,
+               xlsx = df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE)),
+               csv = df_classes <- read.csv(input$classFile$datapath),
+               validate("Invalid file format!")
+        )
         
         #error checks
         inputCheck <- checkClassesInput(df_classes, input$colorCode)

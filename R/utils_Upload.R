@@ -210,7 +210,7 @@ resetDataUI <- function(session, output){
   ns <- session$ns
   
   output$datafileField <- renderUI({
-    fileInput(ns("dataFile"), "Choose a xlsx file", accept = c(".xlsx"))
+    fileInput(ns("dataFile"), "Choose a xlsx or csv file", accept = c(".xlsx, .csv"))
   })
   updateTextInput(session, "dataName", value = "")
   updateAwesomeCheckbox(session, "isMicrobiome", value = FALSE)
@@ -225,7 +225,7 @@ resetClassUI <- function(session, output){
   ns <- session$ns
   
   output$classfileField <- renderUI({
-    fileInput(ns("classFile"), "Choose a xlsx file", accept = c(".xlsx"))
+    fileInput(ns("classFile"), "Choose a xlsx csv file", accept = c(".xlsx, .csv"))
   })
   updateTextInput(session, "className", value = "")
   updateAwesomeCheckbox(session, "colorCode", value = FALSE)
