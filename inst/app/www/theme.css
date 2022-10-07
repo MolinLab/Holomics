@@ -100,6 +100,12 @@ button[id*='upload-'], button[id*='upload-']:hover{
   margin-bottom: .25rem;
 }
 
+/* General awesome buttons */
+.awesome-checkbox input[type="checkbox"]:focus+label::before, 
+.awesome-radio input[type="radio"]:focus+label::before{
+  outline: none;
+}
+
 /* Collapse card buttons */
 .btn-sm{
   color: var(--green)
