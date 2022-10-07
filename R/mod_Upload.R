@@ -86,6 +86,17 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       }
     })
     
+    observeEvent(input$prevFiltered, {
+      if(isTRUE(input$prevFiltered)){
+        shinyjs::hide("isMicrobiome")
+        shinyjs::enable("omicsAnalysismulti")
+      } else {
+        shinyjs::show("isMicrobiome")
+        shinyjs::disable("omicsAnalysismulti")
+        updateCheckboxInput(session, "omicsAnalysismulti", value = FALSE)
+      }
+    }, ignoreNULL = F)
+    
     #save data
     observeEvent(input$saveData, {
       ivData$enable() #check input with validator
@@ -122,7 +133,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
             unfiltered_data <- df_data
           }
           
-          if(input$isMicrobiome){ #check for microbiome data
+          if(input$isMicrobiome && !input$prevFiltered){ #check for microbiome data and if it was not previously filtered
             df_data <- performMixMC(df_data)
           }
           
@@ -142,7 +153,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
             
           }
           
-          if("multi" %in% input$omicsAnalysis){
+          if("multi" %in% input$omicsAnalysis && input$prevFiltered){
             if (!is.null(multiData)){
               multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
             }
@@ -151,7 +162,8 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
           }
           
           tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, 
-                                              nrow(df_data), ncol(df_data), input$isMicrobiome, analysisText))
+                                              nrow(df_data), ncol(df_data), 
+                                              input$isMicrobiome && !input$prevFiltered, analysisText))
           
           #reset UI
           resetDataUI(session, output)

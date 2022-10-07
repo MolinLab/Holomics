@@ -15,6 +15,9 @@ getDataUploadUI <- function(ns){
             textInput(ns("dataName"), "Data name")
           ),
           fluidRow(style = "margin-left: 0;",
+            awesomeCheckbox(ns("prevFiltered"), "Was previously filtered")
+          ), 
+          fluidRow(style = "margin-left: 0;",
             awesomeCheckbox(ns("isMicrobiome"), "Is microbiome data")
           ), 
           fluidRow(style = "margin-left: 0;",
