@@ -351,3 +351,19 @@ getTestKeepX <- function(max){
   keepX <- c(keepX, seq(2, max, 2))
   return (sort(keepX))
 }
+
+#' @description A utils function that extends the table 
+#' with the datasets informations by one row
+#'
+#' @noRd
+extendDataTable <- function(table, name, filename, samplesNum, variablesNum, isMicrobiome, omicsAnalysis){
+  return (rbind(table, c(name, filename, samplesNum, variablesNum, isMicrobiome, omicsAnalysis)))
+}
+
+#' @description A utils function that extends the table 
+#' with the classes informations by one row
+#'
+#' @noRd
+extendClassTable <- function(table, name, filename, samplesNum, containsColor){
+  return(rbind(table, c(name, filename, samplesNum, containsColor)))
+}

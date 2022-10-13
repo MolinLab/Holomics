@@ -11,14 +11,17 @@ app_server <- function( input, output, session ) {
   singleomicsClasses <- reactiveValues(data = list())
   multiomicsClasses <- reactiveValues(data = list())
   
-  mod_Upload_server("upload", singleomicsData, singleomicsClasses, multiomicsData, multiomicsClasses)
+  tables <- reactiveValues(data = NULL, classes = NULL)
+  
+  
+  mod_Upload_server("upload", singleomicsData, singleomicsClasses, multiomicsData, multiomicsClasses, tables)
   
   single_dataset <- reactiveValues()
   single_class <- reactiveValues()
   mod_SingleOmics_server("singleOmics", data = singleomicsData, dataSelection = single_dataset,
                          classes = singleomicsClasses, classSelection = single_class)
-  mod_PCA_server("PCA", dataset = single_dataset, classes = single_class, multiDataset = multiomicsData)
-  mod_PLSDA_server("PLSDA", dataset = single_dataset, classes = single_class, multiDataset = multiomicsData)
+  mod_PCA_server("PCA", dataset = single_dataset, classes = single_class, multiDataset = multiomicsData, tables)
+  mod_PLSDA_server("PLSDA", dataset = single_dataset, classes = single_class, multiDataset = multiomicsData, tables)
   
   mod_sPLS_server("sPLS", data = multiomicsData, classes = multiomicsClasses)
   mod_DIABLO_server("DIABLO", data = multiomicsData, classes = multiomicsClasses)

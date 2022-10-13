@@ -47,13 +47,13 @@ mod_PCA_ui <- function(id){
 #' PCA Server Functions
 #'
 #' @noRd 
-mod_PCA_server <- function(id, dataset, classes, multiDataset){
+mod_PCA_server <- function(id, dataset, classes, multiDataset, tables){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
     render_pca_ui_components(ns, input, output, dataset)
     
-    generate_pca_plots(ns, input, output, dataset, classes, multiDataset)
+    generate_pca_plots(ns, input, output, dataset, classes, multiDataset, tables)
     
   })
 }
@@ -71,7 +71,7 @@ render_pca_ui_components <- function(ns, input, output, dataset){
 }
 
 #' Business logic functions
-generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset){
+generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset, tables){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
@@ -212,6 +212,10 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
       feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
       result <- dataset$data$unfiltered[, feature_cols]
       multiDataset$data[[paste0(dataset$name, "_pca_filtered")]] <- list(filtered = result, unfiltered = result)
+      
+      # extend table in upload with available datasets
+      tables$data <- extendDataTable(tables$data, paste0(dataset$name, "_pca_filtered"), "-", nrow(result), ncol(result),
+                                     FALSE, "multi")
       
       incProgress(1/3)
     })

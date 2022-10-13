@@ -30,7 +30,7 @@ mod_Upload_ui <- function(id){
 #' upload Server Functions
 #'
 #' @noRd 
-mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiClasses){
+mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiClasses, tables){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
@@ -39,7 +39,8 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     ivClass <- initClassValidator(session)
     
     # tables showing the uploaded data
-    tables <- reactiveValues(data = initDataMatrix(), classes = initClassMatrix())
+    tables$data = initDataMatrix()
+    tables$classes = initClassMatrix()
     output$dataTable <- DT::renderDataTable({
       DT::datatable(tables$data, options = list(dom = "tp", pageLength = 5,
                                                 columnDefs = list(list(className = 'dt-body-right', targets = 2:4),
@@ -161,9 +162,8 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
             analysisText = ifelse(analysisText == "", "multi", "both")
           }
           
-          tables$data <- rbind(tables$data, c(input$dataName, input$dataFile$name, 
-                                              nrow(df_data), ncol(df_data), 
-                                              input$isMicrobiome && !input$prevFiltered, analysisText))
+          tables$data <- extendDataTable(tables$data, input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data),
+                          input$isMicrobiome && !input$prevFiltered, analysisText)
           
           #reset UI
           resetDataUI(session, output)
@@ -231,7 +231,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
             multiClasses$data[[input$className]] <- df_classes
           }
           
-          tables$classes <- rbind(tables$classes, c(input$className, input$classFile$name, nrow(df_classes), input$colorCode))
+          tables$classes <- extendClassTable(tables$classes, input$className, input$classFile$name, nrow(df_classes), input$colorCode)
           
           #reset UI
           resetClassUI(session, output)

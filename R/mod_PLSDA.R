@@ -61,13 +61,13 @@ mod_PLSDA_ui <- function(id){
 #' PLSDA Server Functions
 #'
 #' @noRd 
-mod_PLSDA_server <- function(id, dataset, classes, multiDataset){
+mod_PLSDA_server <- function(id, dataset, classes, multiDataset, tables){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
     render_plsda_ui_components(ns, input, output, dataset)
     
-    generate_plsda_plots(ns, input, output, dataset, classes, multiDataset)
+    generate_plsda_plots(ns, input, output, dataset, classes, multiDataset, tables)
     
   })
 }
@@ -84,7 +84,7 @@ render_plsda_ui_components <- function(ns, input, output, dataset){
 }
 
 #' Business logic functions
-generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDataset){
+generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDataset, tables){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
@@ -222,6 +222,9 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
       result <- dataset$data$unfiltered[, feature_cols]
       multiDataset$data[[paste0(dataset$name, "_plsda_filtered")]] <- list(filtered = result, unfiltered = result)
+      
+      tables$data <- extendDataTable(tables$data, paste0(dataset$name, "_plsda_filtered"), "-", nrow(result), ncol(result),
+                                     FALSE, "multi")
       
       incProgress(1/3)
     })
