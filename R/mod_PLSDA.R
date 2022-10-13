@@ -36,9 +36,21 @@ mod_PLSDA_ui <- function(id){
                       ),
                       getSelectedVarsPlot(ns),
                       tabPanel("Filtering for multi-omics",
-                               fluidRow(),
+                               fluidRow(style = "display: flex; column-gap: 1rem",
+                                 downloadButton(ns("Filter.download"), "Filter by loadings"),
+                                 textOutput(ns("Var.filtered"))
+                               ),
+                               tags$hr(),
+                               fluidRow(style = "display: flex; column-gap: 1rem",
+                                        uiOutput(ns("indiv.x.comp.filtered")),
+                                        uiOutput(ns("indiv.y.comp.filtered")),
+                                        uiOutput(ns("names.filtered"))
+                               ),
                                fluidRow(
-                                 downloadButton(ns("Filter.download"), "Filter by loadings")
+                                   bs4Dash::column(width = 12,
+                                                   plotOutput(ns("Indiv.filtered")),
+                                                   uiOutput(ns("indiv.filtered.button"))
+                                   )
                                )
                       )
       )
@@ -96,15 +108,15 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
   })
   
   #' plot functions
-  plot.indiv <- function(){
+  plot.indiv <- function(result, comp.indiv, indNames){
     req(classes$data)
-    if (!is.null(result())){
+    if (!is.null(result)){
       title = colnames(classes$data)[2]
       if (ncol(classes$data) == 3){
         colors = getGroupColors(classes$data)
-        plotIndiv(result(), classes$data[,2], title, comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+        plotIndiv(result, classes$data[,2], title, comp.indiv, indNames = indNames, col.per.group = colors)
       } else {
-        plotIndiv(result(), classes$data[,2], title, comp.indiv(), indNames = input$indiv.names)
+        plotIndiv(result, classes$data[,2], title, comp.indiv, indNames = indNames)
       }
     }
   }
@@ -139,7 +151,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
   
   #'Sample plot
   output$Indiv <- renderPlot(
-    plot.indiv()
+    plot.indiv(result(), comp.indiv(), input$indiv.names)
   ) 
   
   #' Variable plot
@@ -157,8 +169,26 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     table.selVar()
   )
   
+  #' Observe dataset change
+  observeEvent(dataset$data, {
+    output$indiv.x.comp.filtered <- renderUI("")
+
+    output$indiv.y.comp.filtered <- renderUI("")
+
+    output$names.filtered <- renderUI("")
+    
+    output$indiv.filtered.button <- renderUI("")
+
+    output$Indiv.filtered <- renderPlot(
+      plot.indiv(NULL)
+    )
+    
+    output$Var.filtered <- renderText("")
+    
+  })
+  
   #' Filter function
-  filterByLoadings <- function(){
+  filterByLoadings <- function(output){
     req(dataset$data$filtered)
     req(classes$data)
     
@@ -196,6 +226,43 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       incProgress(1/3)
     })
     
+    output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", length(sel_feature)))
+    
+    output$indiv.x.comp.filtered <- renderUI({
+      selectInput(ns("indiv.x.filtered"), "X-Axis component:", seq(1, ncomp, 1))
+    })
+
+    output$indiv.y.comp.filtered <- renderUI({
+      selectInput(ns("indiv.y.filtered"), "Y-Axis component:", seq(1, ncomp, 1), selected = 2)
+    })
+    
+    comp.indiv.filtered <- reactive({
+      req(input$indiv.x.filtered)
+      req(input$indiv.y.filtered)
+      as.numeric(c(input$indiv.x.filtered,input$indiv.y.filtered))
+    })
+    
+    output$names.filtered <- renderUI({
+      awesomeCheckbox(ns("indiv.names.filtered"), "Sample names", value = FALSE)
+    })
+    
+    output$Indiv.filtered <- renderPlot(
+      plot.indiv(splsda.result, comp.indiv.filtered(), input$indiv.names.filtered)
+    )
+    
+    output$indiv.filtered.button <- renderUI({
+      downloadButton(ns("Indiv.filtered.download"), "Save plot")             
+    })  
+    
+    output$Indiv.filtered.download <- downloadHandler(
+      filename = "PLS-DA_filtered_Sampleplot.png",
+      content = function(file){
+        png(file, 1800, 1200, res = 300)
+        plot.indiv(splsda.result, comp.indiv.filtered(), input$indiv.names.filtered)
+        dev.off()
+      }
+    )
+    
     return(result)
   }
   
@@ -213,7 +280,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       paste0(dataName(), "_filtered.xlsx")
     },
     content = function(file){
-        df <- filterByLoadings()
+        df <- filterByLoadings(output)
         openxlsx::write.xlsx(df, file, rowNames = TRUE, colNames = TRUE)
     }
   )
