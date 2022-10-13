@@ -78,6 +78,22 @@ getTunedParametersComponent <- function(ns, keepY = FALSE){
 }
 
 #' @description A utils function to get the tabPanel for
+#' the scree plots
+#'
+#' @return tabpanel
+#'
+#' @noRd
+getScreePlot <- function(ns){
+  return(
+    tabPanel("Scree plot",       
+             bs4Dash::column(width = 12,
+                             plotOutput(ns("Scree")), 
+                             downloadButton(ns("Scree.download"), "Save plot"))
+    )
+  )
+}
+
+#' @description A utils function to get the tabPanel for
 #' the sample plots
 #'
 #' @return tabpanel
