@@ -220,7 +220,7 @@ button[id*='scale-info']{
   margin-left: -.8rem
 }
 
-/* Components input */
-label[id*='ncomp-label']{
+/* Label for components input and upload analysis type */
+label[id*='ncomp-label'], label[for='upload-omicsAnalysis']{
   display: none;
 }

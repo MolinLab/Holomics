@@ -15,7 +15,8 @@ getDataUploadUI <- function(ns){
             textInput(ns("dataName"), "Data name")
           ),
           fluidRow(style = "margin-left: 0;",
-            awesomeCheckbox(ns("prevFiltered"), "Was previously filtered")
+            awesomeCheckbox(ns("prevFiltered"), "Was previously filtered", width = "auto"),
+            getTooltip(ns("isMicrobiome-info"), "Already ran through the single-omics step of the Holomics application")
           ), 
           fluidRow(id = ns("microbiomeRow"), style = "margin-left: 0;",
                    awesomeCheckbox(ns("isMicrobiome"), "Is microbiome data", width = "auto"),
@@ -27,9 +28,17 @@ getDataUploadUI <- function(ns){
                    getTooltip(ns("transposed-info"), "Uploaded data has the samples as the columns and the variables as the rows")
           ),
           fluidRow(style = "margin-left: 0;",
-                   awesomeCheckboxGroup(ns("omicsAnalysis"), "Use for ... omics analysis",
-                                        choices = c("single", "multi"), width = "auto"),
-                   getTooltip(ns("omicsAnalysis-info"), "Uploaded data will only be available for the selected analysis")
+                   bs4Dash::column(width = 12,
+                                   fluidRow(
+                                     tags$label("Use for ... omics analysis"),
+                                     getTooltip(ns("omicsAnalysis-info"), 
+                                                "Uploaded data will only be available for the selected analysis")
+                                   ),
+                                   fluidRow(
+                                    awesomeCheckboxGroup(ns("omicsAnalysis"), "",
+                                                        choices = c("single", "multi"), width = "auto"),
+                                   )
+                   )
           ),
           fluidRow(style = "margin-left: 0;",
             actionButton(ns("saveData"), "Save")
