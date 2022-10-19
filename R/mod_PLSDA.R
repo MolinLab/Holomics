@@ -100,8 +100,13 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
-      result <- mixOmics::plsda(dataset$data$filtered, Y = classes$data[,2],
-                                ncomp = input$ncomp , scale = input$scale)
+      tryCatch({
+        result <- mixOmics::plsda(dataset$data$filtered, Y = classes$data[,2],
+                                  ncomp = input$ncomp , scale = input$scale)
+      }, error = function(cond){
+        getErrorMessage(cond)
+        result <- NULL
+      })
     } else {
       result <- NULL
     }

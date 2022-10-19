@@ -357,13 +357,32 @@ renderImgComp <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
   } 
 }
 
+#' @description A utils function returns the
+#' error message by calling the getShinyErrorAlert
+#' function with a predfined text
+#'
+#' @noRd
+getErrorMessage <- function(error, trim = TRUE){
+  errorMsg = error
+  if (trim && nchar(error) > 100){
+    errorMsg = paste(substr(error, 0, 100), "...")
+  }
+  
+  return (
+    getShinyErrorAlert(paste0("<p>The following error appeared while trying to tune the parameters:</p>
+                        <p><code>", errorMsg,"</code></p> <p>If the error keeps appearing please report it.</p>"), 
+                       TRUE)
+    
+  )
+}
+
 #' @description A utils function that returns
 #' a shiny alert of the type error with a 
 #' custom message
 #'
 #' @noRd
-getShinyErrorAlert <- function(message){
+getShinyErrorAlert <- function(message, html = FALSE){
   return(
-    shinyalert::shinyalert("Error!", message, type = "error")
+    shinyalert::shinyalert("Error!", message, type = "error", html = html)
   )
 }

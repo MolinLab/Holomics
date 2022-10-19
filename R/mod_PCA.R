@@ -86,8 +86,13 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
-      result <- mixOmics::pca(dataset$data$filtered, ncomp = input$ncomp,
-                              scale = input$scale)
+      tryCatch({
+        result <- mixOmics::pca(dataset$data$filtered, ncomp = input$ncomp,
+                                scale = input$scale)
+      }, error = function(cond){
+        getErrorMessage(cond)
+        result <- NULL
+      })
     } else {
       result <- NULL
     }

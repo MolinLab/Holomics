@@ -222,8 +222,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
           output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
         }
       }, error = function(cond){
-        shinyalert::shinyalert("Error!", "There was an error while trying to tune the parameters.
-                             This can be related with the chosen datasets.", type = "error")
+        getErrorMessage(cond, trim = F)
       })
     }
   })
@@ -301,9 +300,14 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
         design <- matrix(0.1, ncol = length(X), nrow = length(X),
                          dimnames = list(names(X), names(X)))
         diag(design) <- 0
-        result <- mixOmics::block.splsda(X, Y,
-                                         ncomp = input$ncomp , scale = input$scale,
-                                         design = design)
+        tryCatch({
+          result <- mixOmics::block.splsda(X, Y,
+                                           ncomp = input$ncomp , scale = input$scale,
+                                           design = design)
+        }, error = function(cond){
+          getErrorMessage(cond)
+          result <- NULL
+        })
       } else {
         result <- NULL
       }
@@ -321,8 +325,13 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
         design <- matrix(0.1, ncol = length(X), nrow = length(X),
                          dimnames = list(names(X), names(X)))
         diag(design) <- 0
-        result <- mixOmics::block.splsda(X, Y, ncomp = tunedVals$ncomp, keepX = tunedVals$keepX, design = design)
         
+        tryCatch({
+          result <- mixOmics::block.splsda(X, Y, ncomp = tunedVals$ncomp, keepX = tunedVals$keepX, design = design)
+        }, error = function(cond){
+          getErrorMessage(cond)
+          result <- NULL
+        })
       }
     }
   })

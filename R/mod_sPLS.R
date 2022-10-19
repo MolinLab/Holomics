@@ -198,8 +198,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
         output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
       }
     }, error = function(cond){
-      shinyalert::shinyalert("Error!", "There was an error while trying to tune the parameters. 
-                             This can be related with the chosen datasets.", type = "error")
+      getErrorMessage(cond, trim = F)
     })
   })
   
@@ -277,8 +276,13 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
-      spls.result <- mixOmics::spls(X, Y,
-                                    ncomp = input$ncomp, scale = input$scale)
+      tryCatch({
+        spls.result <- mixOmics::spls(X, Y,
+                                      ncomp = input$ncomp, scale = input$scale)
+      }, error = function(cond){
+        getErrorMessage(cond)
+        spls.result <- NULL
+      }) 
     } else {
       spls.result <- NULL
     }
@@ -293,8 +297,14 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
             identical(classSelection$data[,1], rownames(dataSelection$data2)))
       X <- dataSelection$data1
       Y <- dataSelection$data2
-      spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedVals$ncomp, 
-                                          keepX = tunedVals$keepX, keepY = tunedVals$keepY)
+    
+        tryCatch({
+        spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedVals$ncomp, 
+                                            keepX = tunedVals$keepX, keepY = tunedVals$keepY)
+      }, error = function(cond){
+        getErrorMessage(cond)
+        spls.result.tuned <- NULL
+      })
     }
   })
   
