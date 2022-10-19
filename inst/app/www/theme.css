@@ -1,3 +1,5 @@
+/** Defines the general color theme for the application **/
+
 :root {
   --grey: #f1f3f2;
   --green: #bfc531;
@@ -8,6 +10,19 @@
 /* Main div */
 .content-wrapper{
   background-color: white;
+}
+
+/* Startpage */
+.workflow-step{
+  color: var(--green);
+  font-weight: bold;
+  font-size: 1.25rem;
+  display: inline;
+}
+
+/* Link to mixOmics */
+.mixOmics-link, .mixOmics-link:hover{
+  color: var(--green);
 }
 
 /* Sidebar */
@@ -79,9 +94,9 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
   color: var(--green);
 }
 
-/* Save plot buttons, delete and tune buttons */
+/* Save plot buttons, delete, info and tune buttons */
 .shiny-download-link, .shiny-download-link:hover, button[id*='-tune'], button[id*='-tune']:hover, 
-button[id*='upload-'], button[id*='upload-']:hover{
+button[id*='upload-'], button[id*='upload-']:hover, button[id*='-info']:hover{
   background-color: var(--green);
   color: white;
 }
@@ -170,4 +185,42 @@ div[id*="fileField"] > div{
 /* Footer link */
 footer a{
   color: #79151d;
+}
+
+/* Error messages */
+div[id*='errorMsg']{
+  display: flex;
+  align-items: center;
+  color: red;
+}
+
+div[id*='parameters.error']{
+  color: red;
+}
+
+/* Download buttons */
+a[id*='.download']{
+  float: right;
+}
+
+/* Info buttons */
+button[id*='-info']{
+  border-radius: 100%;
+  border-color: var(--green);
+  font-size: 8px;
+  padding: 1px 4px;
+  height: fit-content;
+  margin-left: .2rem;
+  background-color: var(--grey);
+  color: black;
+}
+
+/* Scale info buttons */
+button[id*='scale-info']{
+  margin-left: -.8rem
+}
+
+/* Components input */
+label[id*='ncomp-label']{
+  display: none;
 }

@@ -11,6 +11,22 @@ getSelectionComponent <- function(id, label, choices, selected = NULL, multiple 
   )
 }
 
+#' @description A utils function that creates the
+#' popover with its action button to show a information text
+#'
+#' @return bootstrap popover
+#'
+#' @noRd
+getTooltip <- function(id, title){
+  return(
+    bs4Dash::tooltip(
+      actionButton(id, label = "", icon = icon("question"), style = "info", size = "xs"),
+      title = title,
+      placement = "right"
+    )
+  )
+}
+
 #' @description A utils function to get the block with the analysis parameters.
 #'
 #' @return bootstrap box with the parameter components
@@ -19,11 +35,25 @@ getSelectionComponent <- function(id, label, choices, selected = NULL, multiple 
 getAnalysisParametersComponent <- function(ns){
   return(
     bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
-                 fluidRow(style = "column-gap: 1rem", 
-                          numericInput(ns("ncomp"), "Number of components", value = 9, 
-                                       min = 1, max = 15, step = 1, width = "45%"),
-                          awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "15%"),
-                          textOutput(ns("parameters.error"))
+                 fluidRow(style = "column-gap: 1rem",
+                          bs4Dash::column(width = 4,
+                            fluidRow(
+                              tags$label("Number of components"),
+                              getTooltip(ns("component-info"), "TODO")
+                            ),
+                            fluidRow(
+                              numericInput(ns("ncomp"), label = "", value = 9, 
+                                           min = 1, max = 15, step = 1)
+                            )
+                          ),
+                          bs4Dash::column(width = 2, style = "display: flex; column-gap: inherit",
+                            awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "fit-content"),
+                            getTooltip(ns("scale-info"), "Variables will be standardized to have zero means 
+                                       and unit variance before the analysis takes place")
+                          ),
+                          bs4Dash::column(width = 5,
+                            textOutput(ns("parameters.error"))
+                          )
                  )
     )  
   )

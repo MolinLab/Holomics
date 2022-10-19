@@ -22,6 +22,14 @@ mod_sPLS_ui <- function(id){
     ),
     fluidRow(
       bs4Dash::column(width = 5, 
+                      fluidRow(style = "padding-left: 7.5px;",
+                               h1("sPLS"),
+                      ),
+                      fluidRow(
+                               bs4Dash::box(title = "General information", width = 12,
+                                            htmlOutput(ns("sPLSinfotext"))
+                               )  
+                      ),
                       fluidRow(width = 12,
                                getAnalysisParametersComponent(ns)
                       ),
@@ -30,9 +38,19 @@ mod_sPLS_ui <- function(id){
                       )
       ),
       bs4Dash::column(width = 2,
+                      fluidRow(),
+                      fluidRow(),
                       getTuneBox(ns)
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
+                      fluidRow(style = "padding-left: 7.5px;",
+                               h1("sPLS tuned"),
+                      ),
+                      fluidRow(
+                               bs4Dash::box(title = "General information", width = 12,
+                                            htmlOutput(ns("sPLStunedinfotext"))
+                               )
+                      ),
                       fluidRow(width = 12,
                                getTunedParametersComponent(ns, TRUE)
                       ),
@@ -66,6 +84,8 @@ mod_sPLS_server <- function(id, data, classes){
     generate_spls_plots(ns, input, output, dataSelection, classSelection, results$result, results$resultTuned, tunedVals)
     
     generate_spls_error_messages(input, output, data, classes, dataSelection, classSelection, tunedVals)
+    
+    render_spls_infotexts(output)
   })
 }
 
@@ -582,4 +602,22 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariable1.csv", table.selVarX.tuned, type = "csv")
   output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariables2.csv", table.selVarY.tuned, type = "csv")
+}
+
+#' Information texts
+render_spls_infotexts <- function(output){
+  output$sPLSinfotext <- renderText({
+   HTML("The standard PLS is a multivariate analysis used to analyse two datasets by maximising the covariance between the datasets components.
+   The <b>s</b>parse <b>P</b>rojection to <b>L</b>atent <b>S</b>tructure is a variant of the PLS, 
+   which combines the correlation calculation and final variable selection into one step instead of two like the standard PLS has. 
+   It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis. <br/>
+   Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a>
+   and in several scientific papers.") 
+  })
+  
+  output$sPLStunedinfotext <- renderText({
+    HTML("The mixOmics package provides the option to tune the parameters of the sPLS analysis. 
+    This means that the optimal number of components and the optimal number of features to select on each component for every dataset will be calculated. <br/> 
+    More detailed information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html#tuning:PLS' target='_blank'>mixOmics website</a>.")
+  })
 }

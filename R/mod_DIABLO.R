@@ -23,6 +23,14 @@ mod_DIABLO_ui <- function(id){
     ),
     fluidRow(
       bs4Dash::column(width = 5,
+                      fluidRow(style = "padding-left: 7.5px;",
+                               h1("DIABLO"),
+                      ),
+                      fluidRow(
+                               bs4Dash::box(title = "General information", width = 12,
+                                            htmlOutput(ns("DIABLOinfotext"))
+                                            )
+                      ),
                       fluidRow(width = 12,
                                getAnalysisParametersComponent(ns)
                       ),
@@ -31,9 +39,19 @@ mod_DIABLO_ui <- function(id){
                       )
       ),
       bs4Dash::column(width = 2,
+                      fluidRow(),
+                      fluidRow(),
                       getTuneBox(ns)
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
+                      fluidRow(style = "padding-left: 7.5px;",
+                               h1("DIABLO tuned"),
+                      ),
+                      fluidRow(
+                               bs4Dash::box(title = "General information", width = 12,
+                                            htmlOutput(ns("DIABLOtunedinfotext"))
+                               )
+                      ),
                       fluidRow(width = 12,
                                getTunedParametersComponent(ns)
                       ),
@@ -73,6 +91,8 @@ mod_DIABLO_server <- function(id, data, classes){
     generate_diablo_plots(ns, input, output, dataSelection, classSelection, results$result, results$resultTuned, tunedVals, nodes, nodesTuned)
     
     generate_diablo_error_messages(input, output, data, classes, dataSelection, classSelection, tunedVals)
+    
+    render_diablo_infotexts(output)
   })
 }
 
@@ -733,5 +753,23 @@ generate_diablo_error_messages <- function(input, output, data, classes, dataSel
   
   output$network.error.tuned <- renderText({
     return(diabloCheckTwoDatasets(dataSelection))
+  })
+}
+
+#' Information texts
+render_diablo_infotexts <- function(output){
+  output$DIABLOinfotext <- renderText({
+    HTML("<b>D</b>ata <b>I</b>ntegration <b>A</b>nalysis for <b>B</b>iomarker discovery using <b>L</b>atent c<b>O</b>mponents is a 
+    generalised version of the PLS for multiple datasets. It maximises the correlated information between the datasets and simultaneously 
+    identifies the key features of the omics datasets. Generally, DIABLO can be used supervised and unsupervised, whereas, here the supervised version is used. 
+    Therefore, the DIABLO algorithm works with one list containing the omics datasets and the dataset with the classes of each sample. <br/>
+    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/diablo.html' target='_blank'>mixOmics website</a>
+    and in several scientific papers.")
+  })
+  
+  output$DIABLOtunedinfotext <- renderText({
+    HTML("The mixOmics offers parameter tuning for the DIABLO analyses, like for the sPLS. 
+    Again the number of components and variables for each component on each dataset can be tuned using repeated cross-validation. <br/>
+    More detailed information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/diablo.html#tuning-parameters-1' target='_blank'>mixOmics website</a>.")
   })
 }

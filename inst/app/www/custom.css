@@ -1,19 +1,6 @@
-div[id*='errorMsg']{
-  display: flex;
-  align-items: center;
-  color: red;
-}
-
-div[id*='parameters.error']{
-  color: red;
-}
-
+/** Defines css rules for specific widgets **/
 #DIABLO-nodes, #DIABLO-nodes\.tuned{
   width: 30%;
-}
-
-a[id*='.download']{
-  float: right;
 }
 
 #DIABLO-NetworkHtml\.download{

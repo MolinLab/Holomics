@@ -21,11 +21,25 @@ mod_SingleOmics_ui <- function(id){
     ),
     fluidRow(
       bs4Dash::column( width = 6,
-                       h1("PCA"),
+                       fluidRow(style = "padding-left: 7.5px;",
+                         h1("PCA"),
+                       ),
+                       fluidRow(
+                                bs4Dash::box(title = "General information", width = 12,
+                                  htmlOutput(ns("PCAinfotext"))
+                                )  
+                       ),
                        mod_PCA_ui("PCA")
       ),
       bs4Dash::column( width = 6,
-                       h1("PLS-DA"),
+                       fluidRow(style = "padding-left: 7.5px;",
+                                h1("PLS-DA"),
+                       ),
+                       fluidRow(
+                                bs4Dash::box(title = "General information", width = 12,
+                                             htmlOutput(ns("PLSDAinfotext"))
+                                )
+                       ),
                        mod_PLSDA_ui("PLSDA")
       )
     )
@@ -115,6 +129,25 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
           }
         }
       })
+    })
+    
+    output$PCAinfotext <- renderText({
+      HTML("The <b>P</b>rincipal <b>C</b>omponent <b>A</b>nalysis decreases the size of the high-dimensional dataset, 
+      removes noise from the dataset and presents the similarities between the samples.
+      It works unsupervised and determines uncorrelated and orthogonal principal components (PC) in the data.
+      Therefore, the PCA only works with the data matrix containing the samples and features information without knowing the classification of the samples.
+      It helps to identify characteristics of the data and eventual biases and artefacts by visualising the PCs with the respective features and samples. <br/>
+      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pca.html' target='_blank'>mixOmics website</a>
+      and in several scientific papers.")
+    })
+    
+    output$PLSDAinfotext <- renderText({
+      HTML("The <b>P</b>artial <b>L</b>east-<b>S</b>quares <b>D</b>iscriminant <b>A</b>nalysis is a tool used for multivariate dimension reduction of large datasets. 
+      It is similar to the PCA, but with a supervised approach for reducing the input data dimension. This means that the PLS-DA knows the label of each sample when reducing the dimension. 
+      The PLS-DA works with the matrix containing the sample and features information and the dataset with the classes of each sample. 
+      In the context of multi-omics analyses, it is used to get a first impression of the input data and find the key features of the datasets.<br/>
+      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/plsda.html' target='_blank'>mixOmics website</a>
+      and in several scientific papers.")
     })
   })
 }

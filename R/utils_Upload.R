@@ -17,22 +17,26 @@ getDataUploadUI <- function(ns){
           fluidRow(style = "margin-left: 0;",
             awesomeCheckbox(ns("prevFiltered"), "Was previously filtered")
           ), 
-          fluidRow(style = "margin-left: 0;",
-            awesomeCheckbox(ns("isMicrobiome"), "Is microbiome data")
+          fluidRow(id = ns("microbiomeRow"), style = "margin-left: 0;",
+                   awesomeCheckbox(ns("isMicrobiome"), "Is microbiome data", width = "auto"),
+                   getTooltip(ns("isMicrobiome-info"), "Microbiome data used for the single-omics analysis 
+                       will run through the mixMc pipeline developed by mixOmics")
           ), 
           fluidRow(style = "margin-left: 0;",
-                   awesomeCheckbox(ns("transposed"), "Has transposed format")
+                   awesomeCheckbox(ns("transposed"), "Has transposed format", width = "auto"),
+                   getTooltip(ns("transposed-info"), "Uploaded data has the samples as the columns and the variables as the rows")
           ),
           fluidRow(style = "margin-left: 0;",
                    awesomeCheckboxGroup(ns("omicsAnalysis"), "Use for ... omics analysis",
-                                        choices = c("single", "multi"))
+                                        choices = c("single", "multi"), width = "auto"),
+                   getTooltip(ns("omicsAnalysis-info"), "Uploaded data will only be available for the selected analysis")
           ),
           fluidRow(style = "margin-left: 0;",
             actionButton(ns("saveData"), "Save")
           )
         )
-      ) 
-    )
+      )
+  )
 }
 
 #' @description A utils function that defines the UI 
@@ -52,7 +56,9 @@ getClassUploadUI <- function(ns){
           textInput(ns("className"), "Data name")
         ),
         fluidRow(style = "margin-left: 0;",
-          awesomeCheckbox(ns("colorCode"), "Includes color code")
+          awesomeCheckbox(ns("colorCode"), "Includes color code", width = "auto"),
+          getTooltip(ns("colorCode-info"), "Uploaded data has a second column with color names / hex codes 
+          that will be used later on in the plots")
         ),
         fluidRow(style = "margin-left: 0;",
                  actionButton(ns("saveClass"), "Save")
@@ -216,9 +222,12 @@ resetDataUI <- function(session, output){
     fileInput(ns("dataFile"), "Choose a xlsx or csv file", accept = c(".xlsx, .csv"))
   })
   updateTextInput(session, "dataName", value = "")
+  updateAwesomeCheckbox(session, "prevFiltered", value = FALSE)
   updateAwesomeCheckbox(session, "isMicrobiome", value = FALSE)
   updateAwesomeCheckbox(session, "transposed", value = FALSE)
   updateAwesomeCheckboxGroup(session, "omicsAnalysis", selected = "NULL")
+  shinyjs::disable("omicsAnalysismulti")
+  shinyjs::show("isMicrobiome")
 }
 
 #' @description A utils function, to reset the UI components of the data form

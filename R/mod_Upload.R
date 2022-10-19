@@ -14,6 +14,10 @@ mod_Upload_ui <- function(id){
   tagList(
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     h1("Data upload"),
+    fluidRow(style = "margin-left: 0",
+      htmlOutput(ns("infotext"))
+    ),
+    tags$hr(),
     fluidRow(
       bs4Dash::column(width = 5, style = "margin-left: 1rem",
                       awesomeRadio(ns("type"), "Data type", inline = TRUE,
@@ -60,6 +64,13 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     #switch between data and classes form
     observeEvent(input$type, {
       if (input$type == "data"){
+        
+        output$infotext <- renderText(
+          "The dataset has to be a matrix in an excel file, whereas the rows have to be the samples and the columns the measured features. <br/>
+	         The first column has to contain the sample names and the first row the features names. <br/>
+	         If the data contains more variables/columns then excel allows, please invert the data format and select the 'inverted format' checkbox."
+        )
+        
         output$inputFields <- renderUI({
           getDataUploadUI(ns)
         })
@@ -73,6 +84,14 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         })
         
       } else if (input$type == "labels") {
+        
+        output$infotext <- renderText(
+          "The file has to be an excel file with one column that contains the classes of the samples (e.g. bad, good, ...). <br/>
+           The first entry of the first column has to be the name of the attribute the classes describe (e.g. Storability, Quality, ...).<br/>
+	         Additionally, in the second column, a color name / hex code per class can be added, which will be used in the plots.<br/>
+	         The first entry of this column has to contain the value 'Color' or 'Colorcodes'."
+        )
+        
         output$inputFields <- renderUI({
           getClassUploadUI(ns)
         })
@@ -89,10 +108,10 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     
     observeEvent(input$prevFiltered, {
       if(isTRUE(input$prevFiltered)){
-        shinyjs::hide("isMicrobiome")
+        shinyjs::hide("microbiomeRow")
         shinyjs::enable("omicsAnalysismulti")
       } else {
-        shinyjs::show("isMicrobiome")
+        shinyjs::show("microbiomeRow")
         shinyjs::disable("omicsAnalysismulti")
         updateCheckboxInput(session, "omicsAnalysismulti", value = FALSE)
       }
