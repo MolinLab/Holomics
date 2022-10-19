@@ -68,8 +68,10 @@ getAnalysisParametersComponent <- function(ns){
 getTuneBox <- function(ns){
   return(
     bs4Dash::box(id = ns("tuneBox"), width = 12,
-                 fluidRow(style = "flex-direction: column",
-                          actionButton(ns("tune"), "Tune parameters"),
+                 fluidRow(style = "flex-direction: row",
+                          actionButton(ns("tune"), "Tune parameters", width = "90%"),
+                          getTooltip(ns("tune-info"), "Automatically calculate the optimal number of components 
+                                     and the number of variables per component.")
                  ),
                  fluidRow(id = ns("switchRow"),
                           uiOutput(ns("tune.switch"))
