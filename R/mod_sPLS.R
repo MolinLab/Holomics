@@ -524,7 +524,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     plot.indiv()
   )
   
-  #' Variable plot
+  #' Correlation Circle plot
   output$Var <- renderPlot(
     plot.var()
   )
@@ -558,7 +558,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     plot.indiv.tuned()
   )
   
-  #' Variable plot
+  #' Correlation Circle plot
   output$Var.tuned <- renderPlot(
     plot.var.tuned()
   )

@@ -150,14 +150,14 @@ getSamplePlot <- function(ns, postfix = ""){
 }
 
 #' @description A utils function to get the tabPanel for
-#' the variable plots
+#' the Correlation Circle plots
 #'
 #' @return tabpanel
 #'
 #' @noRd
 getVariablePlot <- function(ns, postfix = ""){
   return(
-    tabPanel("Variable plot",
+    tabPanel("Correlation Circle plot",
              fluidRow(style = "display: flex; column-gap: 1rem",
                       uiOutput(paste0(ns("var.x.comp"), postfix)),
                       uiOutput(paste0(ns("var.y.comp"), postfix)),
@@ -286,7 +286,7 @@ renderIndivComps <- function(ns, input, output, tuned = FALSE, tunedInput = NULL
 }
 
 #' @description A utils function to render the 
-#' components for the variable plot
+#' components for the Correlation Circle plot
 #'
 #' @noRd
 renderVarComps <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){

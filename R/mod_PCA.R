@@ -150,7 +150,7 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     plot.indiv(result(), comp.indiv(), input$indiv.names)
   )
   
-  #' Variable plot
+  #' Correlation Circle plot
   output$Var <- renderPlot(
     plot.var() 
   )

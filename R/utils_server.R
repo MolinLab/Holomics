@@ -91,7 +91,7 @@ getCompIndivReactive <- function(input, tuned = FALSE){
 }
 
 #' @description A utils function to get a reactive
-#' object for the comp parameter of the variable plot
+#' object for the comp parameter of the Correlation Circle plot
 #'
 #' @return reactive object
 #'
@@ -192,7 +192,7 @@ plotIndiv <- function(result, classes, title, comp, repSpace = NULL, indNames, c
 #' @description adapter for the plotVar function of
 #' the mixOmics package
 #'
-#' @return variable plot
+#' @return Correlation Circle plot
 #'
 #' @noRd
 plotVar <- function(result, comp, varNames, legend = FALSE, pch) {

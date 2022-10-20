@@ -159,7 +159,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     plot.indiv(result(), comp.indiv(), input$indiv.names)
   ) 
   
-  #' Variable plot
+  #' Correlation Circle plot
   output$Var <- renderPlot(
     plot.var()
   )

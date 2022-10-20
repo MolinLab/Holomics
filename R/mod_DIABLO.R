@@ -552,7 +552,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     plot.indiv()
   )
   
-  #' Variable plot
+  #' Correlation Circle plot
   output$Var <- renderPlot(
     plot.var()
   )
@@ -597,7 +597,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     plot.indiv.tuned()
   )
   
-  #' Variable plot tuned
+  #' Correlation Circle plot tuned
   output$Var.tuned <- renderPlot(
     plot.var.tuned()
   )
