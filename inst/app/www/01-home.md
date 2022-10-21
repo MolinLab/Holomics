@@ -12,7 +12,7 @@ The used analyses algorithms are based on the <a class='mixOmics-link' href="htt
   <li>Save (most) result plots as images in print quality</li>
 </ul>
 
-<img src="workflow.png" alt="Workflow image" width="80%"/>
+<img src="img/workflow.png" alt="Workflow image" width="80%"/>
 
 
 ### Workflow

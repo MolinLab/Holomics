@@ -15,7 +15,7 @@ app_ui <- function(request) {
       
       ## Header 
       bs4Dash::dashboardHeader(
-        title = tags$img(src='www/logo.png', width="80%", style="display: block; margin: auto;"),
+        title = tags$img(src='www/img/logo.png', width="80%", style="display: block; margin: auto;"),
         controlbarIcon = icon("table-cells")
       ),
       
@@ -29,7 +29,10 @@ app_ui <- function(request) {
           bs4Dash::menuItem("Single-omics", tabName = "singleOmics", icon = icon("window-minimize")),
           bs4Dash::menuItem("Pairwise", tabName = "sPLS", icon = icon("layer-group")),
           bs4Dash::menuItem("Multi-omics", tabName = "DIABLO", icon = icon("layer-group")),
-          bs4Dash::menuItem("Help", tabName = "help", icon = icon("info"))
+          bs4Dash::menuItem("Help", tabName = "help", icon = icon("info"), startExpanded = F,
+                            bs4Dash::menuSubItem("Plots", tabName = "help-plots"),
+                            bs4Dash::menuSubItem("Parameter tuning", tabName = "help-tuning")
+          )
         )
       ),
       
@@ -40,12 +43,22 @@ app_ui <- function(request) {
           bs4Dash::tabItem(tabName = "home",
                            fluidRow(
                              column(width = 10,
-                                    includeMarkdown(app_sys("app/www/01-home.md"))) # create and change to app/www/home.md
+                                    includeMarkdown(app_sys("app/www/01-home.md")))
                            )),
           bs4Dash::tabItem(tabName = "upload", mod_Upload_ui("upload")),
           bs4Dash::tabItem(tabName = "singleOmics", mod_SingleOmics_ui("singleOmics")),
           bs4Dash::tabItem(tabName = "sPLS", mod_sPLS_ui("sPLS")),
-          bs4Dash::tabItem(tabName = "DIABLO", mod_DIABLO_ui("DIABLO"))
+          bs4Dash::tabItem(tabName = "DIABLO", mod_DIABLO_ui("DIABLO")),
+          bs4Dash::tabItem(tabName = "help-plots", 
+                           fluidRow(
+                             column(width = 10,
+                                    includeMarkdown(app_sys("app/www/help-plots.md")))
+                           )),
+          bs4Dash::tabItem(tabName = "help-tuning", 
+                           fluidRow(
+                             column(width = 10,
+                                    includeMarkdown(app_sys("app/www/help-tuning.md")))
+                           ))
         )
         
       )
@@ -90,8 +103,8 @@ golem_add_external_resources <- function(){
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
     
-    tags$link(rel = "stylesheet", type ="text/css", href="www/custom.css"),
-    tags$link(rel = "stylesheet", type ="text/css", href="www/theme.css")
+    tags$link(rel = "stylesheet", type ="text/css", href="www/css/custom.css"),
+    tags$link(rel = "stylesheet", type ="text/css", href="www/css/theme.css")
       )
 }
 
