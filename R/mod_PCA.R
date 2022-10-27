@@ -191,9 +191,11 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
       
       set.seed(30)
       
+      #get optimal number of componends
       tune <- mixOmics::tune.pca(dataset$data$filtered, scale = input$scale)
       ncomp <- min(which(tune$cum.var > 0.8))
       
+      #get optimal number of features per component
       grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
       folds <- floor(nrow(dataset$data$filtered)/3)
       
@@ -206,6 +208,7 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
       
       incProgress(1/3)
       
+      #filter dataset
       spca.result <- mixOmics::spca(dataset$data$filtered, ncomp = ncomp, keepX = tune.spca.result$choice.keepX[1:ncomp])
       
       sel_feature <- c()

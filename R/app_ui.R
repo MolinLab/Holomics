@@ -31,7 +31,7 @@ app_ui <- function(request) {
           bs4Dash::menuItem("Multi-omics", tabName = "DIABLO", icon = icon("layer-group")),
           bs4Dash::menuItem("Help", tabName = "help", icon = icon("info"), startExpanded = F,
                             bs4Dash::menuSubItem("Plots", tabName = "help-plots"),
-                            bs4Dash::menuSubItem("Parameter tuning", tabName = "help-tuning")
+                            bs4Dash::menuSubItem("Filtering and tuning", tabName = "help-tuning")
           )
         )
       ),

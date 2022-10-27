@@ -202,6 +202,8 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       Y <- classes$data[,2]
       result <- mixOmics::plsda(dataset$data$filtered, Y = Y,
                                 ncomp = input$ncomp , scale = input$scale)
+      
+      #get optimal number of components and number of features per component
       grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
       set.seed(30)
       tune.splsda.result <- mixOmics::tune.splsda(dataset$data$filtered,Y = Y, ncomp = input$ncomp,
@@ -211,11 +213,14 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
                                         dist = 'max.dist',
                                         nrepeat = 50,
                                         progressBar = TRUE)
+      
+      # max. possible number is input$ncomp
       ncomp <- tune.splsda.result$choice.ncomp$ncomp
       keepX <- tune.splsda.result$choice.keepX[1:ncomp]
       
       incProgress(1/3)
   
+      #filter dataset
       splsda.result <- mixOmics::splsda(dataset$data$filtered, Y = Y, ncomp = ncomp, keepX = keepX, scale = input$scale)
   
       sel_feature <- c()
