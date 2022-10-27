@@ -39,8 +39,6 @@ mod_DIABLO_ui <- function(id){
                       )
       ),
       bs4Dash::column(width = 2,
-                      fluidRow(),
-                      fluidRow(),
                       getTuneBox(ns)
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,

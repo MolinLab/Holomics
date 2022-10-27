@@ -36,7 +36,7 @@ getAnalysisParametersComponent <- function(ns){
   return(
     bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
                  fluidRow(style = "column-gap: 1rem",
-                          bs4Dash::column(width = 4,
+                          bs4Dash::column(width = 6,
                             fluidRow(
                               tags$label("Number of components")
                             ),
@@ -45,14 +45,14 @@ getAnalysisParametersComponent <- function(ns){
                                            min = 1, max = 15, step = 1)
                             )
                           ),
-                          bs4Dash::column(width = 2, style = "display: flex; column-gap: inherit",
+                          bs4Dash::column(width = 5, style = "display: flex; column-gap: inherit",
                             awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "fit-content"),
                             getTooltip(ns("scale-info"), "Variables will be standardized to have zero means 
                                        and unit variance before the analysis takes place")
-                          ),
-                          bs4Dash::column(width = 5,
-                            textOutput(ns("parameters.error"))
                           )
+                 ),
+                 fluidRow(
+                   textOutput(ns("parameters.error"))
                  )
     )  
   )
@@ -68,9 +68,13 @@ getTuneBox <- function(ns){
   return(
     bs4Dash::box(id = ns("tuneBox"), width = 12,
                  fluidRow(style = "flex-direction: row",
-                          actionButton(ns("tune"), "Tune parameters", width = "90%"),
-                          getTooltip(ns("tune-info"), "Automatically calculate the optimal number of components 
+                          bs4Dash::column(width = 11, style = "padding: 0",
+                                          actionButton(ns("tune"), "Tune parameters", width="inherit")
+                          ),
+                          bs4Dash::column(width = 1, style = "padding-left: 0",
+                                          getTooltip(ns("tune-info"), "Automatically calculate the optimal number of components 
                                      and the number of variables per component.")
+                          )
                  ),
                  fluidRow(id = ns("switchRow"),
                           uiOutput(ns("tune.switch"))
