@@ -83,6 +83,8 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
           getDataTable(ns)
         })
         
+        resetDataUI(session, output)
+        
       } else if (input$type == "labels") {
         
         output$infotext <- renderText(

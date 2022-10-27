@@ -231,6 +231,9 @@ resetDataUI <- function(session, output){
     fileInput(ns("dataFile"), "Choose a xlsx or csv file", accept = c(".xlsx, .csv"))
   })
   updateTextInput(session, "dataName", value = "")
+  
+  #not nice but necessary to trigger observeEvent as only there the disable for omicsAnalysismulti works
+  updateAwesomeCheckbox(session, "prevFiltered", value = TRUE)
   updateAwesomeCheckbox(session, "prevFiltered", value = FALSE)
   updateAwesomeCheckbox(session, "isMicrobiome", value = FALSE)
   updateAwesomeCheckbox(session, "transposed", value = FALSE)
