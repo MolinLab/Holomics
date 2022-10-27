@@ -773,7 +773,9 @@ render_diablo_infotexts <- function(output){
     identifies the key features of the omics datasets. Generally, DIABLO can be used supervised and unsupervised, whereas, here the supervised version is used. 
     Therefore, the DIABLO algorithm works with one list containing the omics datasets and the dataset with the classes of each sample. <br/>
     Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/diablo.html' target='_blank'>mixOmics website</a>
-    and in several scientific papers.")
+    and in several scientific papers.</br>
+    <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>  
+    We recommend using here a rather high number of components and then perform parameter tuning.")
   })
   
   output$DIABLOtunedinfotext <- renderText({

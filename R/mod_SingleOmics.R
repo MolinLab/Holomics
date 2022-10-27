@@ -138,7 +138,9 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
       Therefore, the PCA only works with the data matrix containing the samples and features information without knowing the classification of the samples.
       It helps to identify characteristics of the data and eventual biases and artefacts by visualising the PCs with the respective features and samples. <br/>
       Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pca.html' target='_blank'>mixOmics website</a>
-      and in several scientific papers.")
+      and in several scientific papers. </br>
+      <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b> 
+      We recommend to use a number of components that explains at least 80% of the dataset variance.")
     })
     
     output$PLSDAinfotext <- renderText({
@@ -147,7 +149,8 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
       The PLS-DA works with the matrix containing the sample and features information and the dataset with the classes of each sample. 
       In the context of multi-omics analyses, it is used to get a first impression of the input data and find the key features of the datasets.<br/>
       Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/plsda.html' target='_blank'>mixOmics website</a>
-      and in several scientific papers.")
+      and in several scientific papers. </br>
+      <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>")
     })
   })
 }

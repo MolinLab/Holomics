@@ -622,7 +622,9 @@ render_spls_infotexts <- function(output){
    which combines the correlation calculation and final variable selection into one step instead of two like the standard PLS has. 
    It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis. <br/>
    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a>
-   and in several scientific papers.") 
+   and in several scientific papers. </br>
+   <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>  
+   We recommend using here a rather high number of components and then perform parameter tuning.") 
   })
   
   output$sPLStunedinfotext <- renderText({

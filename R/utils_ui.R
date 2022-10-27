@@ -38,8 +38,7 @@ getAnalysisParametersComponent <- function(ns){
                  fluidRow(style = "column-gap: 1rem",
                           bs4Dash::column(width = 4,
                             fluidRow(
-                              tags$label("Number of components"),
-                              getTooltip(ns("component-info"), "TODO")
+                              tags$label("Number of components")
                             ),
                             fluidRow(
                               numericInput(ns("ncomp"), label = "", value = 9, 
