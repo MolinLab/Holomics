@@ -209,7 +209,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       tune.splsda.result <- mixOmics::tune.splsda(dataset$data$filtered,Y = Y, ncomp = input$ncomp,
                                         test.keepX = grid.keepX, scale = input$scale,
                                         validation = c('Mfold'),
-                                        folds = min(table(Y)),
+                                        folds = getFolds(Y),
                                         dist = 'max.dist',
                                         nrepeat = 50,
                                         progressBar = TRUE)

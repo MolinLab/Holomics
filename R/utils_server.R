@@ -352,6 +352,21 @@ getTestKeepX <- function(max){
   return (sort(keepX))
 }
 
+#' @description A utils function that returns the number of folds
+#' for the cross validation according to the provided data.
+#' The max. number of folds is 5.
+#'
+#' @return number 
+#'
+#' @noRd
+getFolds <- function(data){
+  folds <- min(table(data))
+  if (folds > 5){
+    folds <- 5
+  }
+  return (folds)
+}
+
 #' @description A utils function that extends the table 
 #' with the datasets informations by one row
 #'

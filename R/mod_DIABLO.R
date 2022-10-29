@@ -263,7 +263,7 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals)
       BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
       tune.diablo = mixOmics::tune.block.splsda(X, Y, ncomp = ncomp,
                                                 test.keepX = test.keepX, design = design,
-                                                validation = 'Mfold', folds = min(table(Y)), nrepeat = 1,
+                                                validation = 'Mfold', folds = getFolds(Y), nrepeat = 1,
                                                 BPPARAM = BPPARAM, dist = "centroids.dist", progressBar = TRUE)
       keepX = tune.diablo$choice.keepX
       
