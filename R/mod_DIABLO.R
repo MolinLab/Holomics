@@ -241,10 +241,14 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals)
   X <- dataSelection$data
   if (!is.null(X)){
     withProgress(message = 'Tuning parameters .... Please wait!', value = 1/3, {
-      Y <- classSelection$data[,1]
+      Y <- classSelection$data[,2]
       design <- matrix(0.1, ncol = length(X), nrow = length(X),
                        dimnames = list(names(X), names(X)))
       diag(design) <- 0
+      
+      # print(table(Y))
+      # print(min(table(Y)))
+      # print(length(X[[1]]))
       
       #tune ncomp
       set.seed(30)
