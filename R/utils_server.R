@@ -320,6 +320,7 @@ checkMissingData <- function(data, classes){
 #'
 #' @noRd
 getGroupColors <- function(data){
+  data = data[order(data[,2]),]
   match <- match(unique(data[,2]), data[,2])
   
   colors <- c()
