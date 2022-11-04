@@ -68,7 +68,7 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
           dataSelection$data <- data$data[[choice]]
         }
         
-        getSelectionComponent(ns("dataSelection"), "Select dataset:", choices, width = "150")
+        getSelectionComponent(ns("dataSelection"), "Select dataset:", choices, width = "fit-content")
       })
     })
   
@@ -92,7 +92,7 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
           classSelection$data <- classes$data[[choice]]
         }
         
-        getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices, width = "150")
+        getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices, width = "fit-content")
       })
     })
     

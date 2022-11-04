@@ -119,7 +119,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
         dataSelection$data1 <- data$data[[choice]]$filtered
       }
       
-      getSelectionComponent(ns("dataSelection1"), "Select first dataset:", choices = choices, width = "150")
+      getSelectionComponent(ns("dataSelection1"), "Select first dataset:", choices = choices, width = "fit-content")
     })
     
     output$dataSelComp2 <- renderUI({
