@@ -66,9 +66,11 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       if (input$type == "data"){
         
         output$infotext <- renderText(
-          "The dataset has to be a matrix in an excel file, whereas the rows have to be the samples and the columns the measured features. <br/>
+          "The dataset has to be a matrix in an excel or csv file, whereas the rows have to be the samples and the columns the measured features. <br/>
 	         The first column has to contain the sample names and the first row the features names. <br/>
-	         If the data contains more variables/columns then excel allows, please invert the data format and select the 'inverted format' checkbox."
+	         If the data contains more variables/columns then excel allows, please transpose the data format and select the 'transposed format' checkbox.<br/>
+           Also if the dataset contains more than 10.000 features, Holomics will filter the dataset to 10.000 or less features as mixOmics suggests to use
+          their package with max. 10.000 features."
         )
         
         output$inputFields <- renderUI({
@@ -88,9 +90,11 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       } else if (input$type == "labels") {
         
         output$infotext <- renderText(
-          "The file has to be an excel file with one column that contains the classes of the samples (e.g. bad, good, ...). <br/>
-           The first entry of the first column has to be the name of the attribute the classes describe (e.g. Storability, Quality, ...).<br/>
-	         Additionally, in the second column, a color name / hex code per class can be added, which will be used in the plots.<br/>
+          "The file has to be an excel or csv file with at least two columns. <br/>
+           The first column contains the sample names, which have to be exactly the same as in the omics datasets. <br/>
+           The second columns contains the classes of the samples (e.g. bad, good, ...). The first entry of the second column has 
+           to be the name of the attribute the classes describe (e.g. Storability, Quality, ...).<br/>
+	         Additionally, in a third column, a color name / hex code per class can be added, which will be used in the plots.
 	         The first entry of this column has to contain the value 'Color' or 'Colorcodes'."
         )
         
@@ -99,7 +103,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         })
         
         output$classfileField <- renderUI({
-          fileInput(ns("classFile"), "Choose a xlsx csv file", accept = c(".xlsx, .csv"))
+          fileInput(ns("classFile"), "Choose a xlsx or csv file", accept = c(".xlsx, .csv"))
         })
         
         output$table <- renderUI({
