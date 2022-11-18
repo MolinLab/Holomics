@@ -7,54 +7,18 @@
 #' @return number of components
 #'
 #' @noRd
-diabloGetUi <- function(ns, postfix = ""){
-  bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                  getSamplePlot(ns, postfix),
-                  getVariablePlot(ns, postfix),
-                  getLoadingsPlot(ns, postfix),
-                  getCimPlot(ns, postfix),
-                  getArrowPlot(ns, postfix),
-                  tabPanel("Diablo plot",
-                           fluidRow(
-                             uiOutput(paste0(ns("diablo.comp"), postfix))
-                           ),
-                           fluidRow(
-                             bs4Dash::column(width = 12,
-                                             textOutput(paste0(ns("diablo.error"), postfix)),
-                                             plotOutput(paste0(ns("Diablo"), postfix)),
-                                             downloadButton(paste0(ns("Diablo.download"), postfix), "Save plot"))
-                           )
-                  ),
-                  tabPanel("Circos plot",
-                           fluidRow(
-                             numericInput(paste0(ns("cutoffCircos"), postfix), "Cutoff value",
-                                          min = 0, max = 1, step = 0.1, value = 0.7)
-                           ),
-                           fluidRow(
-                             bs4Dash::column(width = 12,
-                                             textOutput(paste0(ns("circos.error"), postfix)),
-                                             plotOutput(paste0(ns("Circos"), postfix)),
-                                             downloadButton(paste0(ns("Circos.download"), postfix), "Save plot"))
-                           )
-                  ), 
-                  tabPanel("Network",
-                           fluidRow(style = "column-gap: 1rem",
-                                    numericInput(paste0(ns("cutoffNetwork"), postfix), "Cutoff value",
-                                                 min = 0, max = 1, step = 0.1, value = 0.5),
-                                    uiOutput(paste0(ns("nodes"), postfix)),
-                                    awesomeCheckbox(paste0(ns("fullName"), postfix), "Show full names")
-                           ),
-                           fluidRow(
-                             bs4Dash::column(width = 12,
-                                             textOutput(paste0(ns("network.error"), postfix)),
-                                             visNetworkOutput(paste0(ns("Network"), postfix)),
-                                             downloadButton(paste0(ns("NetworkGml.download"), postfix), "Save as gml"),
-                                             downloadButton(paste0(ns("NetworkHtml.download"), postfix), "Save as html")
-                             )
-                           )
-                  )
-  )
-}
+# diabloGetUi <- function(ns, postfix = ""){
+#   bs4Dash::tabBox(width = 12, collapsible = FALSE,
+#                   getSamplePlot(ns, postfix),
+#                   getVariablePlot(ns, postfix),
+#                   getLoadingsPlot(ns, postfix),
+#                   getCimPlot(ns, postfix),
+#                   getArrowPlot(ns, postfix),
+#                   getDiabloPlot(ns, postfix),
+#                   getCircosPlot(ns, postfix), 
+#                   getNetworkPlot(ns, postfix)
+#   )
+# }
 
 #'
 #' @description A utils function, which returns the number of components.

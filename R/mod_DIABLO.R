@@ -35,7 +35,16 @@ mod_DIABLO_ui <- function(id){
                                getAnalysisParametersComponent(ns)
                       ),
                       fluidRow(width = 12,
-                               diabloGetUi(ns)
+                               bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                               getSamplePlot(ns),
+                                               getVariablePlot(ns),
+                                               getLoadingsPlot(ns),
+                                               getCimPlot(ns),
+                                               getArrowPlot(ns),
+                                               getDiabloPlot(ns),
+                                               getCircosPlot(ns), 
+                                               getNetworkPlot(ns)
+                               )
                       )
       ),
       bs4Dash::column(width = 2,
@@ -54,7 +63,17 @@ mod_DIABLO_ui <- function(id){
                                getTunedParametersComponent(ns)
                       ),
                       fluidRow(width = 12,
-                               diabloGetUi(ns, ".tuned")
+                               bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                               getErrorRatePlot(ns),
+                                               getSamplePlot(ns, ".tuned"),
+                                               getVariablePlot(ns, ".tuned"),
+                                               getLoadingsPlot(ns, ".tuned"),
+                                               getCimPlot(ns, ".tuned"),
+                                               getArrowPlot(ns, ".tuned"),
+                                               getDiabloPlot(ns, ".tuned"),
+                                               getCircosPlot(ns, ".tuned"), 
+                                               getNetworkPlot(ns, ".tuned")
+                               )
                       )
       )
     )
@@ -214,7 +233,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   observeEvent(input$tune, {
     if (!is.null(input$dataSelection)){
       tryCatch({
-        tune_diablo_values(dataSelection, classSelection, result, tunedVals)
+        tune_diablo_values(dataSelection, classSelection, result, tunedVals, output)
         if (!is.null(tunedVals)){
           shinyjs::show("switchRow")
           output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
@@ -237,7 +256,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
 }
 
 #' Tune the ncomp and keepX parameter for the given dataset
-tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals){
+tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals, output){
   X <- dataSelection$data
   if (!is.null(X)){
     withProgress(message = 'Tuning parameters .... Please wait!', value = 1/3, {
@@ -245,10 +264,6 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals)
       design <- matrix(0.1, ncol = length(X), nrow = length(X),
                        dimnames = list(names(X), names(X)))
       diag(design) <- 0
-      
-      # print(table(Y))
-      # print(min(table(Y)))
-      # print(length(X[[1]]))
       
       #tune ncomp
       set.seed(30)
@@ -276,6 +291,9 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals)
     
     tunedVals$ncomp <- ncomp
     tunedVals$keepX <- keepX
+    
+    output$ErrorRate <- renderPlot(plot(perf.diablo))
+    output$ErrorRate.download <- getDownloadHandler("DIABLO_classification_error.png", function(){plot(perf.diablo)})
   }
 }
 

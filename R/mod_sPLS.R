@@ -34,7 +34,14 @@ mod_sPLS_ui <- function(id){
                                getAnalysisParametersComponent(ns)
                       ),
                       fluidRow(width = 12,
-                               splsGetUi(ns)
+                               bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                               getsPLSSamplePlot(ns),
+                                               getVariablePlot(ns),
+                                               getLoadingsPlot(ns),
+                                               getsPLSSelectedVarsPlot(ns),
+                                               getCimPlot(ns),
+                                               getArrowPlot(ns)
+                               )
                       )
       ),
       bs4Dash::column(width = 2,
@@ -53,7 +60,15 @@ mod_sPLS_ui <- function(id){
                                getTunedParametersComponent(ns, TRUE)
                       ),
                       fluidRow(width = 12,
-                               splsGetUi(ns, ".tuned")
+                               bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                 getsPLSTuningPlots(ns),
+                                 getsPLSSamplePlot(ns, ".tuned"),
+                                 getVariablePlot(ns, ".tuned"),
+                                 getLoadingsPlot(ns, ".tuned"),
+                                 getsPLSSelectedVarsPlot(ns, ".tuned"),
+                                 getCimPlot(ns, ".tuned"),
+                                 getArrowPlot(ns, ".tuned")
+                               )
                       )
       )
     )
@@ -189,7 +204,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
   #' Observe tune button
   observeEvent(input$tune, {
     tryCatch({
-      tune_values(dataSelection, result, tunedVals)
+      tune_values(dataSelection, result, tunedVals, input, output)
 
       if (!is.null(tunedVals)){
         shinyjs::show("switchRow")
@@ -212,48 +227,154 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
 }
 
 #' Tune the ncomp and keepX parameter for the given dataset
-tune_values <- function(dataSelection, result, tunedVals){
+tune_values <- function(dataSelection, result, tunedVals, input, output){
   withProgress(message = 'Tuning parameters .... Please wait!', value = 1/4, {
-    
-    #tune ncomp
-    set.seed(30)
-    tune.spls <- mixOmics::perf(result(), validation = "Mfold", folds = 7, progressBar = TRUE, nrepeat = 50)
-    ncomp <- tune.spls$measures$Q2.total$summary[which.max(tune.spls$measures$Q2.total$summary$mean), 2]
-    
-    incProgress(1/4)
     
     X <- dataSelection$data1
     Y <- dataSelection$data2
+    result <- result()
+    
+    assign("splsTuneError", F, env=globalenv())
+    
+    #tune ncomp
+    finished <- F
+    while (!finished){
+      tryCatch({
+        set.seed(30)
+        tune.spls <- mixOmics::perf(result, validation = "Mfold", folds = 7, progressBar = TRUE, nrepeat = 50)
+        finished = T
+      }, error = function(cond){
+        if (grepl("Error in Ypred", cond, fixed = T)){
+          #get all possible value combinations
+          nearZeroX <- mixOmics::nearZeroVar(X, freqCut = 1, uniqueCut = 100)
+          nearZeroY <- mixOmics::nearZeroVar(Y, freqCut = 1, uniqueCut = 100)
+          
+          if (length(nearZeroX$Position) == 0 && length(nearZeroY$Position) == 0){
+            getErrorMessage(cond)
+            assign("splsTuneError", T, env=globalenv())
+          }
+          
+        }
+      })
+      
+      if (!finished && !get("splsTuneError", env = globalenv())){
+        #get all possible value combinations
+        nearZeroX <- mixOmics::nearZeroVar(X, freqCut = 1, uniqueCut = 100)
+        nearZeroY <- mixOmics::nearZeroVar(Y, freqCut = 1, uniqueCut = 100)
+        
+        if (length(nearZeroX$Position) != 0 || length(nearZeroY$Position) != 0){
+          minValX <- ifelse(length(nearZeroX$Position) != 0, min(nearZeroX$Metrics$percentUnique), 100)
+          minValY <- ifelse(length(nearZeroY$Position) != 0, min(nearZeroY$Metrics$percentUnique), 100)
+          
+          if (minValX < minValY){
+            X <- X[, -mixOmics::nearZeroVar(X, freqCut = 1, uniqueCut = minValX)$Position]
+          } else {
+            Y <- Y[, -mixOmics::nearZeroVar(Y, freqCut = 1, uniqueCut = minValY)$Position]
+          }
+          
+          tryCatch({
+            result <- mixOmics::spls(X, Y,
+                                          ncomp = input$ncomp, scale = input$scale)
+          }, error = function(cond){
+            getErrorMessage(cond)
+            assign("splsTuneError", T, env=globalenv())
+          }) 
+        }
+      }
+    }
+    
+    ncomp <- tune.spls$measures$Q2.total$summary[which.max(tune.spls$measures$Q2.total$summary$mean), 2]
+    incProgress(1/4)
     
     #tune keepX
     set.seed(30)
     list_keepX <- getTestKeepX(ncol(X))
     BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
-    tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
-                                  validation = "Mfold",
-                                  test.keepX = list_keepX, 
-                                  measure = "cor", BPPARAM = BPPARAM,
-                                  folds = 5, nrepeat = 50, progressBar = TRUE)
-    keepX <- tune.X$choice.keepX
     
+    finished <- F
+    folds <- 5
+    validation <- "Mfold"
+    while (!finished){
+      tryCatch({
+        tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
+                                      validation = validation,
+                                      test.keepX = list_keepX, 
+                                      measure = "cor", BPPARAM = BPPARAM,
+                                      folds = folds, nrepeat = 50, progressBar = TRUE)
+        finished <- T
+        
+      }, error = function(cond){
+        if (folds + 1 > nrow(X) || validation == "loo"){
+          getErrorMessage(cond)
+          assign("splsTuneError", T, env=globalenv())
+        }
+      })
+      
+      if (!finished && !get("splsTuneError", env = globalenv())){
+        if (folds > nrow(X)){
+          validation <- "loo"
+        } else {
+          folds <- folds + 1
+        }
+      }
+    }
+    
+    keepX <- tune.X$choice.keepX
     incProgress(1/4)
     
     #tune keepY
     set.seed(30)
     list_keepY <- getTestKeepX(ncol(Y))
-    tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
-                                  validation = "Mfold",
-                                  test.keepY = list_keepY, 
-                                  measure = "cor", BPPARAM = BPPARAM,
-                                  folds = 5, nrepeat = 50, progressBar = TRUE)
-    keepY <- tune.Y$choice.keepY
+    finished <- F
+    folds <- 5
+    validation <- "Mfold"
+    while (!finished){
+      tryCatch({
+        tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
+                                      validation = "Mfold",
+                                      test.keepY = list_keepY, 
+                                      measure = "cor", BPPARAM = BPPARAM,
+                                      folds = folds, nrepeat = 50, progressBar = TRUE)
+        finished <- T
+        
+      }, error = function(cond){
+        if (folds + 1 > nrow(X) || validation == "loo"){
+          getErrorMessage(cond)
+          assign("splsTuneError", T, env=globalenv())
+        }
+      })
+      
+      if (!finished && !get("splsTuneError", env = globalenv())){
+        if (folds > nrow(X)){
+          validation <- "loo"
+        } else {
+          folds <- folds + 1
+        }
+      }
+    }
     
+    keepY <- tune.Y$choice.keepY
     incProgress(1/4)
   })
   
-  tunedVals$ncomp = ncomp
-  tunedVals$keepX = keepX
-  tunedVals$keepY = keepY
+  if(get("splsTuneError", env = globalenv())){
+    tunedVals <- NULL
+  } else {
+    tunedVals$ncomp = ncomp
+    tunedVals$keepX = keepX
+    tunedVals$keepY = keepY
+    
+    #' Loading plot
+    output$Tuned.ncomp <- renderPlot(plot(tune.spls, criterion = 'Q2.total'))
+    
+    output$Tuned.keepX <- renderPlot(plot(tune.X))
+    
+    output$Tuned.keepY <- renderPlot(plot(tune.Y))
+    
+    output$Tuned.ncomp.download <- getDownloadHandler("PLS_Q2_Components_Plot.png", function(){plot(tune.spls, criterion = 'Q2.total')})
+    output$Tuned.keepX.download <- getDownloadHandler("PLS_keepX_Plot.png", function(){plot(tune.X)})
+    output$Tuned.keepY.download <- getDownloadHandler("PLS_keepY_Plot.png", function(){plot(tune.Y)})
+  }
 }
 
 #' Run analysis

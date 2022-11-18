@@ -199,7 +199,7 @@ getLoadingsPlot <- function(ns, postfix = ""){
 }
 
 #' @description A utils function to get the tabPanel for
-#' the sample plots
+#' the selected variable tables
 #'
 #' @return tabpanel
 #'
@@ -259,6 +259,96 @@ getArrowPlot <- function(ns, postfix = ""){
                bs4Dash::column(width = 12,
                                textOutput(paste0(ns("arrow.error"), postfix)),
                                plotOutput(paste0(ns("Arrow"), postfix)))
+             )
+    )
+  )
+}
+
+#' @description A utils function to get the tabPanel for
+#' the diablo plot
+#'
+#' @return tabpanel
+#'
+#' @noRd
+getDiabloPlot <- function(ns, postfix = ""){
+  return (
+    tabPanel("Diablo plot",
+             fluidRow(
+               uiOutput(paste0(ns("diablo.comp"), postfix))
+             ),
+             fluidRow(
+               bs4Dash::column(width = 12,
+                               textOutput(paste0(ns("diablo.error"), postfix)),
+                               plotOutput(paste0(ns("Diablo"), postfix)),
+                               downloadButton(paste0(ns("Diablo.download"), postfix), "Save plot"))
+             )
+    )
+  )
+}
+
+#' @description A utils function to get the tabPanel for
+#' the circos plot
+#'
+#' @return tabpanel
+#'
+#' @noRd
+getCircosPlot <- function(ns, postfix = ""){
+  return (
+    tabPanel("Circos plot",
+             fluidRow(
+               numericInput(paste0(ns("cutoffCircos"), postfix), "Cutoff value",
+                            min = 0, max = 1, step = 0.1, value = 0.7)
+             ),
+             fluidRow(
+               bs4Dash::column(width = 12,
+                               textOutput(paste0(ns("circos.error"), postfix)),
+                               plotOutput(paste0(ns("Circos"), postfix)),
+                               downloadButton(paste0(ns("Circos.download"), postfix), "Save plot"))
+             )
+    )
+  )
+}
+
+#' @description A utils function to get the tabPanel for
+#' the network plot
+#'
+#' @return tabpanel
+#'
+#' @noRd
+getNetworkPlot <- function(ns, postfix = ""){
+  return (
+    tabPanel("Network",
+             fluidRow(style = "column-gap: 1rem",
+                      numericInput(paste0(ns("cutoffNetwork"), postfix), "Cutoff value",
+                                   min = 0, max = 1, step = 0.1, value = 0.5),
+                      uiOutput(paste0(ns("nodes"), postfix)),
+                      awesomeCheckbox(paste0(ns("fullName"), postfix), "Show full names")
+             ),
+             fluidRow(
+               bs4Dash::column(width = 12,
+                               textOutput(paste0(ns("network.error"), postfix)),
+                               visNetworkOutput(paste0(ns("Network"), postfix)),
+                               downloadButton(paste0(ns("NetworkGml.download"), postfix), "Save as gml"),
+                               downloadButton(paste0(ns("NetworkHtml.download"), postfix), "Save as html")
+               )
+             )
+    )
+  )
+}
+
+#' @description A utils function to get the tabPanel for
+#' the plot with the error rate
+#'
+#' @return tabpanel
+#'
+#' @noRd
+getErrorRatePlot <- function(ns){
+  return(
+    tabPanel("Error rates", 
+             fluidRow(
+               bs4Dash::column(width = 12,
+                               plotOutput(ns("ErrorRate")),
+                               downloadButton(ns("ErrorRate.download"), "Save plot"))             
              )
     )
   )

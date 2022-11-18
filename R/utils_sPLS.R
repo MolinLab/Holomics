@@ -1,50 +1,85 @@
 #' sPLS 
 #' 
-#' @description A utils function, which generates the UI code for 
-#' the spls page. The postfix is added always on the end of the 
-#' id values of the components
+#' @description A utils function to get the tabPanel for
+#' the sample plot for the sPLS analysis
 #'
-#' @return number of components
+#' @return tabpanel
 #'
 #' @noRd
-splsGetUi <- function(ns, postfix = ""){
-  bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                  tabPanel("Sample plot",
-                           fluidRow(style = "display: flex; column-gap: 1rem",
-                                    uiOutput(paste0(ns("indiv.x.comp"), postfix)),
-                                    uiOutput(paste0(ns("indiv.y.comp"), postfix)),
-                                    awesomeCheckbox(paste0(ns("indiv.names"), postfix), "Sample names", value = FALSE),
-                                    selectInput(paste0(ns("rep.space"), postfix), "Replication space:",
-                                                c("Separated"= "NULL", "X-variate"= "X-variate",
-                                                  "Y-variate" = "Y-variate", "XY-variate" = "XY-variate"))
-                           ),
-                           fluidRow(
-                             bs4Dash::column(width = 12,
-                                             plotOutput(paste0(ns("Indiv"), postfix)),
-                                             downloadButton(paste0(ns("Indiv.download"), postfix), "Save plot"))
-                           )
-                  ),
-                  getVariablePlot(ns, postfix),
-                  getLoadingsPlot(ns, postfix),
-                  tabPanel("Selected variables",
-                           fluidRow(
-                             uiOutput(paste0(ns("sel.var.comp"), postfix))
-                           ),
-                           fluidRow(
-                             bs4Dash::tabBox(width = 12,
-                                             tabPanel("Dataset 1",
-                                                      DT::dataTableOutput(paste0(ns("X.Sel.Var"), postfix)),
-                                                      downloadButton(paste0(ns("SelVarX.download"), postfix), "Save table")
-                                             ),
-                                             tabPanel("Dataset 2",
-                                                      DT::dataTableOutput(paste0(ns("Y.Sel.Var"), postfix)),
-                                                      downloadButton(paste0(ns("SelVarY.download"), postfix), "Save table")
-                                             )
-                             )
-                           )
-                  ),
-                  getCimPlot(ns, postfix),
-                  getArrowPlot(ns, postfix)
+getsPLSSamplePlot <- function(ns, postfix = ""){
+  return (
+    tabPanel("Sample plot",
+             fluidRow(style = "display: flex; column-gap: 1rem",
+                      uiOutput(paste0(ns("indiv.x.comp"), postfix)),
+                      uiOutput(paste0(ns("indiv.y.comp"), postfix)),
+                      awesomeCheckbox(paste0(ns("indiv.names"), postfix), "Sample names", value = FALSE),
+                      selectInput(paste0(ns("rep.space"), postfix), "Replication space:",
+                                  c("Separated"= "NULL", "X-variate"= "X-variate",
+                                    "Y-variate" = "Y-variate", "XY-variate" = "XY-variate"))
+             ),
+             fluidRow(
+               bs4Dash::column(width = 12,
+                               plotOutput(paste0(ns("Indiv"), postfix)),
+                               downloadButton(paste0(ns("Indiv.download"), postfix), "Save plot"))
+             )
+    )
+  )
+}
+
+#' @description A utils function to get the tabPanel for
+#' the selected variable tables of the sPLS analysis
+#'
+#' @return tabpanel
+#'
+#' @noRd
+getsPLSSelectedVarsPlot <- function(ns, postfix = ""){
+  return(
+    tabPanel("Selected variables",
+             fluidRow(
+               uiOutput(paste0(ns("sel.var.comp"), postfix))
+             ),
+             fluidRow(
+               bs4Dash::tabBox(width = 12,
+                               tabPanel("Dataset 1",
+                                        DT::dataTableOutput(paste0(ns("X.Sel.Var"), postfix)),
+                                        downloadButton(paste0(ns("SelVarX.download"), postfix), "Save table")
+                               ),
+                               tabPanel("Dataset 2",
+                                        DT::dataTableOutput(paste0(ns("Y.Sel.Var"), postfix)),
+                                        downloadButton(paste0(ns("SelVarY.download"), postfix), "Save table")
+                               )
+               )
+             )
+    )
+  )
+}
+
+#' @description A utils function to get the tabPanel for
+#' the plots with the showing the tuning results
+#'
+#' @return tabpanel
+#'
+#' @noRd
+getsPLSTuningPlots <- function(ns){
+  return(
+    tabPanel("Tuned parameters",
+             fluidRow(
+               bs4Dash::tabBox(width = 12,
+                               tabPanel("Components",
+                                        plotOutput(ns("Tuned.ncomp")),
+                                        downloadButton(ns("Tuned.ncomp.download"), "Save plot")
+                               ),
+                               tabPanel("Variables dataset 1",
+                                        plotOutput(ns("Tuned.keepX")),
+                                        downloadButton(ns("Tuned.keepX.download"), "Save plot")
+                               ),
+                               tabPanel("Variables dataset 2",
+                                        plotOutput(ns("Tuned.keepY")),
+                                        downloadButton(ns("Tuned.keepY.download"), "Save plot")
+                               )
+               )
+             )
+    )
   )
 }
 
