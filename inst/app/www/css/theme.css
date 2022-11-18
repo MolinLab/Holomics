@@ -30,6 +30,13 @@
   background-color: var(--grey);
 }
 
+@media only screen and (max-height: 550px){
+  #sidebarId{
+    overflow-y: auto;
+  }
+}
+
+
 #sidebarItemExpanded{
   background-color: var(--green);
 }
