@@ -23,6 +23,7 @@
 /* Link to mixOmics */
 .mixOmics-link, .mixOmics-link:hover{
   color: var(--green);
+  cursor: pointer;
 }
 
 /* Sidebar */
