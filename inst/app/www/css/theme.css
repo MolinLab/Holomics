@@ -102,11 +102,11 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
   color: var(--green);
 }
 
-/* Save plot buttons, delete, info and tune buttons */
+/* Save plot buttons, delete, info, tune and ok buttons */
 .shiny-download-link, .shiny-download-link:hover, button[id*='-tune'], button[id*='-tune']:hover, 
-button[id*='upload-'], button[id*='upload-']:hover, button[id*='-info']:hover{
-  background-color: var(--green);
-  color: white;
+button[id*='upload-'], button[id*='upload-']:hover, button[id*='-info']:hover, button[class='confirm']{
+  background-color: var(--green) !important;
+  color: white !important;
 }
 
 #downloadDIABLO-Network,  #downloadDIABLO-Network\.tuned{
@@ -219,8 +219,8 @@ button[id*='-info']{
   padding: 1px 4px;
   height: fit-content;
   margin-left: .2rem;
-  background-color: var(--grey);
-  color: black;
+  background-color: var(--grey) !important;
+  color: black !important;
 }
 
 /* Scale info buttons */
