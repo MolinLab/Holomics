@@ -26,6 +26,12 @@
   cursor: pointer;
 }
 
+/* Links to scientifc papers */
+.ref-link, .ref-link{
+  color: black;
+  cursor: pointer;
+}
+
 /* Sidebar */
 #sidebarId{
   background-color: var(--grey);

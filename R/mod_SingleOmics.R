@@ -137,8 +137,9 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
       It works unsupervised and determines uncorrelated and orthogonal principal components (PC) in the data.
       Therefore, the PCA only works with the data matrix containing the samples and features information without knowing the classification of the samples.
       It helps to identify characteristics of the data and eventual biases and artefacts by visualising the PCs with the respective features and samples. <br/>
-      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pca.html' target='_blank'>mixOmics website</a>,
-      in several scientific papers and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pca.html' target='_blank'>mixOmics website</a> and
+      in several scientific papers (e.g. <a class='ref-link' href='https://link.springer.com/article/10.1186/1471-2105-13-24' target='_blank'>Yao et.al. (2012)</a>).
+      More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
       <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
       <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b> 
       We recommend to use a number of components that explains at least 80% of the dataset variance.")
@@ -149,8 +150,9 @@ mod_SingleOmics_server <- function(id, data, dataSelection, classes, classSelect
       It is similar to the PCA, but with a supervised approach for reducing the input data dimension. This means that the PLS-DA knows the label of each sample when reducing the dimension. 
       The PLS-DA works with the matrix containing the sample and features information and the dataset with the classes of each sample. 
       In the context of multi-omics analyses, it is used to get a first impression of the input data and find the key features of the datasets.<br/>
-      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/plsda.html' target='_blank'>mixOmics website</a>,
-      in several scientific papers and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/plsda.html' target='_blank'>mixOmics website</a> and
+      in several scientific papers (e.g. <a class='ref-link' href='https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-3310-7' target='_blank'>Ruiz-Perez et.al. (2020)</a>).
+      More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
       <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
       <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>")
     })

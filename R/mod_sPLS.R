@@ -740,8 +740,9 @@ render_spls_infotexts <- function(output){
    The <b>s</b>parse <b>P</b>rojection to <b>L</b>atent <b>S</b>tructure is a variant of the PLS, 
    which combines the correlation calculation and final variable selection into one step instead of two like the standard PLS has. 
    It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis. <br/>
-   Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a>,
-   in several scientific papers and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+   Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a> and
+   in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>Lê Cao et.al. (2008)</a>).
+   More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
    <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
    <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>  
    We recommend using here a rather high number of components and then perform parameter tuning.") 
@@ -751,6 +752,6 @@ render_spls_infotexts <- function(output){
     HTML("The mixOmics package provides the option to tune the parameters of the sPLS analysis. 
     This means that the optimal number of components and the optimal number of features to select on each component for every dataset will be calculated. <br/> 
     More detailed information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html#tuning:PLS' target='_blank'>mixOmics website</a>
-         and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.")
+    and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.")
   })
 }

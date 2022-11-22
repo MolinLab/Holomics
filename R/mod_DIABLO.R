@@ -792,9 +792,10 @@ render_diablo_infotexts <- function(output){
     generalised version of the PLS for multiple datasets. It maximises the correlated information between the datasets and simultaneously 
     identifies the key features of the omics datasets. Generally, DIABLO can be used supervised and unsupervised, whereas, here the supervised version is used. 
     Therefore, the DIABLO algorithm works with one list containing the omics datasets and the dataset with the classes of each sample. <br/>
-    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/diablo.html' target='_blank'>mixOmics website</a>,
-      in several scientific papers and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
-      <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
+    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/diablo.html' target='_blank'>mixOmics website</a> and
+    in several scientific papers (e.g. <a class='ref-link' href='https://academic.oup.com/bioinformatics/article/35/17/3055/5292387' target='_blank'>Singh et.al. (2019)</a>).
+    More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+    <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
     <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>  
     We recommend using here a rather high number of components and then perform parameter tuning.")
   })
@@ -803,6 +804,6 @@ render_diablo_infotexts <- function(output){
     HTML("The mixOmics offers parameter tuning for the DIABLO analyses, like for the sPLS. 
     Again the number of components and variables for each component on each dataset can be tuned using repeated cross-validation. <br/>
     More detailed information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/diablo.html#tuning-parameters-1' target='_blank'>mixOmics website</a> 
-         and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.")
+    and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.")
   })
 }
