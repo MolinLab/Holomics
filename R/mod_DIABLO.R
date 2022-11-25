@@ -158,11 +158,15 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   })
   
   observeEvent(input$dataSelection, {
-    list <- list()
-    for (s in strsplit(input$dataSelection, "\t")){
-      list[[s]] <- data$data[[s]]$filtered
+    dataList <- list()
+    token <- strsplit(input$dataSelection, "\t")
+    namesList <- lapply(token, function(t) data$data[[t]]$name)
+    names <- make.unique(unlist(namesList), sep = " ")
+    for (i in 1:length(token)){
+      orgName <- token[[i]]
+      dataList[[names[[i]]]] <- data$data[[orgName]]$filtered
     }
-    dataSelection$data <- list
+    dataSelection$data <- dataList
   })
   
   #' Observe class input change

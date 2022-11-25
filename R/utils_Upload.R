@@ -36,7 +36,21 @@ getDataUploadUI <- function(ns){
                                    ),
                                    fluidRow(
                                     awesomeCheckboxGroup(ns("omicsAnalysis"), "",
-                                                        choices = c("single", "multi"), width = "auto"),
+                                                        choices = c("single", "multi"), width = "auto")
+                                   )
+                   )
+          ),
+          fluidRow(style = "margin-left: 0;",
+                   bs4Dash::column(width = 12,
+                                   fluidRow(
+                                     tags$label("Name for plots"),
+                                     getTooltip(ns("plotName-info"), 
+                                                "Name that will be used in the plots")
+                                   ),
+                                   fluidRow(
+                                     getSelectionComponent(ns("plotName"), label = "", 
+                                                           choices = c("Metabolomics"= "Metabolomics", "Microbiomics"= "Microbiomics",
+                                                                       "Transcriptomics" = "Transcriptomics", "Proteomics" = "Proteomics"))
                                    )
                    )
           ),
@@ -204,8 +218,9 @@ isValidName <- function(name, names){
 #'
 #' @noRd
 initDataMatrix <- function(){
-  matrix <- matrix(nrow = 0, ncol = 6)
-  colnames(matrix) <- c("Name", "Filename", "No. of samples", "No. of features", "Is microbiome data", "For ...-omics analysis")
+  matrix <- matrix(nrow = 0, ncol = 7)
+  colnames(matrix) <- c("Name", "Filename", "No. of samples", "No. of features", 
+                        "Is microbiome data", "For ...-omics analysis", "Name for plots")
   return (matrix)
 }
 

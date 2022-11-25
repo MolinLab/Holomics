@@ -116,15 +116,16 @@ splsCheckNcomp <- function(input, tuned = FALSE, tunedVals = NULL){
 #'  else empty string
 #'  
 #' @noRd
-getTitleAccordingToRepSpace <- function(repSpace){
+getTitleAccordingToRepSpace <- function(repSpace, name1, name2){
+  names <- getDatasetNames(name1, name2)
   title = NULL
   subtitle = NULL
   if(is.null(repSpace)){   #separated
-    subtitle = c("ds1", "ds2")  #TODO change to name
+    subtitle = c(names$name1, names$name2)
   } else if (repSpace == "X-variate"){
-    title = "sPLS in [] space"   #TODO
+    title = paste("sPLS in", names$name1, "space")
   } else if (repSpace == "Y-variate"){
-    title = "sPLS in [] space"  #TODO
+    title = paste("sPLS in", names$name2, "space")
   } else if (repSpace == "XY-variate"){
     title = "sPLS in averaged subspace"
   }

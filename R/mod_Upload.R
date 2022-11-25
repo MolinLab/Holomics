@@ -173,7 +173,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
           
           if("single" %in% input$omicsAnalysis){
             if (!is.null(singleData)){
-              singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+              singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data, name = input$plotName)
             }
             analysisText = "single"
             
@@ -181,14 +181,14 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
           
           if("multi" %in% input$omicsAnalysis && input$prevFiltered){
             if (!is.null(multiData)){
-              multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data)
+              multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data, name = input$plotName)
             }
             
             analysisText = ifelse(analysisText == "", "multi", "both")
           }
           
           tables$data <- extendDataTable(tables$data, input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data),
-                          input$isMicrobiome && !input$prevFiltered, analysisText)
+                          input$isMicrobiome && !input$prevFiltered, analysisText, input$plotName)
           
           #reset UI
           resetDataUI(session, output)

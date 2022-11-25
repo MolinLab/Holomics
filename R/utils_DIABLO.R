@@ -1,25 +1,3 @@
-#' DIABLO 
-#' 
-#' @description A utils function, which generates the UI code for 
-#' the diablo page. The postfix is added always on the end of the 
-#' id values of the components
-#'
-#' @return number of components
-#'
-#' @noRd
-# diabloGetUi <- function(ns, postfix = ""){
-#   bs4Dash::tabBox(width = 12, collapsible = FALSE,
-#                   getSamplePlot(ns, postfix),
-#                   getVariablePlot(ns, postfix),
-#                   getLoadingsPlot(ns, postfix),
-#                   getCimPlot(ns, postfix),
-#                   getArrowPlot(ns, postfix),
-#                   getDiabloPlot(ns, postfix),
-#                   getCircosPlot(ns, postfix), 
-#                   getNetworkPlot(ns, postfix)
-#   )
-# }
-
 #'
 #' @description A utils function, which returns the number of components.
 #' If the tune switch is on or off the number is taken from

@@ -181,12 +181,12 @@ plotIndiv <- function(result, classes, title = NULL, subtitle = NULL, legend.tit
       mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                           group = classes, ind.names = indNames,
                           title = title, legend = TRUE, 
-                          legend.title = title, legend.position = legendPosition)
+                          legend.title = legend.title, legend.position = legendPosition)
     } else {
       mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                           group = classes, ind.names = indNames,
                           subtitle = subtitle, legend = TRUE, 
-                          legend.title = title, legend.position = legendPosition)
+                          legend.title = legend.title, legend.position = legendPosition)
     }
     
   } else {
@@ -194,13 +194,13 @@ plotIndiv <- function(result, classes, title = NULL, subtitle = NULL, legend.tit
       mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                           group = classes, ind.names = indNames,
                           title = title, legend = TRUE, 
-                          legend.title = title, legend.position = legendPosition, 
+                          legend.title = legend.title, legend.position = legendPosition, 
                           col.per.group = col.per.group)
     } else {
       mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                           group = classes, ind.names = indNames,
                           subtitle = subtitle, legend = TRUE, 
-                          legend.title = title, legend.position = legendPosition, 
+                          legend.title = legend.title, legend.position = legendPosition, 
                           col.per.group = col.per.group)
     }
   }
@@ -232,18 +232,18 @@ plotVar <- function(result, comp, varNames, legend = FALSE, pch) {
 #' @return loadings plot
 #'
 #' @noRd
-plotLoadings <- function(result, comp, contrib = NULL, method = "mean", legend.color) {
+plotLoadings <- function(result, comp, contrib = NULL, method = "mean", subtitle, legend.color = NULL) {
   comp <- checkCompNcompCombination(result$ncomp, comp)
   
-  if (missing(legend.color)){
-    mixOmics::plotLoadings(result, comp = comp,
-                           contrib = contrib, method = method, size.title = ggplot2::rel(1))
-  } else {
+  if (missing(subtitle)){
     mixOmics::plotLoadings(result, comp = comp,
                            contrib = contrib, method = method, size.title = ggplot2::rel(1), 
                            legend.color = legend.color)
+  } else {
+    mixOmics::plotLoadings(result, comp = comp,
+                           contrib = contrib, method = method, size.title = ggplot2::rel(1), 
+                           legend.color = legend.color, subtitle = subtitle)
   }
-  
 }
 
 #' @description adapter for the selectVar function of
@@ -391,8 +391,8 @@ getFolds <- function(data){
 #' with the datasets informations by one row
 #'
 #' @noRd
-extendDataTable <- function(table, name, filename, samplesNum, variablesNum, isMicrobiome, omicsAnalysis){
-  return (rbind(table, c(name, filename, samplesNum, variablesNum, isMicrobiome, omicsAnalysis)))
+extendDataTable <- function(table, name, filename, samplesNum, variablesNum, isMicrobiome, omicsAnalysis, plotName){
+  return (rbind(table, c(name, filename, samplesNum, variablesNum, isMicrobiome, omicsAnalysis, plotName)))
 }
 
 #' @description A utils function that extends the table 
@@ -401,4 +401,15 @@ extendDataTable <- function(table, name, filename, samplesNum, variablesNum, isM
 #' @noRd
 extendClassTable <- function(table, name, filename, samplesNum, containsColor){
   return(rbind(table, c(name, filename, samplesNum, containsColor)))
+}
+
+#' @description A utils function that makes sure 
+#' that the name of the dataset is unique
+#'
+#' @noRd
+getDatasetNames <- function(name1, name2){
+  if(name1 == name2){
+    name2 <- paste(name1, "2")
+  }
+  return(list(name1 = name1, name2 = name2))
 }

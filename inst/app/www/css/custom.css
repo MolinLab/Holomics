@@ -65,3 +65,13 @@ div.vis-network div.vis-navigation div.vis-button.vis-zoomExtends{
 div.vis-network div.vis-navigation div.vis-button:hover{
   box-shadow: 0 0 3px 3px rgba(191,197,49,.3);
 }
+
+/* Label for components input and upload analysis type */
+label[id*='ncomp-label'], label[for='upload-omicsAnalysis'], label[for='upload-plotName-selectized']{
+  display: none;
+}
+
+/* Plot name dropdown */
+#upload-plotName + div{
+  margin-bottom: 0;
+}

@@ -119,11 +119,11 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       legend.title = colnames(classes$data)[2]
       if (ncol(classes$data) == 3){
         colors = getGroupColors(classes$data)
-        plotIndiv(result, classes = classes$data[,2], title = "PLS-DA on [] data", legend.title = legend.title, 
-                  comp = comp.indiv, indNames = indNames, col.per.group = colors)
+        plotIndiv(result, classes = classes$data[,2], title = paste("PLS-DA on", dataset$data$name ,"data"), 
+                  legend.title = legend.title, comp = comp.indiv, indNames = indNames, col.per.group = colors)
       } else {
-        plotIndiv(result, classes = classes$data[,2], title = "PLS-DA on [] data", legend.title = legend.title, 
-                  comp = comp.indiv, indNames = indNames)
+        plotIndiv(result, classes = classes$data[,2], title = paste("PLS-DA on", dataset$data$name ,"data"), 
+                  legend.title = legend.title, comp = comp.indiv, indNames = indNames)
       }
     }
   }
@@ -233,10 +233,10 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       
       feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
       result <- dataset$data$unfiltered[, feature_cols]
-      multiDataset$data[[paste0(dataset$name, "_plsda_filtered")]] <- list(filtered = result, unfiltered = result)
+      multiDataset$data[[paste0(dataset$name, "_plsda_filtered")]] <- list(filtered = result, unfiltered = result, name = dataset$data$name)
       
       tables$data <- extendDataTable(tables$data, paste0(dataset$name, "_plsda_filtered"), "-", nrow(result), ncol(result),
-                                     FALSE, "multi")
+                                     FALSE, "multi", dataset$data$name)
       
       incProgress(1/3)
     })

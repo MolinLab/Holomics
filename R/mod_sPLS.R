@@ -132,6 +132,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
       #observeEvent of input$dataSelection will not be triggered
       if(!is.null(selection) && selection == choice){
         dataSelection$data1 <- data$data[[choice]]$filtered
+        dataSelection$data1Name <- data$data[[choice]]$name
       }
       
       getSelectionComponent(ns("dataSelection1"), "Select first dataset:", choices = choices, width = "fit-content")
@@ -149,6 +150,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
       #observeEvent of input$dataSelection will not be triggered
       if(!is.null(selection) && selection == choice){
         dataSelection$data2 <- data$data[[choice]]$filtered
+        dataSelection$data2Name <- data$data[[choice]]$name
       }
       
       getSelectionComponent(ns("dataSelection2"), "Select second dataset:", choices = choices, width = "fit-content")
@@ -178,10 +180,12 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
   #' Observe change of data selection
   observeEvent(input$dataSelection1, {
     dataSelection$data1 <- data$data[[input$dataSelection1]]$filtered
+    dataSelection$data1Name <- data$data[[input$dataSelection1]]$name
   })
   
   observeEvent(input$dataSelection2, {
     dataSelection$data2 <- data$data[[input$dataSelection2]]$filtered
+    dataSelection$data2Name <- data$data[[input$dataSelection2]]$name
   })
   
   #' Observe change of class selection
@@ -512,7 +516,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     if(!is.null(result())){
       legend.title = colnames(classSelection$data)[2]
       
-      titles = getTitleAccordingToRepSpace(rep.space())
+      titles = getTitleAccordingToRepSpace(rep.space(), dataSelection$data1Name, dataSelection$data2Name)
       
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
@@ -529,15 +533,20 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   plot.var <- function(){
     if(!is.null(result())){
+      names <- getDatasetNames(dataSelection$data1Name, dataSelection$data2Name)
       plotVar(result(), comp.var(), input$var.names,
-            pch = c(1,2), legend = TRUE)
+            pch = c(1,2), legend = c(names$name1, names$name2))
     }
   }
   
   plot.load <- function(){
     req(input$load.comp)
     if(!is.null(result())){
-      plotLoadings(result(), as.numeric(input$load.comp))
+      names <- getDatasetNames(dataSelection$data1Name, dataSelection$data2Name)
+      plotLoadings(result(), as.numeric(input$load.comp), 
+                   subtitle = lapply(c(names$name1, names$name2),
+                                     function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'"))
+      )
     }
   }
   
@@ -582,7 +591,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.indiv.tuned <- function(){
     if (!is.null(resultTuned())){
       legend.title = colnames(classSelection$data)[2]
-      titles = getTitleAccordingToRepSpace(rep.space.tuned())
+      titles = getTitleAccordingToRepSpace(rep.space.tuned(), dataSelection$data1Name, dataSelection$data2Name)
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 

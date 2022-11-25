@@ -112,10 +112,10 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
       legend.title = colnames(classes$data)[2]
       if (ncol(classes$data) == 3){
         colors = getGroupColors(classes$data)
-        plotIndiv(result, classes = classes$data[,2], title = "PCA on [] data", legend.title = legend.title, 
+        plotIndiv(result, classes = classes$data[,2], title = paste("PCA on", dataset$data$name ,"data"), legend.title = legend.title, 
                   comp = comp.indiv, indNames = indNames, col.per.group = colors)
       } else {
-        plotIndiv(result, classes = classes$data[,2], title = "PCA on [] data", legend.title = legend.title, 
+        plotIndiv(result, classes = classes$data[,2], title = paste("PCA on", dataset$data$name ,"data"), legend.title = legend.title, 
                   comp = comp.indiv, indNames = indNames)
       }
     }
@@ -221,11 +221,11 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
       
       feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
       result <- dataset$data$unfiltered[, feature_cols]
-      multiDataset$data[[paste0(dataset$name, "_pca_filtered")]] <- list(filtered = result, unfiltered = result)
+      multiDataset$data[[paste0(dataset$name, "_pca_filtered")]] <- list(filtered = result, unfiltered = result, name = dataset$data$name)
       
       # extend table in upload with available datasets
       tables$data <- extendDataTable(tables$data, paste0(dataset$name, "_pca_filtered"), "-", nrow(result), ncol(result),
-                                     FALSE, "multi")
+                                     FALSE, "multi", dataset$data$name)
       
       incProgress(1/3)
     })
