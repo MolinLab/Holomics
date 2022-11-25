@@ -116,12 +116,14 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
   plot.indiv <- function(result, comp.indiv, indNames){
     req(classes$data)
     if (!is.null(result)){
-      title = colnames(classes$data)[2]
+      legend.title = colnames(classes$data)[2]
       if (ncol(classes$data) == 3){
         colors = getGroupColors(classes$data)
-        plotIndiv(result, classes$data[,2], title, comp.indiv, indNames = indNames, col.per.group = colors)
+        plotIndiv(result, classes = classes$data[,2], title = "PLS-DA on [] data", legend.title = legend.title, 
+                  comp = comp.indiv, indNames = indNames, col.per.group = colors)
       } else {
-        plotIndiv(result, classes$data[,2], title, comp.indiv, indNames = indNames)
+        plotIndiv(result, classes = classes$data[,2], title = "PLS-DA on [] data", legend.title = legend.title, 
+                  comp = comp.indiv, indNames = indNames)
       }
     }
   }

@@ -108,3 +108,26 @@ splsCheckNcomp <- function(input, tuned = FALSE, tunedVals = NULL){
     return("")
   }
 }
+
+#' @description A utils function, which checks if at least two components 
+#' are in the model
+#'
+#' @return error message if less than two components
+#'  else empty string
+#'  
+#' @noRd
+getTitleAccordingToRepSpace <- function(repSpace){
+  title = NULL
+  subtitle = NULL
+  if(is.null(repSpace)){   #separated
+    subtitle = c("ds1", "ds2")  #TODO change to name
+  } else if (repSpace == "X-variate"){
+    title = "sPLS in [] space"   #TODO
+  } else if (repSpace == "Y-variate"){
+    title = "sPLS in [] space"  #TODO
+  } else if (repSpace == "XY-variate"){
+    title = "sPLS in averaged subspace"
+  }
+  
+  return (list(title = title, subtitle = subtitle))
+}

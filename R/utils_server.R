@@ -172,19 +172,37 @@ checkCompNcompCombination <- function(ncomp, comp){
 #' @return sample plot
 #'
 #' @noRd
-plotIndiv <- function(result, classes, title, comp, repSpace = NULL, indNames, col.per.group, legendPosition = "right") {
+plotIndiv <- function(result, classes, title = NULL, subtitle = NULL, legend.title, comp, 
+                      repSpace = NULL, indNames, col.per.group, legendPosition = "right") {
   comp <- checkCompNcompCombination(result$ncomp, comp)
   
   if (missing(col.per.group)){
-    mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
-                        group = classes, ind.names = indNames,
-                        legend = TRUE, legend.title = title,
-                        legend.position = legendPosition)
+    if (is.null(subtitle)){
+      mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
+                          group = classes, ind.names = indNames,
+                          title = title, legend = TRUE, 
+                          legend.title = title, legend.position = legendPosition)
+    } else {
+      mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
+                          group = classes, ind.names = indNames,
+                          subtitle = subtitle, legend = TRUE, 
+                          legend.title = title, legend.position = legendPosition)
+    }
+    
   } else {
-    mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
-                        group = classes, ind.names = indNames,
-                        legend = TRUE, legend.title = title,
-                        legend.position = legendPosition, col.per.group = col.per.group)
+    if (is.null(subtitle)){
+      mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
+                          group = classes, ind.names = indNames,
+                          title = title, legend = TRUE, 
+                          legend.title = title, legend.position = legendPosition, 
+                          col.per.group = col.per.group)
+    } else {
+      mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
+                          group = classes, ind.names = indNames,
+                          subtitle = subtitle, legend = TRUE, 
+                          legend.title = title, legend.position = legendPosition, 
+                          col.per.group = col.per.group)
+    }
   }
 
 }
@@ -219,10 +237,11 @@ plotLoadings <- function(result, comp, contrib = NULL, method = "mean", legend.c
   
   if (missing(legend.color)){
     mixOmics::plotLoadings(result, comp = comp,
-                           contrib = contrib, method = method)
+                           contrib = contrib, method = method, size.title = ggplot2::rel(1))
   } else {
     mixOmics::plotLoadings(result, comp = comp,
-                           contrib = contrib, method = method, legend.color = legend.color)
+                           contrib = contrib, method = method, size.title = ggplot2::rel(1), 
+                           legend.color = legend.color)
   }
   
 }

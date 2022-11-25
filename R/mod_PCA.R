@@ -109,12 +109,14 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
   plot.indiv <- function(result, comp.indiv, indNames){
     if(!is.null(result)){
       req(classes$data)
-      title = colnames(classes$data)[2]
+      legend.title = colnames(classes$data)[2]
       if (ncol(classes$data) == 3){
         colors = getGroupColors(classes$data)
-        plotIndiv(result, classes$data[,2], title, comp.indiv, indNames = indNames, col.per.group = colors)
+        plotIndiv(result, classes = classes$data[,2], title = "PCA on [] data", legend.title = legend.title, 
+                  comp = comp.indiv, indNames = indNames, col.per.group = colors)
       } else {
-        plotIndiv(result, classes$data[,2], title, comp.indiv, indNames = indNames)
+        plotIndiv(result, classes = classes$data[,2], title = "PCA on [] data", legend.title = legend.title, 
+                  comp = comp.indiv, indNames = indNames)
       }
     }
   }

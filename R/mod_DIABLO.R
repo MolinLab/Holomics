@@ -395,13 +395,13 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.indiv <- function(){
     if(!is.null(result()) & input$ncomp >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[2]
+      legend.title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotIndiv(result(), classSelection$data[,2], title, comp.indiv(), 
+        plotIndiv(result(), classes=classSelection$data[,2], legend.title = legend.title, comp = comp.indiv(), 
                   indNames = input$indiv.names, legendPosition = "bottom", col.per.group = colors)
       } else {
-        plotIndiv(result(), classSelection$data[,2], title, comp.indiv(), 
+        plotIndiv(result(), classes = classSelection$data[,2], legend.title = legend.title, comp = comp.indiv(), 
                   indNames = input$indiv.names, legendPosition = "bottom")
       }
     }
@@ -438,7 +438,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.arrow <- function(){
     if(!is.null(result()) & input$ncomp >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[2]
+      legend.title = colnames(classSelection$data)[2]
       
       result <- result()
       newNames <- c()
@@ -452,9 +452,9 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(result, classSelection$data[,2], title, input$namesArrow, col.per.group = colors)
+        plotArrow(result, classSelection$data[,2], legend.title, input$namesArrow, col.per.group = colors)
       } else {
-        plotArrow(result, classSelection$data[,2], title, input$namesArrow)
+        plotArrow(result, classSelection$data[,2], legend.title, input$namesArrow)
       }
     }
   }
@@ -473,12 +473,13 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.circos <- function(){
     if(!is.null(result()) & length(dataSelection$data) > 1){
+      title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = TRUE,
+        mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = TRUE, legend.title = title,
                              size.labels =1.5, size.variables = .85, color.Y = colors)
       } else {
-        mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = TRUE)      
+        mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = TRUE, legend.title = title)      
       }
     }
   }
@@ -490,11 +491,13 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotIndiv(result.tuned(), classSelection$data[,2], title, comp.indiv.tuned(), 
-                  indNames = input$indiv.names.tuned, legendPosition = "bottom", col.per.group = colors)
+        plotIndiv(result.tuned(), classes = classSelection$data[,2], legend.title = title, 
+                  comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+                  legendPosition = "bottom", col.per.group = colors)
       } else {
-        plotIndiv(result.tuned(), classSelection$data[,2], title, comp.indiv.tuned(), 
-                  indNames = input$indiv.names.tuned, legendPosition = "bottom")
+        plotIndiv(result.tuned(), classes = classSelection$data[,2], legend.title = title, 
+                  comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned,
+                  legendPosition = "bottom")
       }
     }
   }
@@ -530,13 +533,13 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.arrow.tuned <- function(){
     if(!is.null(result.tuned()) & tunedVals$ncomp >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[2]
+      legend.title = colnames(classSelection$data)[2]
       
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(result.tuned(), classSelection$data[,2], title, input$namesArrow.tuned, col.per.group = colors)
+        plotArrow(result.tuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned, col.per.group = colors)
       } else {
-        plotArrow(result.tuned(), classSelection$data[,2], title, input$namesArrow.tuned)
+        plotArrow(result.tuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned)
       }
     }
   }
@@ -555,13 +558,16 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.circos.tuned <- function(){
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
+      title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
-                             size.labels =1.5, size.variables = .85, color.Y = colors)
+                             legend.title = title, size.labels =1.5, 
+                             size.variables = .85, color.Y = colors)
       } else {
         mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
-                             size.labels =1.5, size.variables = .85)
+                             legend.title = title, size.labels =1.5, 
+                             size.variables = .85)
       }
     }
   }

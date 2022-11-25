@@ -510,13 +510,18 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.indiv <- function(){
     req(classSelection$data)
     if(!is.null(result())){
-      title = colnames(classSelection$data)[2]
+      legend.title = colnames(classSelection$data)[2]
+      
+      titles = getTitleAccordingToRepSpace(rep.space())
+      
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotIndiv(result(), classSelection$data[,2], title, comp.indiv(), indNames = input$indiv.names, 
+        plotIndiv(result(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
+                  subtitle = titles$subtitle, comp = comp.indiv(), indNames = input$indiv.names, 
                   repSpace = rep.space(), legendPosition = "bottom", col.per.group = colors)
       } else {
-        plotIndiv(result(), classSelection$data[,2], title, comp.indiv(), indNames = input$indiv.names, 
+        plotIndiv(result(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
+                  subtitle = titles$subtitle, comp = comp.indiv(), indNames = input$indiv.names, 
                   repSpace = rep.space(), legendPosition = "bottom")    
       }
     }
@@ -547,12 +552,12 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     if(!is.null(result())){
       if(splsGetNcomp(input) >= 2){
         req(classSelection$data)
-        title = colnames(classSelection$data)[2]
+        legend.title = colnames(classSelection$data)[2]
         if (ncol(classSelection$data) == 3){
           colors = getGroupColors(classSelection$data)
-          plotArrow(result(), classSelection$data[,2], title, input$namesArrow, col.per.group = colors)
+          plotArrow(result(), classSelection$data[,2], legend.title, input$namesArrow, col.per.group = colors)
         } else {
-          plotArrow(result(), classSelection$data[,2], title, input$namesArrow)
+          plotArrow(result(), classSelection$data[,2], legend.title, input$namesArrow)
         }
       }
     }
@@ -576,13 +581,16 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   #tuned
   plot.indiv.tuned <- function(){
     if (!is.null(resultTuned())){
-      title = colnames(classSelection$data)[2]
+      legend.title = colnames(classSelection$data)[2]
+      titles = getTitleAccordingToRepSpace(rep.space.tuned())
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotIndiv(resultTuned(), classSelection$data[,2], title, comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+        plotIndiv(resultTuned(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
+                  subtitle = titles$subtitle, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
                   repSpace = rep.space.tuned(), legendPosition = "bottom", col.per.group = colors)
       } else {
-        plotIndiv(resultTuned(), classSelection$data[,2], title, comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
+        plotIndiv(resultTuned(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
+                  subtitle = titles$subtitle, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
                   repSpace = rep.space.tuned(), legendPosition = "bottom")    
       }
     }
@@ -611,12 +619,12 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.arrow.tuned <- function(){
     if(!is.null(resultTuned()) & splsGetNcomp(input, tuned = TRUE, tunedVals) >= 2){
       req(classSelection$data)
-      title = colnames(classSelection$data)[2]
+      legend.title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(resultTuned(), classSelection$data[,2], title, input$namesArrow.tuned, col.per.group = colors)
+        plotArrow(resultTuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned, col.per.group = colors)
       } else {
-        plotArrow(resultTuned(), classSelection$data[,2], title, input$namesArrow.tuned)
+        plotArrow(resultTuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned)
       }
     }
   }
@@ -625,7 +633,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     if (!is.null(resultTuned())){
       req(input$sel.var.comp.tuned)
       req(classSelection$data)
-      title = colnames(classSelection$data)[2]
+      legend.title = colnames(classSelection$data)[2]
       selectVar(resultTuned(), as.numeric(input$sel.var.comp.tuned), XY = TRUE)
     }
   })
