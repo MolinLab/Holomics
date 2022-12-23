@@ -286,6 +286,23 @@ performMixMC <- function(data){
 }
 
 #' @description A utils function, gets the the top 10.000 features 
+#' of the given data
+#' 
+#' @return filtered data
+#' 
+#' @noRd
+filterToTenThousand <- function(data){
+  #low count filtering
+  keep <- colSums(data) > 10
+  data <- data[, keep]
+  
+  if (ncol(data) > 10000){
+    data <- filterByMAD(data)
+  }
+  return(data)
+}
+
+#' @description A utils function, gets the the top 10.000 features 
 #' of the given data according to the Median Absolute Deviation
 #' 
 #' @return filtered data

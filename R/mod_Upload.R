@@ -164,7 +164,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
           }
           
           if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
-            df_data  <- filterByMAD(df_data)
+            df_data  <- filterToTenThousand(df_data)
             unfiltered_data <- df_data  #also the unfiltered data can only contain 10.000 features
           }
           
