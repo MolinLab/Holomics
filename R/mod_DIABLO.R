@@ -27,7 +27,7 @@ mod_DIABLO_ui <- function(id){
                                h1("DIABLO"),
                       ),
                       fluidRow(
-                               bs4Dash::box(title = "General information", width = 12,
+                               bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
                                             htmlOutput(ns("DIABLOinfotext"))
                                             )
                       ),
@@ -55,7 +55,7 @@ mod_DIABLO_ui <- function(id){
                                h1("DIABLO tuned"),
                       ),
                       fluidRow(
-                               bs4Dash::box(title = "General information", width = 12,
+                               bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
                                             htmlOutput(ns("DIABLOtunedinfotext"))
                                )
                       ),

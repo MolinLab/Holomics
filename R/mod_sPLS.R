@@ -26,7 +26,7 @@ mod_sPLS_ui <- function(id){
                                h1("sPLS"),
                       ),
                       fluidRow(
-                               bs4Dash::box(title = "General information", width = 12,
+                               bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
                                             htmlOutput(ns("sPLSinfotext"))
                                )  
                       ),
@@ -52,7 +52,7 @@ mod_sPLS_ui <- function(id){
                                h1("sPLS tuned"),
                       ),
                       fluidRow(
-                               bs4Dash::box(title = "General information", width = 12,
+                               bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
                                             htmlOutput(ns("sPLStunedinfotext"))
                                )
                       ),

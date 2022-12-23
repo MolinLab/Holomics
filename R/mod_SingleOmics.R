@@ -25,7 +25,7 @@ mod_SingleOmics_ui <- function(id){
                          h1("PCA")
                        ),
                        fluidRow(
-                                bs4Dash::box(title = "General information", width = 12,
+                                bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
                                   htmlOutput(ns("PCAinfotext"))
                                 )  
                        ),
@@ -36,7 +36,7 @@ mod_SingleOmics_ui <- function(id){
                                 h1("PLS-DA"),
                        ),
                        fluidRow(
-                                bs4Dash::box(title = "General information", width = 12,
+                                bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
                                              htmlOutput(ns("PLSDAinfotext"))
                                 )
                        ),
