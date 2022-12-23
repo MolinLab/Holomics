@@ -50,7 +50,8 @@ getDataUploadUI <- function(ns){
                                    fluidRow(
                                      getSelectionComponent(ns("plotName"), label = "", 
                                                            choices = c("Metabolomics"= "Metabolomics", "Microbiomics"= "Microbiomics",
-                                                                       "Transcriptomics" = "Transcriptomics", "Proteomics" = "Proteomics"))
+                                                                       "Transcriptomics" = "Transcriptomics", "Proteomics" = "Proteomics",
+                                                                       "Genomics" = "Genomics", "Phenomics" = "Phenomics"))
                                    )
                    )
           ),
