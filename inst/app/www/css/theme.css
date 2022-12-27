@@ -196,6 +196,11 @@ div[id*="fileField"] > div{
   margin-bottom: 0;
 }
 
+/* Upload general information box */
+#upload-general-information{
+  margin-bottom: 0;
+}
+
 /* Footer link */
 footer a{
   color: #79151d;

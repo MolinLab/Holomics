@@ -14,8 +14,11 @@ mod_Upload_ui <- function(id){
   tagList(
     shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     h1("Data upload"),
-    fluidRow(style = "margin-left: 0",
-      htmlOutput(ns("infotext"))
+    fluidRow(
+             bs4Dash::box(title = "General information", width = 12, 
+                          collapsed = TRUE, id = ns("general-information"),
+                          htmlOutput(ns("infotext"))
+             )
     ),
     tags$hr(),
     fluidRow(
@@ -70,7 +73,8 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
 	         The first column has to contain the sample names and the first row the features names. <br/>
 	         If the data contains more variables/columns then excel allows, please transpose the data format and select the 'transposed format' checkbox.<br/>
            Also if the dataset contains more than 10.000 features, Holomics will filter the dataset to 10.000 or less features as mixOmics suggests to use
-          their package with max. 10.000 features."
+          their package with max. 10.000 features. </br>
+          In addition any wanted/necessary normalisation needs to be done before using Holomics."
         )
         
         output$inputFields <- renderUI({
