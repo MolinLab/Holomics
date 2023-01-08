@@ -237,7 +237,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   observeEvent(input$tune, {
     if (!is.null(input$dataSelection)){
       tryCatch({
-        tune_diablo_values(dataSelection, classSelection, result, tunedVals, output)
+        tune_diablo_values(dataSelection, classSelection, result, tunedVals, input, output)
         if (!is.null(tunedVals)){
           shinyjs::show("switchRow")
           output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
@@ -260,7 +260,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
 }
 
 #' Tune the ncomp and keepX parameter for the given dataset
-tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals, output){
+tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals, input, output){
   X <- dataSelection$data
   if (!is.null(X)){
     withProgress(message = 'Tuning parameters .... Please wait!', value = 1/3, {
@@ -269,8 +269,54 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
                        dimnames = list(names(X), names(X)))
       diag(design) <- 0
       
+      result <- result()
+      assign("diabloTuneError", F, env=globalenv())
+      
       #tune ncomp
-      perf.diablo <- mixOmics::perf(result(), validation = 'Mfold', folds = min(table(Y)), nrepeat = 50, progressBar = TRUE, cpus = 1)
+      finished <- F
+      while (!finished){
+        dataName <- tryCatch({
+          set.seed(30)
+          perf.diablo <- mixOmics::perf(result, validation = 'Mfold', folds = min(table(Y)), nrepeat = 50, 
+                                        progressBar = TRUE, cpus = 1)
+          finished = T
+        }, error = function(cond){
+          if (grepl("There are features with zero variance", cond$message, fixed = T)){
+            dataName <- stringr::str_match(cond$message, "There are features with zero variance in block '([^']*)'")[2]
+            return(dataName)
+          } else {
+            getErrorMessage(cond)
+            assign("diabloTuneError", T, env=globalenv())
+          }
+        })
+        
+        if (!finished && !get("diabloTuneError", env = globalenv())){
+          data <- X[[dataName]]
+          
+          #get all possible value combinations
+          nearZerodata <- mixOmics::nearZeroVar(data, freqCut = 1, uniqueCut = 100)
+          
+          if (length(nearZerodata$Position) == 0){
+            getErrorMessage("Unfortunately it is not possible to tune the parameters")
+            assign("diabloTuneError", T, env=globalenv())  
+          } else {
+            minUniqueCut <- ifelse(length(nearZerodata$Position) != 0, min(nearZerodata$Metrics$percentUnique), 100)
+            
+            #remove values with lowest variance
+            X[[dataName]] <- data[, -mixOmics::nearZeroVar(data, freqCut = 1, uniqueCut = minUniqueCut)$Position]
+            
+            #calculate result with newly filtered data
+            tryCatch({
+              result <- mixOmics::block.splsda(X, Y, ncomp = input$ncomp , scale = input$scale,
+                                             design = design)
+            }, error = function(cond){
+              getErrorMessage(cond)
+              assign("diabloTuneError", T, env=globalenv())
+            }) 
+          }
+        }
+      }
+      
       ncomp = perf.diablo$choice.ncomp$WeightedVote["Overall.BER", "centroids.dist"]
       
       incProgress(1/3)
