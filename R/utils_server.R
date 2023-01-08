@@ -351,21 +351,21 @@ getGroupColors <- function(data){
 
 #' @description A utils function that generates the list of
 #' different keepX number used for tuning. 
-#' From 2 to 20 it will be tested in steps of 2, all above 20
-#' in steps of 5. The maximum value can be 50
+#' From 2 to 10 it will be tested in steps of 2, all above 10
+#' in steps of 5. The maximum value can be 100
 #'
 #' @return array 
 #'
 #' @noRd
 getTestKeepX <- function(max){
   keepX <- c()
-  if (max >= 50){
-    max <- 50
+  if (max >= 100){
+    max <- 100
   }
   
-  if(max >= 20){
-    keepX <- c(keepX, seq(20, max, 5)) 
-    max <- 19
+  if(max >= 10){
+    keepX <- c(keepX, seq(10, max, 5)) 
+    max <- 9
   }
   
   keepX <- c(keepX, seq(2, max, 2))
