@@ -243,29 +243,32 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     #tune ncomp
     finished <- F
     while (!finished){
-      tryCatch({
+      values <- tryCatch({
+        set.seed(30)
         tune.spls <- mixOmics::perf(result, validation = "Mfold", folds = 7, progressBar = TRUE, nrepeat = 50)
         finished = T
       }, error = function(cond){
-        if (grepl("Error in Ypred", cond, fixed = T)){
+        if (grepl("Error in Ypred", cond, fixed = T) || 
+            grepl("X.test %*% a.cv: non-conformable arguments", cond, fixed = T)){
           #get all possible value combinations
           nearZeroX <- mixOmics::nearZeroVar(X, freqCut = 1, uniqueCut = 100)
           nearZeroY <- mixOmics::nearZeroVar(Y, freqCut = 1, uniqueCut = 100)
           
-          if (length(nearZeroX$Position) == 0 && length(nearZeroY$Position) == 0){
-            getErrorMessage(cond)
-            assign("splsTuneError", T, env=globalenv())
-          }
-          
+          return (list(nearZeroX = nearZeroX, nearZeroY = nearZeroY))
+        } else {
+          getErrorMessage(cond)
+          assign("splsTuneError", T, env=globalenv())
         }
       })
-      
+    
       if (!finished && !get("splsTuneError", env = globalenv())){
         #get all possible value combinations
-        nearZeroX <- mixOmics::nearZeroVar(X, freqCut = 1, uniqueCut = 100)
-        nearZeroY <- mixOmics::nearZeroVar(Y, freqCut = 1, uniqueCut = 100)
+        nearZeroX <- values$nearZeroX
+        nearZeroY <- values$nearZeroY
         
-        if (length(nearZeroX$Position) != 0 || length(nearZeroY$Position) != 0){
+        if (length(nearZeroX$Position) == 0 && length(nearZeroY$Position) == 0){
+          getErrorMessage("Unfortunately it is not possible to tune the parameters")
+        } else {          
           minValX <- ifelse(length(nearZeroX$Position) != 0, min(nearZeroX$Metrics$percentUnique), 100)
           minValY <- ifelse(length(nearZeroY$Position) != 0, min(nearZeroY$Metrics$percentUnique), 100)
           
@@ -276,8 +279,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
           }
           
           tryCatch({
-            result <- mixOmics::spls(X, Y,
-                                          ncomp = input$ncomp, scale = input$scale)
+            result <- mixOmics::spls(X, Y, ncomp = input$ncomp, scale = input$scale)
           }, error = function(cond){
             getErrorMessage(cond)
             assign("splsTuneError", T, env=globalenv())
