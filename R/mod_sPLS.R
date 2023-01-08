@@ -244,7 +244,6 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     finished <- F
     while (!finished){
       tryCatch({
-        set.seed(30)
         tune.spls <- mixOmics::perf(result, validation = "Mfold", folds = 7, progressBar = TRUE, nrepeat = 50)
         finished = T
       }, error = function(cond){
@@ -291,7 +290,6 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     incProgress(1/4)
     
     #tune keepX
-    set.seed(30)
     list_keepX <- getTestKeepX(ncol(X))
     BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
     
@@ -327,7 +325,6 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     incProgress(1/4)
     
     #tune keepY
-    set.seed(30)
     list_keepY <- getTestKeepX(ncol(Y))
     finished <- F
     folds <- 5

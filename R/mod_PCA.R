@@ -27,16 +27,27 @@ mod_PCA_ui <- function(id){
                           textOutput(ns("Var.filtered"))
                  ),
                  tags$hr(),
-                 fluidRow(style = "display: flex; column-gap: 1rem",
-                          uiOutput(ns("indiv.x.comp.filtered")),
-                          uiOutput(ns("indiv.y.comp.filtered")),
-                          uiOutput(ns("names.filtered"))
-                 ),
-                 fluidRow(
-                   bs4Dash::column(width = 12,
-                                   plotOutput(ns("Indiv.filtered")),
-                                   uiOutput(ns("indiv.filtered.button"))
-                   )
+                 bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                 tabPanel("Correlations", 
+                                          fluidRow(
+                                            bs4Dash::column(width = 12,
+                                                            plotOutput(ns("Correlations")),
+                                                            downloadButton(ns("Correlations.download"), "Save plot"))             
+                                          )
+                                 ),
+                                 tabPanel("Sample plot", 
+                                          fluidRow(style = "display: flex; column-gap: 1rem",
+                                                   uiOutput(ns("indiv.x.comp.filtered")),
+                                                   uiOutput(ns("indiv.y.comp.filtered")),
+                                                   uiOutput(ns("names.filtered"))
+                                          ),
+                                          fluidRow(
+                                            bs4Dash::column(width = 12,
+                                                            plotOutput(ns("Indiv.filtered")),
+                                                            uiOutput(ns("indiv.filtered.button"))
+                                            )
+                                          )
+                                 )
                  )
         )
       )
@@ -191,9 +202,8 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
 
     withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
       
-      set.seed(30)
-      
-      #get optimal number of componends
+
+      #get optimal number of components
       tune <- mixOmics::tune.pca(dataset$data$filtered, scale = input$scale)
       ncomp <- min(which(tune$cum.var > 0.8))
       
@@ -230,7 +240,12 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
       incProgress(1/3)
     })
     
+    #set output components
     output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", ncol(result)))
+    
+    output$Correlations <- renderPlot(plot(tune.spca.result))
+    
+    output$Correlations.download <- getDownloadHandler("PCA_correlations.png", function(){plot(tune.spca.result)})
     
     output$indiv.x.comp.filtered <- renderUI({
       selectInput(ns("indiv.x.filtered"), "X-Axis component:", seq(1, ncomp, 1))
@@ -275,7 +290,14 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
   })
 
   #' Download handler
-  output$Indiv.download <- getDownloadHandler("PCA_Sampleplot.png", plot.indiv)
+  output$Indiv.download <- downloadHandler(
+    filename = "PCA_Sampleplot.png",
+    content = function(file){
+      png(file, 1800, 1200, res = 300)
+      plot.indiv(result(), comp.indiv(), input$indiv.names)
+      dev.off()
+    }
+  )
   output$Var.download <- getDownloadHandler("PCA_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PCA_SelectedVariables.csv", table.selVar, type = "csv")

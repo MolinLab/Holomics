@@ -37,20 +37,25 @@ mod_PLSDA_ui <- function(id){
                       getSelectedVarsPlot(ns),
                       tabPanel("Filtering for multi-omics",
                                fluidRow(style = "display: flex; column-gap: 1rem",
-                                 downloadButton(ns("Filter.download"), "Filter by loadings"),
-                                 textOutput(ns("Var.filtered"))
+                                        downloadButton(ns("Filter.download"), "Filter by loadings"),
+                                        textOutput(ns("Var.filtered"))
                                ),
                                tags$hr(),
-                               fluidRow(style = "display: flex; column-gap: 1rem",
-                                        uiOutput(ns("indiv.x.comp.filtered")),
-                                        uiOutput(ns("indiv.y.comp.filtered")),
-                                        uiOutput(ns("names.filtered"))
-                               ),
-                               fluidRow(
-                                   bs4Dash::column(width = 12,
-                                                   plotOutput(ns("Indiv.filtered")),
-                                                   uiOutput(ns("indiv.filtered.button"))
-                                   )
+                               bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                               getErrorRatePlot(ns),
+                                               tabPanel("Sample plot", 
+                                                 fluidRow(style = "display: flex; column-gap: 1rem",
+                                                          uiOutput(ns("indiv.x.comp.filtered")),
+                                                          uiOutput(ns("indiv.y.comp.filtered")),
+                                                          uiOutput(ns("names.filtered"))
+                                                 ),
+                                                 fluidRow(
+                                                     bs4Dash::column(width = 12,
+                                                                     plotOutput(ns("Indiv.filtered")),
+                                                                     uiOutput(ns("indiv.filtered.button"))
+                                                     )
+                                                 )
+                                               )
                                )
                       )
       )
@@ -207,7 +212,6 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       
       #get optimal number of components and number of features per component
       grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
-      set.seed(30)
       tune.splsda.result <- mixOmics::tune.splsda(dataset$data$filtered,Y = Y, ncomp = input$ncomp,
                                         test.keepX = grid.keepX, scale = input$scale,
                                         validation = c('Mfold'),
@@ -228,7 +232,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       sel_feature <- c()
       for (comp in 1:ncomp){
         loadings <- mixOmics::plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
-        sel_feature <- c(sel_feature, rownames(loadings))
+        sel_feature <- c(sel_feature, rownames(loadings$X))
       }
       
       feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
@@ -239,9 +243,16 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
                                      FALSE, "multi", dataset$data$name)
       
       incProgress(1/3)
+      
+      errorPlot <- plot(tune.splsda.result)
     })
     
+    #set output components
     output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", length(sel_feature)))
+    
+    output$ErrorRate <- renderPlot(errorPlot)
+    
+    output$ErrorRate.download <- getDownloadHandler("PLSDA_error_rates.png", function(){errorPlot})
     
     output$indiv.x.comp.filtered <- renderUI({
       selectInput(ns("indiv.x.filtered"), "X-Axis component:", seq(1, ncomp, 1))
@@ -286,7 +297,14 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
   })
   
   #' Download handler
-  output$Indiv.download <- getDownloadHandler("PLS-DA_Sampleplot.png", plot.indiv)
+  output$Indiv.download <- downloadHandler(
+    filename = "PLS-DA_Sampleplot.png",
+    content = function(file){
+      png(file, 1800, 1200, res = 300)
+      plot.indiv(result(), comp.indiv(), input$indiv.names)
+      dev.off()
+    }
+  )
   output$Var.download <- getDownloadHandler("PLS-DA_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedVariables.csv", table.selVar, type = "csv")
