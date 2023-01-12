@@ -32,7 +32,19 @@ mod_DIABLO_ui <- function(id){
                                             )
                       ),
                       fluidRow(width = 12,
-                               getAnalysisParametersComponent(ns)
+                               getAnalysisParametersComponent(ns, 
+                                                              bs4Dash::column(width = 4,
+                                                                              fluidRow(
+                                                                                tags$label("Design matrix value"),
+                                                                                getTooltip(ns("matrix-info"), "Correlation values that indicates how strong
+                                                                                           the connection between the datasets is")
+                                                                              ),
+                                                                              fluidRow(
+                                                                                numericInput(ns("matrix"), label = "", value = 0.1, 
+                                                                                             min = 0, max = 1, step = 0.1)
+                                                                              )
+                                                              )
+                              )
                       ),
                       fluidRow(width = 12,
                                bs4Dash::tabBox(width = 12, collapsible = FALSE,
@@ -265,7 +277,7 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
   if (!is.null(X)){
     withProgress(message = 'Tuning parameters .... Please wait!', value = 1/3, {
       Y <- classSelection$data[,2]
-      design <- matrix(0.1, ncol = length(X), nrow = length(X),
+      design <- matrix(input$matrix, ncol = length(X), nrow = length(X),
                        dimnames = list(names(X), names(X)))
       diag(design) <- 0
       
@@ -365,7 +377,7 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
       output$parameters.error <- renderText(msg)
       
       if(msg == ""){
-        design <- matrix(0.1, ncol = length(X), nrow = length(X),
+        design <- matrix(input$matrix, ncol = length(X), nrow = length(X),
                          dimnames = list(names(X), names(X)))
         diag(design) <- 0
         tryCatch({
@@ -390,7 +402,7 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
       X <- dataSelection$data
       Y <- classSelection$data[,2]  #only second column contains label information
       if (!is.null(X)){
-        design <- matrix(0.1, ncol = length(X), nrow = length(X),
+        design <- matrix(input$matrix, ncol = length(X), nrow = length(X),
                          dimnames = list(names(X), names(X)))
         diag(design) <- 0
         
