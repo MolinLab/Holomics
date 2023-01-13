@@ -248,7 +248,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     })
     
     #set output components
-    output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", length(sel_feature)))
+    output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", ncol(result)))
     
     output$ErrorRate <- renderPlot(errorPlot)
     
