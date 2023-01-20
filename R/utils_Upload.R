@@ -48,10 +48,11 @@ getDataUploadUI <- function(ns){
                                                 "Name that will be used in the plots")
                                    ),
                                    fluidRow(
-                                     getSelectionComponent(ns("plotName"), label = "", 
+                                     selectizeInput(ns("plotName"), label = "", 
                                                            choices = c("Metabolomics"= "Metabolomics", "Microbiomics"= "Microbiomics",
                                                                        "Transcriptomics" = "Transcriptomics", "Proteomics" = "Proteomics",
-                                                                       "Genomics" = "Genomics", "Phenomics" = "Phenomics"))
+                                                                       "Genomics" = "Genomics", "Phenomics" = "Phenomics"),
+                                                    options = list(create=T))
                                    )
                    )
           ),
@@ -148,6 +149,7 @@ initDataValidator <- function(session){
   iv$add_rule("dataName", sv_required(message = "You need to enter a name!"))
   iv$add_rule("dataName", sv_regex("^[a-zA-Z0-9_ ]*$", "Please only use characters, space, underscore or digits for the name."))
   iv$add_rule("omicsAnalysis", sv_required(message = "You need to select at least one type of analysis!"))
+  iv$add_rule("plotName", sv_required(message = "You need to either select or enter a name!"))
   return (iv)
 }
 
