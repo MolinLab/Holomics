@@ -155,51 +155,57 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
           getShinyErrorAlert("The input needs to have at least one row and three columns!")
         } else if(sum(duplicated(df_data[,1])) != 0){ #there should not be duplicates in the first column
           getShinyErrorAlert("The sample names cannot contain duplicates!")
-        }else{
+        } else {
           rownames(df_data) <- df_data[,1]   #all rows, first column
           df_data <- df_data[,-1]
-          unfiltered_data <- df_data
           
-          if(input$transposed){ #check for transposed file format
-            df_data <- t(df_data)
+          #values can only be numeric
+          if(all(sapply(df_data, is.numeric))){
             unfiltered_data <- df_data
-          }
-          
-          if(input$isMicrobiome && !input$prevFiltered){ #check for microbiome data and if it was not previously filtered
-            df_data <- performMixMC(df_data)
-          }
-          
-          if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
-            df_data  <- filterToTenThousand(df_data)
-            unfiltered_data <- df_data  #also the unfiltered data can only contain 10.000 features
-          }
-          
-          #save data and write to table
-          analysisText = ""
-          
-          if("single" %in% input$omicsAnalysis){
-            if (!is.null(singleData)){
-              singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data, name = input$plotName)
-            }
-            analysisText = "single"
-            
-          }
-          
-          if("multi" %in% input$omicsAnalysis && input$prevFiltered){
-            if (!is.null(multiData)){
-              multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data, name = input$plotName)
+  
+            if(input$transposed){ #check for transposed file format
+              df_data <- t(df_data)
+              unfiltered_data <- df_data
             }
             
-            analysisText = ifelse(analysisText == "", "multi", "both")
+            if(input$isMicrobiome && !input$prevFiltered){ #check for microbiome data and if it was not previously filtered
+              df_data <- performMixMC(df_data)
+            }
+            
+            if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
+              df_data  <- filterToTenThousand(df_data)
+              unfiltered_data <- df_data  #also the unfiltered data can only contain 10.000 features
+            }
+            
+            #save data and write to table
+            analysisText = ""
+            
+            if("single" %in% input$omicsAnalysis){
+              if (!is.null(singleData)){
+                singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data, name = input$plotName)
+              }
+              analysisText = "single"
+              
+            }
+            
+            if("multi" %in% input$omicsAnalysis && input$prevFiltered){
+              if (!is.null(multiData)){
+                multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data, name = input$plotName)
+              }
+              
+              analysisText = ifelse(analysisText == "", "multi", "both")
+            }
+            
+            tables$data <- extendDataTable(tables$data, input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data),
+                            input$isMicrobiome && !input$prevFiltered, analysisText, input$plotName)
+            
+            #reset UI
+            resetDataUI(session, output)
+            ivData$disable()
+            ivData <- initDataValidator(session)
+          } else {
+            getShinyErrorAlert("The data can only contain numeric values apart from the row/column names!")
           }
-          
-          tables$data <- extendDataTable(tables$data, input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data),
-                          input$isMicrobiome && !input$prevFiltered, analysisText, input$plotName)
-          
-          #reset UI
-          resetDataUI(session, output)
-          ivData$disable()
-          ivData <- initDataValidator(session)
         }
       }
 
