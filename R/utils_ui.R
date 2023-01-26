@@ -42,7 +42,7 @@ getAnalysisParametersComponent <- function(ns, designMatrix = NULL){
                             ),
                             fluidRow(
                               numericInput(ns("ncomp"), label = "", value = 9, 
-                                           min = 1, max = 15, step = 1)
+                                           min = 2, max = 15, step = 1)
                             )
                           ),
                           bs4Dash::column(width = 3, style = "display: flex; column-gap: inherit",
