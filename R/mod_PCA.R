@@ -100,17 +100,32 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
-      tryCatch({
-        result <- mixOmics::pca(dataset$data$filtered, ncomp = input$ncomp,
-                                scale = input$scale)
-      }, error = function(cond){
-        getErrorMessage(cond)
-        result <- NULL
-      })
+      X <- dataset$data$filtered
+      finished = F
+      while(!finished){
+        X <- tryCatch({
+          result <- mixOmics::pca(X, ncomp = input$ncomp,
+                                  scale = input$scale)
+          finished = T
+        }, error = function(cond){
+          if (grepl("columns with zero variance", cond$message, fixed = T)){
+            print("in")
+            indices <- stringr::str_match(cond$message, "columns with zero variance in 'X': ([\\d,]*).")[2]
+            X <- X[, -lapply(strsplit(indices, ","), as.numeric)[[1]]]
+            return (X)
+          } else {
+            getErrorMessage(cond)
+            result <- NULL
+            return(NULL)
+          }
+        })
+        
+        finished <- ifelse(finished, finished, is.null(X))
+      }
     } else {
       result <- NULL
     }
-
+    result
   })
   
   #' plot functions
