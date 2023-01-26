@@ -379,13 +379,12 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     output$Tuned.keepY.download <- getDownloadHandler("PLS_keepY_Plot.png", function(){plot(tune.Y)})
     
     if(all(tune.spls$measures$Q2.total$summary$mean < 0)){
-      shinyalert::shinyalert("Warning!", HTML("Unfortunately, the Q2 score for all the components is below 0, 
-                                    which could be the result of a too low number of samples or that X does not explain Y 
-                                    (for more information see: 
-                                    <a class='mixOmics-link' href='https://mixomics-users.discourse.group/t/q2-total-negative-in-perf-pls/138/6' 
-                                    target='_blank'>Q2.total negative in perf.pls (Lê Cao, 2020)</a>) </br>.
-                                    In general, please consider using the untuned version."), 
-                             type = "warning", html = T
+      getShinyWarningAlert(HTML("Unfortunately, the Q2 score for all the components is below 0, 
+                                 which could be the result of a too low number of samples or that X does not explain Y 
+                                (for more information see: 
+                                <a class='mixOmics-link' href='https://mixomics-users.discourse.group/t/q2-total-negative-in-perf-pls/138/6' 
+                                target='_blank'>Q2.total negative in perf.pls (Lê Cao, 2020)</a>) </br>.
+                                In general, please consider using the untuned version."), html = T
       )
     }
   }

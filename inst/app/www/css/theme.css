@@ -110,7 +110,8 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
 
 /* Save plot buttons, delete, info, tune and ok buttons */
 .shiny-download-link, .shiny-download-link:hover, button[id*='-tune'], button[id*='-tune']:hover, 
-button[id*='upload-'], button[id*='upload-']:hover, button[id*='-info']:hover, button[class='confirm']{
+button[id*='upload-'], button[id*='upload-']:hover, button[id*='-info']:hover, button[class='confirm'],
+button[id*='.start']{
   background-color: var(--green) !important;
   color: white !important;
 }

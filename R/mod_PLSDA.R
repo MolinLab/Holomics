@@ -37,7 +37,8 @@ mod_PLSDA_ui <- function(id){
                       getSelectedVarsPlot(ns),
                       tabPanel("Filtering for multi-omics",
                                fluidRow(style = "display: flex; column-gap: 1rem",
-                                        downloadButton(ns("Filter.download"), "Filter by loadings"),
+                                        actionButton(ns("Filter.start"), "Start filtering by loadings"),
+                                        downloadButton(ns("Filter.download"), "Save filtered data"),
                                         textOutput(ns("Var.filtered"))
                                ),
                                tags$hr(),
@@ -86,6 +87,8 @@ render_plsda_ui_components <- function(ns, input, output, dataset){
   renderLoadComp(ns, input, output)
   
   renderSelVarComp(ns, input, output)
+  
+  shinyjs::hide("Filter.download")
 }
 
 #' Business logic functions
@@ -196,16 +199,19 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     )
     
     output$Var.filtered <- renderText("")
-    
+  })
+  
+  dataName <- reactive({
+    dataset$name 
   })
   
   #' Filter function
-  filterByLoadings <- function(output){
+  filterByLoadings <- function(){
     req(dataset$data$filtered)
     req(classes$data)
     
     withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
-        
+      
       Y <- classes$data[,2]
       result <- mixOmics::plsda(dataset$data$filtered, Y = Y,
                                 ncomp = input$ncomp , scale = input$scale)
@@ -213,22 +219,22 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       #get optimal number of components and number of features per component
       grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
       tune.splsda.result <- mixOmics::tune.splsda(dataset$data$filtered,Y = Y, ncomp = input$ncomp,
-                                        test.keepX = grid.keepX, scale = input$scale,
-                                        validation = c('Mfold'),
-                                        folds = getFolds(Y),
-                                        dist = 'max.dist',
-                                        nrepeat = 50,
-                                        progressBar = TRUE)
+                                                  test.keepX = grid.keepX, scale = input$scale,
+                                                  validation = c('Mfold'),
+                                                  folds = getFolds(Y),
+                                                  dist = 'max.dist',
+                                                  nrepeat = 50,
+                                                  progressBar = TRUE)
       
       # max. possible number is input$ncomp
       ncomp <- tune.splsda.result$choice.ncomp$ncomp
       keepX <- tune.splsda.result$choice.keepX[1:ncomp]
       
       incProgress(1/3)
-  
+      
       #filter dataset
       splsda.result <- mixOmics::splsda(dataset$data$filtered, Y = Y, ncomp = ncomp, keepX = keepX, scale = input$scale)
-  
+      
       sel_feature <- c()
       for (comp in 1:ncomp){
         loadings <- mixOmics::plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
@@ -257,7 +263,7 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     output$indiv.x.comp.filtered <- renderUI({
       selectInput(ns("indiv.x.filtered"), "X-Axis component:", seq(1, ncomp, 1))
     })
-
+    
     output$indiv.y.comp.filtered <- renderUI({
       selectInput(ns("indiv.y.filtered"), "Y-Axis component:", seq(1, ncomp, 1), selected = 2)
     })
@@ -288,12 +294,13 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
         dev.off()
       }
     )
-    
-    return(result)
   }
   
-  dataName <- reactive({
-    dataset$name 
+  #Start filtering
+  observeEvent(input$Filter.start, {
+    shinyjs::hide("Filter.download")
+    filterByLoadings()
+    shinyjs::show("Filter.download")
   })
   
   #' Download handler
@@ -313,8 +320,8 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
       paste0(dataName(), "_plsda_filtered.xlsx")
     },
     content = function(file){
-        df <- filterByLoadings(output)
-        openxlsx::write.xlsx(df, file, rowNames = TRUE, colNames = TRUE)
+      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_plsda_filtered")]]$filtered, 
+                           file, rowNames = TRUE, colNames = TRUE)
     }
   )
 }

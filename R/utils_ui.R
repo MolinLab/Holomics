@@ -471,12 +471,27 @@ getErrorMessage <- function(error, trim = TRUE){
 }
 
 #' @description A utils function that returns
+#' a shiny alert of the given type with the given text
+#'
+#' @noRd
+getShinyAlert <- function(title, text, type, html){
+  shinyalert::shinyalert(title, text, type = type, html = html)
+}
+
+#' @description A utils function that returns
 #' a shiny alert of the type error with a 
 #' custom message
 #'
 #' @noRd
 getShinyErrorAlert <- function(message, html = FALSE){
-  return(
-    shinyalert::shinyalert("Error!", message, type = "error", html = html)
-  )
+  getShinyAlert("Error!", message, "error", html)
+}
+
+#' @description A utils function that returns
+#' a shiny alert of the type warning with a 
+#' custom message
+#'
+#' @noRd
+getShinyWarningAlert <- function(message, html = FALSE){
+  getShinyAlert("Warning!", message, "warning", html)
 }

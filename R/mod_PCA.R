@@ -23,7 +23,8 @@ mod_PCA_ui <- function(id){
         getSelectedVarsPlot(ns),
         tabPanel("Filtering for multi-omics",
                  fluidRow(style = "display: flex; column-gap: 1rem",
-                          downloadButton(ns("Filter.download"), "Filter by loadings"),
+                          actionButton(ns("Filter.start"), "Start filtering by loadings"),
+                          downloadButton(ns("Filter.download"), "Save filtered data"),
                           textOutput(ns("Var.filtered"))
                  ),
                  tags$hr(),
@@ -79,6 +80,8 @@ render_pca_ui_components <- function(ns, input, output, dataset){
   renderLoadComp(ns, input, output)
   
   renderSelVarComp(ns, input, output)
+  
+  shinyjs::hide("Filter.download")
 }
 
 #' Business logic functions
@@ -193,101 +196,120 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     )
     
     output$Var.filtered <- renderText("")
-    
   })
-  
-  #' Filter function
-  filterByLoadings <- function(output){
-    req(dataset$data$filtered)
-
-    withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
-      
-
-      #get optimal number of components
-      tune <- mixOmics::tune.pca(dataset$data$filtered, scale = input$scale)
-      ncomp <- min(which(tune$cum.var > 0.8))
-      
-      #get optimal number of features per component
-      grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
-      folds <- floor(nrow(dataset$data$filtered)/3)
-      
-      BPPARAM <- BiocParallel::SnowParam(workers = max(parallel::detectCores()-1, 2))
-      tune.spca.result <- mixOmics::tune.spca(dataset$data$filtered, ncomp = ncomp,
-                                             test.keepX = grid.keepX, scale = input$scale,
-                                             nrepeat = 5, folds = folds)
-      
-      keepX <- tune.spca.result$choice.keepX[1:ncomp]
-      
-      incProgress(1/3)
-      
-      #filter dataset
-      spca.result <- mixOmics::spca(dataset$data$filtered, ncomp = ncomp, keepX = tune.spca.result$choice.keepX[1:ncomp])
-      
-      sel_feature <- c()
-      for (comp in 1:ncomp){
-        loadings <- mixOmics::selectVar(spca.result, comp = comp)$name
-        sel_feature <- c(sel_feature, loadings)
-      }
-      
-      feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
-      result <- dataset$data$unfiltered[, feature_cols]
-      multiDataset$data[[paste0(dataset$name, "_pca_filtered")]] <- list(filtered = result, unfiltered = result, name = dataset$data$name)
-      
-      # extend table in upload with available datasets
-      tables$data <- extendDataTable(tables$data, paste0(dataset$name, "_pca_filtered"), "-", nrow(result), ncol(result),
-                                     FALSE, "multi", dataset$data$name)
-      
-      incProgress(1/3)
-    })
-    
-    #set output components
-    output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", ncol(result)))
-    
-    output$Correlations <- renderPlot(plot(tune.spca.result))
-    
-    output$Correlations.download <- getDownloadHandler("PCA_correlations.png", function(){plot(tune.spca.result)})
-    
-    output$indiv.x.comp.filtered <- renderUI({
-      selectInput(ns("indiv.x.filtered"), "X-Axis component:", seq(1, ncomp, 1))
-    })
-    
-    output$indiv.y.comp.filtered <- renderUI({
-      selectInput(ns("indiv.y.filtered"), "Y-Axis component:", seq(1, ncomp, 1), selected = 2)
-    })
-    
-    comp.indiv.filtered <- reactive({
-      req(input$indiv.x.filtered)
-      req(input$indiv.y.filtered)
-      as.numeric(c(input$indiv.x.filtered,input$indiv.y.filtered))
-    })
-    
-    output$names.filtered <- renderUI({
-      awesomeCheckbox(ns("indiv.names.filtered"), "Sample names", value = FALSE)
-    })
-    
-    output$Indiv.filtered <- renderPlot(
-      plot.indiv(spca.result, comp.indiv.filtered(), input$indiv.names.filtered)
-    )
-    
-    output$indiv.filtered.button <- renderUI({
-      downloadButton(ns("Indiv.filtered.download"), "Save plot")             
-    })  
-    
-    output$Indiv.filtered.download <- downloadHandler(
-      filename = "PCA_filtered_Sampleplot.png",
-      content = function(file){
-        png(file, 1800, 1200, res = 300)
-        plot.indiv(spca.result, comp.indiv.filtered(), input$indiv.names.filtered)
-        dev.off()
-      }
-    )
-    
-    return(result)
-  }
   
   dataName <- reactive({
     dataset$name 
   })
+  
+  #' Filter function
+  filterByLoadings <- function(){
+    req(dataset$data$filtered)
+    
+    withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
+      
+      
+      #get optimal number of components
+      tune <- mixOmics::tune.pca(dataset$data$filtered, scale = input$scale)
+      ncomp <- min(which(tune$cum.var > 0.8))
+      
+      if (ncomp <= 15){
+        #get optimal number of features per component
+        grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
+        folds <- floor(nrow(dataset$data$filtered)/3)
+        
+        BPPARAM <- BiocParallel::SnowParam(workers = max(parallel::detectCores()-1, 2))
+        suppressWarnings({
+          tune.spca.result <- mixOmics::tune.spca(dataset$data$filtered, ncomp = ncomp,
+                                                  test.keepX = grid.keepX, scale = input$scale,
+                                                  nrepeat = 10, folds = folds, BPPARAM = BPPARAM)
+          
+          keepX <- tune.spca.result$choice.keepX[1:ncomp]
+          
+          incProgress(1/3)
+          
+          #filter dataset
+          spca.result <- mixOmics::spca(dataset$data$filtered, ncomp = ncomp, keepX = tune.spca.result$choice.keepX[1:ncomp],
+                                      max.iter = 1000)
+        })
+        sel_feature <- c()
+        for (comp in 1:ncomp){
+          loadings <- mixOmics::selectVar(spca.result, comp = comp)$name
+          sel_feature <- c(sel_feature, loadings)
+        }
+        
+        feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
+        result <- dataset$data$unfiltered[, feature_cols]
+        multiDataset$data[[paste0(dataset$name, "_pca_filtered")]] <- list(filtered = result, unfiltered = result, name = dataset$data$name)
+        
+        # extend table in upload with available datasets
+        tables$data <- extendDataTable(tables$data, paste0(dataset$name, "_pca_filtered"), "-", nrow(result), ncol(result),
+                                       FALSE, "multi", dataset$data$name)
+        
+        #set output components
+        output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", ncol(result)))
+        
+        output$Correlations <- renderPlot(plot(tune.spca.result))
+        
+        output$Correlations.download <- getDownloadHandler("PCA_correlations.png", function(){plot(tune.spca.result)})
+        
+        output$indiv.x.comp.filtered <- renderUI({
+          selectInput(ns("indiv.x.filtered"), "X-Axis component:", seq(1, ncomp, 1))
+        })
+        
+        output$indiv.y.comp.filtered <- renderUI({
+          selectInput(ns("indiv.y.filtered"), "Y-Axis component:", seq(1, ncomp, 1), selected = 2)
+        })
+        
+        comp.indiv.filtered <- reactive({
+          req(input$indiv.x.filtered)
+          req(input$indiv.y.filtered)
+          as.numeric(c(input$indiv.x.filtered,input$indiv.y.filtered))
+        })
+        
+        output$names.filtered <- renderUI({
+          awesomeCheckbox(ns("indiv.names.filtered"), "Sample names", value = FALSE)
+        })
+        
+        output$Indiv.filtered <- renderPlot(
+          plot.indiv(spca.result, comp.indiv.filtered(), input$indiv.names.filtered)
+        )
+        
+        output$indiv.filtered.button <- renderUI({
+          downloadButton(ns("Indiv.filtered.download"), "Save plot")             
+        })  
+        
+        output$Indiv.filtered.download <- downloadHandler(
+          filename = "PCA_filtered_Sampleplot.png",
+          content = function(file){
+            png(file, 1800, 1200, res = 300)
+            plot.indiv(spca.result, comp.indiv.filtered(), input$indiv.names.filtered)
+            dev.off()
+          }
+        )
+        
+        incProgress(1/3)
+      } else {
+        
+        getShinyWarningAlert("The number of components for filtering this dataset would be above 15, 
+                             which would result in a huge runtime to filter the dataset. 
+                             This is why the filtering was aborted and we recommend either using the whole dataset or using 
+                             PLS-DA for the filtering step.")
+        incProgress(2/3)
+      }
+    })
+    ifelse(ncomp <= 15, result, NA)
+  }
+  
+  #Start filtering
+  observeEvent(input$Filter.start, {
+    shinyjs::hide("Filter.download")
+    filteredResult <- filterByLoadings()
+    if(!is.na(filteredResult)){
+      shinyjs::show("Filter.download")
+    }
+  })
+  
 
   #' Download handler
   output$Indiv.download <- downloadHandler(
@@ -302,13 +324,15 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
   output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PCA_SelectedVariables.csv", table.selVar, type = "csv")
   output$Scree.download <- getDownloadHandler("PCA_Screeplot.png", plot.scree)
+  
   output$Filter.download <- downloadHandler(
     filename = function() {
       paste0(dataName(), "_pca_filtered.xlsx")
     },
     content = function(file){
-      df <- filterByLoadings(output)
-      openxlsx::write.xlsx(df, file, rowNames = TRUE, colNames = TRUE)
+      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_pca_filtered")]]$filtered, 
+                           file, rowNames = TRUE, colNames = TRUE)
     }
   )
+
 }

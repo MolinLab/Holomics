@@ -19,6 +19,12 @@ button[id*='upload-delete']:before{
   margin-right: 2px;
 }
 
+button[id*='Filter.start']:before{
+  content: "\f144";
+  font-family: 'Font Awesome 6 Free' !important;
+  margin-right: 2px;
+}
+
 #DIABLO-tuneBox > .card-header, #sPLS-tuneBox > .card-header{
   display: none;
 }
