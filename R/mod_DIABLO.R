@@ -595,11 +595,22 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       req(classSelection$data)
       legend.title = colnames(classSelection$data)[2]
       
+      resultTuned <- result.tuned()
+      newNames <- c()
+      for (name in names(resultTuned$variates)){
+        if (grepl("\\s+", name)){ #check that no dataset has whitespace as their name
+          name <- gsub(" ", "", name)
+        }
+        newNames <- cbind(newNames, name)
+      }
+      names(resultTuned$variates) <- newNames
+      
+      
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(result.tuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned, col.per.group = colors)
+        plotArrow(resultTuned, classSelection$data[,2], legend.title, input$namesArrow.tuned, col.per.group = colors)
       } else {
-        plotArrow(result.tuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned)
+        plotArrow(resultTuned, classSelection$data[,2], legend.title, input$namesArrow.tuned)
       }
     }
   }
