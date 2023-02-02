@@ -275,6 +275,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
 tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals, input, output){
   X <- dataSelection$data
   if (!is.null(X)){
+    error <- F
     withProgress(message = 'Tuning parameters .... Please wait!', value = 1/3, {
       Y <- classSelection$data[,2]
       design <- matrix(input$matrix, ncol = length(X), nrow = length(X),
@@ -282,11 +283,10 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
       diag(design) <- 0
       
       result <- result()
-      assign("diabloTuneError", F, env=globalenv())
-      
+
       #tune ncomp
       finished <- F
-      while (!finished){
+      while (!finished && !error){
         dataName <- tryCatch({
           set.seed(30)
           perf.diablo <- mixOmics::perf(result, validation = 'Mfold', folds = min(table(Y)), nrepeat = 50, 
@@ -298,11 +298,13 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
             return(dataName)
           } else {
             getErrorMessage(cond)
-            assign("diabloTuneError", T, env=globalenv())
+            return(NULL)
           }
         })
         
-        if (!finished && !get("diabloTuneError", env = globalenv())){
+        error <- is.null(dataName)
+        
+        if (!finished && !error){
           data <- X[[dataName]]
           
           #get all possible value combinations
@@ -310,7 +312,7 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
           
           if (length(nearZerodata$Position) == 0){
             getErrorMessage("Unfortunately it is not possible to tune the parameters")
-            assign("diabloTuneError", T, env=globalenv())  
+            error <- T 
           } else {
             minUniqueCut <- ifelse(length(nearZerodata$Position) != 0, min(nearZerodata$Metrics$percentUnique), 100)
             
@@ -323,37 +325,42 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
                                              design = design)
             }, error = function(cond){
               getErrorMessage(cond)
-              assign("diabloTuneError", T, env=globalenv())
+              error <- T
             }) 
           }
         }
       }
       
-      ncomp = perf.diablo$choice.ncomp$WeightedVote["Overall.BER", "centroids.dist"]
-      
-      incProgress(1/3)
-      
-      #tune keepX
-      test.keepX = dataSelection$data
-      for (i in 1 : length(names(dataSelection$data))){
-        test.keepX[[i]] = getTestKeepX(ncol(dataSelection$data[[i]]))
+      if (!error){
+        ncomp = perf.diablo$choice.ncomp$WeightedVote["Overall.BER", "centroids.dist"]
+        
+        incProgress(1/3)
+        
+        #tune keepX
+        test.keepX = dataSelection$data
+        for (i in 1 : length(names(dataSelection$data))){
+          test.keepX[[i]] = getTestKeepX(ncol(dataSelection$data[[i]]))
+        }
+        
+        BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
+        tune.diablo = mixOmics::tune.block.splsda(X, Y, ncomp = ncomp,
+                                                  test.keepX = test.keepX, design = design,
+                                                  validation = 'Mfold', folds = getFolds(Y), nrepeat = 1,
+                                                  BPPARAM = BPPARAM, dist = "centroids.dist", progressBar = TRUE)
+        keepX = tune.diablo$choice.keepX
+        incProgress(1/3)
       }
-      
-      BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
-      tune.diablo = mixOmics::tune.block.splsda(X, Y, ncomp = ncomp,
-                                                test.keepX = test.keepX, design = design,
-                                                validation = 'Mfold', folds = getFolds(Y), nrepeat = 1,
-                                                BPPARAM = BPPARAM, dist = "centroids.dist", progressBar = TRUE)
-      keepX = tune.diablo$choice.keepX
-      
-      incProgress(1/3)
     })
     
-    tunedVals$ncomp <- ncomp
-    tunedVals$keepX <- keepX
-    
-    output$ErrorRate <- renderPlot(plot(perf.diablo))
-    output$ErrorRate.download <- getDownloadHandler("DIABLO_classification_error.png", function(){plot(perf.diablo)})
+    if (error){
+      tunedVals <- NULL
+    } else {
+      tunedVals$ncomp <- ncomp
+      tunedVals$keepX <- keepX
+      
+      output$ErrorRate <- renderPlot(plot(perf.diablo))
+      output$ErrorRate.download <- getDownloadHandler("DIABLO_classification_error.png", function(){plot(perf.diablo)})
+    }
   }
 }
 
