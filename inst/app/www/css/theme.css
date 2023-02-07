@@ -162,9 +162,13 @@ button[id*='.start']{
   border-color: var(--green);
 }
 
-/* Tune buttons */
-div[id*='-tuneBox'] > .card-body{
+/* Tune and filter box */
+div[id*='Box'] > .card-body{
   padding: .5rem 1.25rem .5rem 1.25rem;
+}
+
+div[id*='Box'] > .card-header{
+  display: none;
 }
 
 /* Tune switch */
@@ -181,6 +185,16 @@ div[id*='-tuneBox'] > .card-body{
 .material-switch > label::before{
   box-shadow: inset 0 0 10px rgb(191, 197, 49);
   background-color: var(--grey);
+}
+
+div[id*='-switchRow'] > {
+  margin: auto;
+  width: 100%;
+  margin-top: .5rem;
+}
+
+div[id*='-tune.switch']{
+  margin: 1rem auto 0 auto;
 }
 
 div[id*='-tune.switch'] > div {

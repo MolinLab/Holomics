@@ -60,27 +60,64 @@ getAnalysisParametersComponent <- function(ns, designMatrix = NULL){
 }
 
 #' @description A utils function to get the block with the
-#' tune button and tune swith
+#' tune button and tune switch
 #'
 #' @return bootstrap box with the tune components
 #'
 #' @noRd
-getTuneBox <- function(ns){
+getTuneBox <- function(ns, name, infotext){
   return(
     bs4Dash::box(id = ns("tuneBox"), width = 12,
+                 getTuneButtonRow(ns, name, infotext),
+                 getSwitchRow(ns)
+    )
+  )
+}
+
+#' @description A utils function to get the block with the
+#' download button
+#'
+#' @return bootstrap box with the download button
+#'
+#' @noRd
+getFilterBox <- function(ns, name, infotext){
+  return(
+    bs4Dash::box(id = ns("filterBox"), width = 12,
+                 getTuneButtonRow(ns, name, infotext),
                  fluidRow(style = "flex-direction: row",
-                          bs4Dash::column(width = 11, style = "padding: 0",
-                                          actionButton(ns("tune"), "Tune parameters", width="inherit")
-                          ),
-                          bs4Dash::column(width = 1, style = "padding-left: 0",
-                                          getTooltip(ns("tune-info"), "Automatically calculate the optimal number of components 
-                                     and the number of variables per component.")
-                          )
-                 ),
-                 fluidRow(id = ns("switchRow"),
-                          uiOutput(ns("tune.switch"))
+                          downloadButton(ns("Filter.download"), "Save filtered data", 
+                                         style = "margin-top: 10px; width: 100%")
                  )
     )
+  )
+}
+
+#' @description A utils function to get the row with the
+#' tune button and infotext
+#'
+#' @return bootstrap box with the tune components
+#'
+#' @noRd
+getTuneButtonRow <- function(ns, name, infotext){
+  fluidRow(style = "flex-direction: row",
+           bs4Dash::column(width = 11, style = "padding: 0",
+                           actionButton(ns("tune"), name, width="inherit")
+           ),
+           bs4Dash::column(width = 1, style = "padding-left: 0",
+                           getTooltip(ns("tune-info"), infotext)
+           )
+  )
+}
+
+#' @description A utils function to get the row with 
+#' the tune switch
+#'
+#' @return row with switch
+#'
+#' @noRd
+getSwitchRow <- function(ns){
+  fluidRow(id = ns("switchRow"),
+           uiOutput(ns("tune.switch"))
   )
 }
 
@@ -119,12 +156,12 @@ getTunedParametersComponent <- function(ns, keepY = FALSE){
 #' @return tabpanel
 #'
 #' @noRd
-getScreePlot <- function(ns){
+getScreePlot <- function(ns, postfix = ""){
   return(
     tabPanel("Scree plot",       
              bs4Dash::column(width = 12,
-                             plotOutput(ns("Scree")), 
-                             downloadButton(ns("Scree.download"), "Save plot"))
+                             plotOutput(paste0(ns("Scree"), postfix)), 
+                             downloadButton(paste0(ns("Scree.download"), postfix), "Save plot"))
     )
   )
 }

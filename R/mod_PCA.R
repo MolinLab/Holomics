@@ -10,47 +10,76 @@
 mod_PCA_ui <- function(id){
   ns <- NS(id)
   tagList(
+    shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
-      getAnalysisParametersComponent(ns)
+      bs4Dash::column(width = 12,
+                      uiOutput(ns("dataSelComp")), 
+                      uiOutput(ns("classSelComp")),
+                      textOutput(ns("errorMsg")),
+                      style = "display: flex; column-gap: 1rem"
+      )
     ),
     fluidRow(
-      bs4Dash::tabBox(
-        width = 12, collapsible = FALSE,
-        getScreePlot(ns),
-        getSamplePlot(ns),
-        getVariablePlot(ns),
-        getLoadingsPlot(ns),
-        getSelectedVarsPlot(ns),
-        tabPanel("Filtering for multi-omics",
-                 fluidRow(style = "display: flex; column-gap: 1rem",
-                          actionButton(ns("Filter.start"), "Start filtering by loadings"),
-                          downloadButton(ns("Filter.download"), "Save filtered data"),
-                          textOutput(ns("Var.filtered"))
-                 ),
-                 tags$hr(),
-                 bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                                 tabPanel("Correlations", 
-                                          fluidRow(
-                                            bs4Dash::column(width = 12,
-                                                            plotOutput(ns("Correlations")),
-                                                            downloadButton(ns("Correlations.download"), "Save plot"))             
-                                          )
-                                 ),
-                                 tabPanel("Sample plot", 
-                                          fluidRow(style = "display: flex; column-gap: 1rem",
-                                                   uiOutput(ns("indiv.x.comp.filtered")),
-                                                   uiOutput(ns("indiv.y.comp.filtered")),
-                                                   uiOutput(ns("names.filtered"))
-                                          ),
-                                          fluidRow(
-                                            bs4Dash::column(width = 12,
-                                                            plotOutput(ns("Indiv.filtered")),
-                                                            uiOutput(ns("indiv.filtered.button"))
+      bs4Dash::column(width = 5,
+                       fluidRow(style = "padding-left: 7.5px;",
+                                h1("PCA")
+                       ),
+                       fluidRow(
+                         bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
+                                      htmlOutput(ns("PCAinfotext"))
+                         )
+                       ),
+                       fluidRow(width = 12,
+                         getAnalysisParametersComponent(ns)
+                       ),
+                       fluidRow(
+                         bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                           getScreePlot(ns),
+                           getSamplePlot(ns),
+                           getVariablePlot(ns),
+                           getLoadingsPlot(ns),
+                           getSelectedVarsPlot(ns)
+                         )
+                       )
+
+      ),
+      bs4Dash::column(width = 2,
+                      getFilterBox(ns, "Filter dataset", "TODO"),
+      ),
+      bs4Dash::column(id = ns("tunedCol"), width = 5,
+                       fluidRow(style = "padding-left: 7.5px;",
+                                h1("PCA filtered"),
+                       ),
+                       fluidRow(
+                         bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
+                                      htmlOutput(ns("PCAfilteredinfotext"))
+                         )
+                       ),
+                      fluidRow(width = 12,
+                               bs4Dash::box(title = "Filtered dataset parameters", width = 12, collapsed = TRUE,
+                                            fluidRow(style = "column-gap: 1rem",
+                                                     textOutput(ns("ncomp.tuned")),
+                                                     textOutput(ns("keepX.tuned")),
+                                                     textOutput(ns("scale.tuned"))
                                             )
-                                          )
-                                 )
-                 )
-        )
+                               )
+                      ),
+                      fluidRow(width = 12,
+                               bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                               tabPanel("Correlations",
+                                                        fluidRow(
+                                                          bs4Dash::column(width = 12,
+                                                                          plotOutput(ns("Correlations")),
+                                                                          downloadButton(ns("Correlations.download"), "Save plot"))
+                                                        )
+                                               ),
+                                               getScreePlot(ns, ".tuned"),
+                                               getSamplePlot(ns, ".tuned"),
+                                               getVariablePlot(ns, ".tuned"),
+                                               getLoadingsPlot(ns, ".tuned"),
+                                               getSelectedVarsPlot(ns, ".tuned")
+                               )
+                      )
       )
     )
   )
@@ -63,44 +92,206 @@ mod_PCA_server <- function(id, dataset, classes, multiDataset, tables){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    render_pca_ui_components(ns, input, output, dataset)
+    shinyjs::hide("Filter.download")
+    shinyjs::hide("tunedCol")
+  
+    dataSelection <- reactiveValues()
+    classSelection <- reactiveValues()
+    useTunedVals <- reactiveVal(FALSE)
+    tunedVals <- reactiveValues(ncomp = 2, keepX = NULL,  scale = T)
     
-    generate_pca_plots(ns, input, output, dataset, classes, multiDataset, tables)
+    results <- run_pca_analysis(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals)
     
+    render_pca_ui_components(ns, input, output, tunedVals)
+    
+    observe_pca_ui_components(ns, input, output, dataset, dataSelection, classes, classSelection, results, 
+                              useTunedVals, tunedVals, multiDataset, tables)
+    
+    generate_pca_plots(ns, input, output, dataSelection, classSelection, results$result, results$resultTuned, 
+                       tunedVals, multiDataset, tables)
+    
+    generate_pca_error_messages(output, dataset, classes, dataSelection, classSelection)
+      
+    render_pca_infotexts(output)
   })
 }
 
 #' Render Ui functions
-render_pca_ui_components <- function(ns, input, output, dataset){
+render_pca_ui_components <- function(ns, input, output, tunedVals){
   
-  renderIndivComps(ns, input, output)
+  renderIndivComps(ns, input, output, TRUE, tunedVals)
   
-  renderVarComps(ns, input, output)
+  renderVarComps(ns, input, output, TRUE, tunedVals)
   
-  renderLoadComp(ns, input, output)
+  renderLoadComp(ns, input, output, TRUE, tunedVals)
   
-  renderSelVarComp(ns, input, output)
-  
-  shinyjs::hide("Filter.download")
+  renderSelVarComp(ns, input, output, TRUE, tunedVals)
 }
 
-#' Business logic functions
-generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset, tables){
-  #' Create reactive values
-  comp.indiv <- getCompIndivReactive(input)
-  comp.var <- getCompVarReactive(input)
+#'Observe different ui components
+observe_pca_ui_components <- function(ns, input, output, dataset, dataSelection, classes, classSelection, result, useTunedVals, tunedVals, multiDataset, tables){
+  observeEvent(dataset$data, {
+    output$dataSelComp <- renderUI({
+      choice <- ""
+      choices <- generateChoices(dataset$data)
+      if (length(choices) != 0L) 
+        choice <- choices[[1]]
+      
+      selection <- isolate(input$dataSelection)
+      
+      #same choice name as before but the data is not necessarily the same!
+      #observeEvent of input$dataSelection will not be triggered
+      if(!is.null(selection) && selection == choice){
+        dataSelection$data <- dataset$data[[choice]]
+      }
+      
+      getSelectionComponent(ns("dataSelection"), "Select dataset:", choices, width = "fit-content")
+    })
+  })
   
-  #' run analysis
-  result <- reactive({
-    req(dataset$data$filtered)
-    req(nrow(classes$data) == nrow(dataset$data$filtered))
-    req(identical(classes$data[,1], rownames(dataset$data$filtered)))
+  observeEvent(input$dataSelection, {
+    dataSelection$data <- dataset$data[[input$dataSelection]]
+    dataSelection$name <- input$dataSelection
+  })
+  
+  observeEvent(classes$data, {
+    output$classSelComp <- renderUI({
+      choices <- generateChoices(classes$data)
+      choice = ""
+      if (length(choices) != 0L) 
+        choice <- choices[[1]]
+      
+      selection <- isolate(input$classSelection)
+      
+      #same choice name as before but the data is not necessarily the same!
+      #observeEvent of input$dataSelection will not be triggered
+      if(!is.null(selection) && selection == choice){
+        classSelection$data <- classes$data[[choice]]
+      }
+      
+      getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices, width = "fit-content")
+    })
+  })
+  
+  observeEvent(input$classSelection, {
+    classSelection$data <- classes$data[[input$classSelection]]
+  })
+  
+  observeEvent(dataSelection$data, {
+    output$tune.switch <- renderUI({})
+    useTunedVals(FALSE)
+    shinyjs::hide("tunedCol")
+    shinyjs::hide("Filter.download")
+  })
+  
+  #' Observe tune button
+  observeEvent(input$tune, {
+    tryCatch({
+      pca_filterByLoadings(input, output, dataSelection, result, tunedVals, multiDataset, tables)
+
+      if (!is.null(tunedVals)){
+        shinyjs::show("tunedCol")
+        shinyjs::show("Filter.download")
+        useTunedVals(T)
+      }
+    }, error = function(cond){
+      getErrorMessage(cond, trim = F)
+    })
+  })
+}
+
+#' Filter function
+pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals, multiDataset, tables){
+  req(dataSelection$data$filtered)
+
+  withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
     
-    msg <- checkDataNcompCompatibility(dataset$data$filtered, input$ncomp) 
+    error <- F
+    #get optimal number of components
+    error <- tryCatch({
+      tune <- mixOmics::tune.pca(dataSelection$data$filtered, scale = input$scale)
+      ncomp <- min(which(tune$cum.var > 0.8))
+      error <- F
+    }, error = function(cond){
+      getErrorMessage(cond)
+      return(T)
+    })
+    
+
+    if (error){
+      tunedVals <- NULL
+    } else{
+      if (ncomp <= 15){
+        #get optimal number of features per component
+        grid.keepX <- getTestKeepX(ncol(dataSelection$data$filtered))
+        folds <- floor(nrow(dataSelection$data$filtered)/3)
+        
+        BPPARAM <- BiocParallel::SnowParam(workers = max(parallel::detectCores()-1, 2))
+        suppressWarnings({
+          tune.spca.result <- mixOmics::tune.spca(dataSelection$data$filtered, ncomp = ncomp,
+                                                  test.keepX = grid.keepX, scale = input$scale,
+                                                  nrepeat = 10, folds = folds, BPPARAM = BPPARAM)
+          
+          keepX <- tune.spca.result$choice.keepX[1:ncomp]
+          
+          incProgress(1/3)
+          
+          #filter dataset
+          spca.result <- mixOmics::spca(dataSelection$data$filtered, ncomp = ncomp, keepX = tune.spca.result$choice.keepX[1:ncomp],
+                                        input$scale, max.iter = 10000)
+        })
+        
+        sel_feature <- c()
+        for (comp in 1:ncomp){
+          loadings <- mixOmics::selectVar(spca.result, comp = comp)$name
+          sel_feature <- c(sel_feature, loadings)
+        }
+        
+        feature_cols <- (names(dataSelection$data$unfiltered) %in% sel_feature)
+        result <- dataSelection$data$unfiltered[, feature_cols]
+        multiDataset$data[[paste0(dataSelection$name, "_pca_filtered")]] <- list(filtered = result, unfiltered = result, 
+                                                                                 name = dataSelection$data$name)
+        
+        # extend table in upload with available datasets
+        tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_pca_filtered"), "-", nrow(result), ncol(result),
+                                       FALSE, "multi", dataSelection$data$name)
+        
+        #Correlations plot
+        output$Correlations <- renderPlot(plot(tune.spca.result))
+  
+        output$Correlations.download <- getDownloadHandler("PCA_correlations.png", function(){plot(tune.spca.result)})
+        
+        tunedVals$ncomp <- ncomp
+        tunedVals$keepX <- keepX
+        tunedVals$scale <- input$scale
+        
+        incProgress(1/3)
+      } else {
+        
+        tunedVals <- NULL
+        
+        getShinyWarningAlert("The number of components for filtering this dataset would be above 15, 
+                               which would result in a huge runtime to filter the dataset. 
+                               This is why the filtering was aborted and we recommend either using the whole dataset or using 
+                               PLS-DA for the filtering step.")
+        incProgress(2/3)
+      }
+    }
+  })
+}
+
+#' Run analysis
+run_pca_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
+  result <- reactive({
+    req(dataSelection$data$filtered)
+    req(nrow(classSelection$data) == nrow(dataSelection$data$filtered))
+    req(identical(classSelection$data[,1], rownames(dataSelection$data$filtered)))
+    
+    msg <- checkDataNcompCompatibility(dataSelection$data$filtered, input$ncomp) 
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
-      X <- dataset$data$filtered
+      X <- dataSelection$data$filtered
       finished = F
       while(!finished){
         X <- tryCatch({
@@ -109,7 +300,6 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
           finished = T
         }, error = function(cond){
           if (grepl("columns with zero variance", cond$message, fixed = T)){
-            print("in")
             indices <- stringr::str_match(cond$message, "columns with zero variance in 'X': ([\\d,]*).")[2]
             X <- X[, -lapply(strsplit(indices, ","), as.numeric)[[1]]]
             return (X)
@@ -128,6 +318,74 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     result
   })
   
+  result.tuned <- reactive({
+    if (useTunedVals()){
+      req(dataSelection$data$filtered)
+      req(nrow(classSelection$data) == nrow(dataSelection$data$filtered))
+      req(identical(classSelection$data[,1], rownames(dataSelection$data$filtered)))
+      
+      X <- dataSelection$data$filtered
+      finished = F
+      while(!finished){
+        tryCatch({
+          suppressWarnings({
+            result.tuned <- mixOmics::spca(X, ncomp = tunedVals$ncomp, keepX = tunedVals$keepX,
+                                          scale = tunedVals$scale, max.iter = 1000)
+          })
+          finished = T
+        }, error = function(cond){
+            getErrorMessage(cond)
+            result.tuned <- NULL
+        })
+      }
+      result.tuned
+    }
+  })
+  
+  return(list(result = result, resultTuned = result.tuned))
+}
+
+#' Generate the error messages
+generate_pca_error_messages <- function(output, dataset, classes, dataSelection, classSelection){
+  # Error message when selection is incompatible or  data or classes are missing
+  inputSelChange <- reactive({  #change of input values or selected values
+    list(dataSelection$data, classSelection$data)
+  })
+  
+  observeEvent(inputSelChange(), {
+    output$errorMsg <- renderText({
+      if(length(dataset$data) == 0){
+        "Please upload some data to be able to use the analysis!"
+      } else if(length(classes$data) == 0){
+        "Please upload some classes/label information to be able to use the analysis!"
+      } else {
+        class <- classSelection$data
+        data <- dataSelection$data$filtered
+        
+        req(data)
+        req(class)
+        if (length(data) != 0 && nrow(class) != nrow(data)){
+          "The selected data and classes are incompatible due to their different amount of samples! 
+            Please change your selection!"
+        } else if(!identical(class[,1], rownames(data))){
+          "The selected data and classes are incompatible as they do not contain the same sample(name)s! 
+            Please change your selection!"
+        } else {
+          ""
+        }
+      }
+    })
+  })
+}
+
+#' Business logic functions
+generate_pca_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals, multiDataset, tables){
+  #' Create reactive values
+  comp.indiv <- getCompIndivReactive(input)
+  comp.var <- getCompVarReactive(input)
+  comp.indiv.tuned <- getCompIndivReactive(input, tuned = TRUE)
+  comp.var.tuned <- getCompVarReactive(input, tuned = TRUE)
+  
   #' plot functions
   plot.scree <- function() {
     if(!is.null(result())){
@@ -135,17 +393,17 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     }
   }
   
-  plot.indiv <- function(result, comp.indiv, indNames){
-    if(!is.null(result)){
-      req(classes$data)
-      legend.title = colnames(classes$data)[2]
-      if (ncol(classes$data) == 3){
-        colors = getGroupColors(classes$data)
-        plotIndiv(result, classes = classes$data[,2], title = paste("PCA on", dataset$data$name ,"data"), legend.title = legend.title, 
-                  comp = comp.indiv, indNames = indNames, col.per.group = colors)
+  plot.indiv <- function(){
+    if(!is.null(result())){
+      req(classSelection$data)
+      legend.title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
+        colors = getGroupColors(classSelection$data)
+        plotIndiv(result(), classes = classSelection$data[,2], title = paste("PCA on", dataSelection$data$name ,"data"), legend.title = legend.title, 
+                  comp = comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
       } else {
-        plotIndiv(result, classes = classes$data[,2], title = paste("PCA on", dataset$data$name ,"data"), legend.title = legend.title, 
-                  comp = comp.indiv, indNames = indNames)
+        plotIndiv(result(), classes = classSelection$data[,2], title = paste("PCA on", dataSelection$data$name ,"data"), legend.title = legend.title, 
+                  comp = comp.indiv(), indNames = input$indiv.names)
       }
     }
   }
@@ -170,6 +428,48 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     }
   }
   
+  plot.scree.tuned <- function() {
+    if(!is.null(resultTuned())){
+      plot(resultTuned())
+    }
+  }
+  
+  plot.indiv.tuned <- function(){
+    if(!is.null(resultTuned())){
+      legend.title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
+        colors = getGroupColors(classSelection$data)
+        plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PCA on", dataSelection$data$name ,"data"), 
+                  legend.title = legend.title, comp = comp.indiv.tuned(), 
+                  indNames = input$indiv.names.tuned, col.per.group = colors)
+      } else {
+        plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PCA on", dataSelection$data$name ,"data"), 
+                  legend.title = legend.title, comp = comp.indiv.tuned(), 
+                  indNames = input$indiv.names.tuned)
+      }
+    }
+  }
+  
+  plot.var.tuned <- function(){
+    if(!is.null(resultTuned())){
+      plotVar(resultTuned(), comp.var.tuned(), input$var.names.tuned)
+    }
+  }
+  
+  plot.load.tuned <- function(){
+    if(!is.null(resultTuned())){
+      req(input$load.comp.tuned)
+      plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned))
+    }
+  }
+  
+  table.selVar.tuned <- function(){
+    if(!is.null(resultTuned())){
+      req(input$sel.var.comp.tuned)
+      selectVar(resultTuned(), as.numeric(input$sel.var.comp.tuned))
+    }
+  }
+  
   #'output plots
    #' Scree plot
   output$Scree <- renderPlot(
@@ -178,7 +478,7 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
   
   #' Sample plot
   output$Indiv <- renderPlot(
-    plot.indiv(result(), comp.indiv(), input$indiv.names)
+    plot.indiv()
   )
   
   #' Correlation Circle plot
@@ -196,149 +496,61 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     table.selVar()
   )
   
-  #' Observe dataset change
-  observeEvent(dataset$data, {
-    output$indiv.x.comp.filtered <- renderUI("")
-    
-    output$indiv.y.comp.filtered <- renderUI("")
-    
-    output$names.filtered <- renderUI("")
-    
-    output$indiv.filtered.button <- renderUI("")
-    
-    output$Indiv.filtered <- renderPlot(
-      plot.indiv(NULL)
-    )
-    
-    output$Var.filtered <- renderText("")
-  })
-  
-  dataName <- reactive({
-    dataset$name 
-  })
-  
-  #' Filter function
-  filterByLoadings <- function(){
-    req(dataset$data$filtered)
-    
-    withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
-      
-      
-      #get optimal number of components
-      tune <- mixOmics::tune.pca(dataset$data$filtered, scale = input$scale)
-      ncomp <- min(which(tune$cum.var > 0.8))
-      
-      if (ncomp <= 15){
-        #get optimal number of features per component
-        grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
-        folds <- floor(nrow(dataset$data$filtered)/3)
-        
-        BPPARAM <- BiocParallel::SnowParam(workers = max(parallel::detectCores()-1, 2))
-        suppressWarnings({
-          tune.spca.result <- mixOmics::tune.spca(dataset$data$filtered, ncomp = ncomp,
-                                                  test.keepX = grid.keepX, scale = input$scale,
-                                                  nrepeat = 10, folds = folds, BPPARAM = BPPARAM)
-          
-          keepX <- tune.spca.result$choice.keepX[1:ncomp]
-          
-          incProgress(1/3)
-          
-          #filter dataset
-          spca.result <- mixOmics::spca(dataset$data$filtered, ncomp = ncomp, keepX = tune.spca.result$choice.keepX[1:ncomp],
-                                      max.iter = 1000)
-        })
-        sel_feature <- c()
-        for (comp in 1:ncomp){
-          loadings <- mixOmics::selectVar(spca.result, comp = comp)$name
-          sel_feature <- c(sel_feature, loadings)
-        }
-        
-        feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
-        result <- dataset$data$unfiltered[, feature_cols]
-        multiDataset$data[[paste0(dataset$name, "_pca_filtered")]] <- list(filtered = result, unfiltered = result, name = dataset$data$name)
-        
-        # extend table in upload with available datasets
-        tables$data <- extendDataTable(tables$data, paste0(dataset$name, "_pca_filtered"), "-", nrow(result), ncol(result),
-                                       FALSE, "multi", dataset$data$name)
-        
-        #set output components
-        output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", ncol(result)))
-        
-        output$Correlations <- renderPlot(plot(tune.spca.result))
-        
-        output$Correlations.download <- getDownloadHandler("PCA_correlations.png", function(){plot(tune.spca.result)})
-        
-        output$indiv.x.comp.filtered <- renderUI({
-          selectInput(ns("indiv.x.filtered"), "X-Axis component:", seq(1, ncomp, 1))
-        })
-        
-        output$indiv.y.comp.filtered <- renderUI({
-          selectInput(ns("indiv.y.filtered"), "Y-Axis component:", seq(1, ncomp, 1), selected = 2)
-        })
-        
-        comp.indiv.filtered <- reactive({
-          req(input$indiv.x.filtered)
-          req(input$indiv.y.filtered)
-          as.numeric(c(input$indiv.x.filtered,input$indiv.y.filtered))
-        })
-        
-        output$names.filtered <- renderUI({
-          awesomeCheckbox(ns("indiv.names.filtered"), "Sample names", value = FALSE)
-        })
-        
-        output$Indiv.filtered <- renderPlot(
-          plot.indiv(spca.result, comp.indiv.filtered(), input$indiv.names.filtered)
-        )
-        
-        output$indiv.filtered.button <- renderUI({
-          downloadButton(ns("Indiv.filtered.download"), "Save plot")             
-        })  
-        
-        output$Indiv.filtered.download <- downloadHandler(
-          filename = "PCA_filtered_Sampleplot.png",
-          content = function(file){
-            png(file, 1800, 1200, res = 300)
-            plot.indiv(spca.result, comp.indiv.filtered(), input$indiv.names.filtered)
-            dev.off()
-          }
-        )
-        
-        incProgress(1/3)
-      } else {
-        
-        getShinyWarningAlert("The number of components for filtering this dataset would be above 15, 
-                             which would result in a huge runtime to filter the dataset. 
-                             This is why the filtering was aborted and we recommend either using the whole dataset or using 
-                             PLS-DA for the filtering step.")
-        incProgress(2/3)
-      }
-    })
-    ifelse(ncomp <= 15, result, NA)
-  }
-  
-  #Start filtering
-  observeEvent(input$Filter.start, {
-    shinyjs::hide("Filter.download")
-    filteredResult <- filterByLoadings()
-    if(!is.na(filteredResult)){
-      shinyjs::show("Filter.download")
-    }
-  })
-  
-
-  #' Download handler
-  output$Indiv.download <- downloadHandler(
-    filename = "PCA_Sampleplot.png",
-    content = function(file){
-      png(file, 1800, 1200, res = 300)
-      plot.indiv(result(), comp.indiv(), input$indiv.names)
-      dev.off()
-    }
+  #filtered/tuned
+  #' Scree plot
+  output$Scree.tuned <- renderPlot(
+    plot.scree.tuned()
   )
+  
+  #' Sample plot
+  output$Indiv.tuned <- renderPlot(
+    plot.indiv.tuned()
+  )
+  
+  #' Correlation Circle plot
+  output$Var.tuned <- renderPlot(
+    plot.var.tuned() 
+  )
+  
+  #' Loading plot
+  output$Load.tuned <- renderPlot(
+    plot.load.tuned()
+  )
+  
+  #'Selected Variables Tables
+  output$Sel.Var.tuned <- DT::renderDataTable(
+    table.selVar.tuned()
+  )
+  
+  #' Tuned parameters
+  output$ncomp.tuned <- renderText(
+    paste("Number of components: ", tunedVals$ncomp)
+  )
+  
+  output$keepX.tuned <- renderText(
+    paste("Variables of dataset 1: ",  paste(tunedVals$keepX, collapse = ", "))
+  )
+  
+  output$scale.tuned <- renderText(
+    paste("scaled: ",  tunedVals$scale)
+  )
+  
+  #' Download handler
+  dataName <- reactive({
+    dataSelection$name 
+  })
+
+  output$Indiv.download <- getDownloadHandler("PCA_Sampleplot.png", plot.indiv)
+  output$Scree.download <- getDownloadHandler("PCA_Screeplot.png", plot.scree)
   output$Var.download <- getDownloadHandler("PCA_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PCA_SelectedVariables.csv", table.selVar, type = "csv")
-  output$Scree.download <- getDownloadHandler("PCA_Screeplot.png", plot.scree)
+  
+  output$Indiv.download.tuned <- getDownloadHandler("PCA_filtered_Sampleplot.png", plot.indiv.tuned)
+  output$Scree.download.tuned <- getDownloadHandler("PCA_filtered_Screeplot.png", plot.scree.tuned)
+  output$Var.download.tuned <- getDownloadHandler("PCA_filtered_Variableplot.png", plot.var.tuned)
+  output$Load.download.tuned <- getDownloadHandler("PCA_filtered_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$SelVar.download.tuned <- getDownloadHandler("PCA_filtered_SelectedVariables.csv", table.selVar.tuned, type = "csv")
   
   output$Filter.download <- downloadHandler(
     filename = function() {
@@ -350,4 +562,21 @@ generate_pca_plots <- function(ns, input, output, dataset, classes, multiDataset
     }
   )
 
+}
+
+#' Information texts
+render_pca_infotexts <- function(output){
+  output$PCAinfotext <- renderText({
+    HTML("The <b>P</b>rincipal <b>C</b>omponent <b>A</b>nalysis decreases the size of the high-dimensional dataset, 
+      removes noise from the dataset and presents the similarities between the samples.
+      It works unsupervised and determines uncorrelated and orthogonal principal components (PC) in the data.
+      Therefore, the PCA only works with the data matrix containing the samples and features information without knowing the classification of the samples.
+      It helps to identify characteristics of the data and eventual biases and artefacts by visualising the PCs with the respective features and samples. <br/>
+      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pca.html' target='_blank'>mixOmics website</a> and
+      in several scientific papers (e.g. <a class='ref-link' href='https://link.springer.com/article/10.1186/1471-2105-13-24' target='_blank'>Yao et.al. (2012)</a>).
+      More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+      <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
+      <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b> 
+      We recommend to use a number of components that explains at least 80% of the dataset variance.")
+  })
 }

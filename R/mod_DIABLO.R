@@ -60,7 +60,8 @@ mod_DIABLO_ui <- function(id){
                       )
       ),
       bs4Dash::column(width = 2,
-                      getTuneBox(ns)
+                      getTuneBox(ns, "Tune parameters", "Automatically calculate the optimal number of components 
+                                     and the number of variables per component.")
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(style = "padding-left: 7.5px;",

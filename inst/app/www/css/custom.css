@@ -25,20 +25,6 @@ button[id*='Filter.start']:before{
   margin-right: 2px;
 }
 
-#DIABLO-tuneBox > .card-header, #sPLS-tuneBox > .card-header{
-  display: none;
-}
-
-#DIABLO-tune\.switch, #sPLS-tune\.switch{
-  margin: 1rem auto 0 auto;
-}
-
-#DIABLO-switchRow, #sPLS-switchRow{
-  margin: auto;
-  width: 100%;
-  margin-top: .5rem;
-}
-
 /* Network navigation parameters */
 div.vis-network div.vis-navigation div.vis-button.vis-up{
   background-image: url("img/diablo_navigation/arrow_up.png");

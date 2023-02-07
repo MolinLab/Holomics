@@ -9,54 +9,67 @@
 #' @importFrom shiny NS tagList 
 mod_PLSDA_ui <- function(id){
   ns <- NS(id)
-  tagList(    
+  tagList(
+    shinybusy::add_busy_spinner(spin = "circle", position = "bottom-right", height = "60px", width = "60px"),
     fluidRow(
-      getAnalysisParametersComponent(ns)
+      bs4Dash::column(width = 12,
+                      uiOutput(ns("dataSelComp")), 
+                      uiOutput(ns("classSelComp")),
+                      textOutput(ns("errorMsg")),
+                      style = "display: flex; column-gap: 1rem"
+      )
     ),
     fluidRow(
-      bs4Dash::tabBox(width = 12, collapsible = FALSE,
-                      getSamplePlot(ns),
-                      getVariablePlot(ns),
-                      tabPanel("Loading plot",
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 uiOutput(ns("load.comp")),
-                                                 selectInput(ns("load.cont"), "Contribution:", width = "100",
-                                                             choices = c("minimal" = "min", "maximal" = "max")),
-                                                 selectInput(ns("load.method"), "Method:", width = "100",
-                                                             choices = c("mean" = "mean", "median" = "median")),
-                                                 style = "display: flex; column-gap: 1rem"             
-                                 )
-                               ),
-                               fluidRow(
-                                 bs4Dash::column(width = 12,
-                                                 plotOutput(ns("Load")),
-                                                 downloadButton(ns("Load.download"), "Save plot"))
+      bs4Dash::column(width = 5,
+                      fluidRow(style = "padding-left: 7.5px;",
+                               h1("PLS-DA")
+                      ),
+                      fluidRow(
+                        bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
+                                     htmlOutput(ns("PLSDAinfotext"))
+                        )
+                      ),
+                      fluidRow(width = 12,
+                               getAnalysisParametersComponent(ns)
+                      ),
+                      fluidRow(
+                        bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                        getSamplePlot(ns),
+                                        getVariablePlot(ns),
+                                        getPLSDASamplePlot(ns),
+                                        getSelectedVarsPlot(ns)
+                        )
+                      )
+                      
+      ),
+      bs4Dash::column(width = 2,
+                      getFilterBox(ns, "Filter dataset", "TODO"),
+      ),
+      bs4Dash::column(id = ns("tunedCol"), width = 5,
+                      fluidRow(style = "padding-left: 7.5px;",
+                               h1("PLS-DA filtered"),
+                      ),
+                      fluidRow(
+                        bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
+                                     htmlOutput(ns("plsdafilteredinfotext"))
+                        )
+                      ),
+                      fluidRow(width = 12,
+                               bs4Dash::box(title = "Filtered dataset parameters", width = 12, collapsed = TRUE,
+                                            fluidRow(style = "column-gap: 1rem",
+                                                     textOutput(ns("ncomp.tuned")),
+                                                     textOutput(ns("keepX.tuned")),
+                                                     textOutput(ns("scale.tuned"))
+                                            )
                                )
                       ),
-                      getSelectedVarsPlot(ns),
-                      tabPanel("Filtering for multi-omics",
-                               fluidRow(style = "display: flex; column-gap: 1rem",
-                                        actionButton(ns("Filter.start"), "Start filtering by loadings"),
-                                        downloadButton(ns("Filter.download"), "Save filtered data"),
-                                        textOutput(ns("Var.filtered"))
-                               ),
-                               tags$hr(),
+                      fluidRow(width = 12,
                                bs4Dash::tabBox(width = 12, collapsible = FALSE,
                                                getErrorRatePlot(ns),
-                                               tabPanel("Sample plot", 
-                                                 fluidRow(style = "display: flex; column-gap: 1rem",
-                                                          uiOutput(ns("indiv.x.comp.filtered")),
-                                                          uiOutput(ns("indiv.y.comp.filtered")),
-                                                          uiOutput(ns("names.filtered"))
-                                                 ),
-                                                 fluidRow(
-                                                     bs4Dash::column(width = 12,
-                                                                     plotOutput(ns("Indiv.filtered")),
-                                                                     uiOutput(ns("indiv.filtered.button"))
-                                                     )
-                                                 )
-                                               )
+                                               getSamplePlot(ns, ".tuned"),
+                                               getVariablePlot(ns, ".tuned"),
+                                               getPLSDASamplePlot(ns, ".tuned"),
+                                               getSelectedVarsPlot(ns, ".tuned")
                                )
                       )
       )
@@ -68,48 +81,197 @@ mod_PLSDA_ui <- function(id){
 #'
 #' @noRd 
 mod_PLSDA_server <- function(id, dataset, classes, multiDataset, tables){
-  moduleServer( id, function(input, output, session){
+  moduleServer(id, function(input, output, session){
     ns <- session$ns
+    shinyjs::hide("Filter.download")
+    shinyjs::hide("tunedCol")
     
-    render_plsda_ui_components(ns, input, output, dataset)
+    dataSelection <- reactiveValues()
+    classSelection <- reactiveValues()
+    useTunedVals <- reactiveVal(FALSE)
+    tunedVals <- reactiveValues(ncomp = 2, keepX = NULL,  scale = T)
     
-    generate_plsda_plots(ns, input, output, dataset, classes, multiDataset, tables)
+    results <- run_plsda_analysis(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals)
     
+    render_plsda_ui_components(ns, input, output, tunedVals)
+    
+    observe_plsda_ui_components(ns, input, output, dataset, dataSelection, classes, classSelection, results, 
+                              useTunedVals, tunedVals, multiDataset, tables)
+    
+    generate_plsda_plots(ns, input, output, dataSelection, classSelection, results$result, results$resultTuned, 
+                       tunedVals, multiDataset, tables)
+    
+    generate_plsda_error_messages(output, dataset, classes, dataSelection, classSelection)
+    
+    render_plsda_infotexts(output)
   })
 }
 
 #' Render Ui functions
-render_plsda_ui_components <- function(ns, input, output, dataset){
-  renderIndivComps(ns, input, output)
+render_plsda_ui_components <- function(ns, input, output, tunedVals){
+  renderIndivComps(ns, input, output, TRUE, tunedVals)
   
-  renderVarComps(ns, input, output)
+  renderVarComps(ns, input, output, TRUE, tunedVals)
   
-  renderLoadComp(ns, input, output)
+  renderLoadComp(ns, input, output, TRUE, tunedVals)
   
-  renderSelVarComp(ns, input, output)
-  
-  shinyjs::hide("Filter.download")
+  renderSelVarComp(ns, input, output, TRUE, tunedVals)
 }
 
-#' Business logic functions
-generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDataset, tables){
-  #' Create reactive values
-  comp.indiv <- getCompIndivReactive(input)
-  comp.var <- getCompVarReactive(input)
+#'Observe different ui components
+observe_plsda_ui_components <- function(ns, input, output, dataset, dataSelection, classes, classSelection, result, useTunedVals, tunedVals, multiDataset, tables){
+  observeEvent(dataset$data, {
+    output$dataSelComp <- renderUI({
+      choice <- ""
+      choices <- generateChoices(dataset$data)
+      if (length(choices) != 0L) 
+        choice <- choices[[1]]
+      
+      selection <- isolate(input$dataSelection)
+      
+      #same choice name as before but the data is not necessarily the same!
+      #observeEvent of input$dataSelection will not be triggered
+      if(!is.null(selection) && selection == choice){
+        dataSelection$data <- dataset$data[[choice]]
+      }
+      
+      getSelectionComponent(ns("dataSelection"), "Select dataset:", choices, width = "fit-content")
+    })
+  })
   
-  #' run analysis
-  result <- reactive({
-    req(dataset$data$filtered)
-    req(classes$data)
-    req(nrow(classes$data) == nrow(dataset$data$filtered))
-    req(identical(classes$data[,1], rownames(dataset$data$filtered)))
+  observeEvent(input$dataSelection, {
+    dataSelection$data <- dataset$data[[input$dataSelection]]
+    dataSelection$name <- input$dataSelection
+  })
+  
+  observeEvent(classes$data, {
+    output$classSelComp <- renderUI({
+      choices <- generateChoices(classes$data)
+      choice = ""
+      if (length(choices) != 0L) 
+        choice <- choices[[1]]
+      
+      selection <- isolate(input$classSelection)
+      
+      #same choice name as before but the data is not necessarily the same!
+      #observeEvent of input$dataSelection will not be triggered
+      if(!is.null(selection) && selection == choice){
+        classSelection$data <- classes$data[[choice]]
+      }
+      
+      getSelectionComponent(ns("classSelection"), "Select classes/labels:", choices, width = "fit-content")
+    })
+  })
+  
+  observeEvent(input$classSelection, {
+    classSelection$data <- classes$data[[input$classSelection]]
+  })
+  
+  observeEvent(dataSelection$data, {
+    output$tune.switch <- renderUI({})
+    useTunedVals(FALSE)
+    shinyjs::hide("tunedCol")
+    shinyjs::hide("Filter.download")
+  })
+  
+  #' Observe tune button
+  observeEvent(input$tune, {
+    tryCatch({
+      plsda_filterByLoadings(input, output, dataSelection, classSelection, result, tunedVals, multiDataset, tables)
+      
+      if (!is.null(tunedVals)){
+        shinyjs::show("tunedCol")
+        shinyjs::show("Filter.download")
+        useTunedVals(T)
+      }
+    }, error = function(cond){
+      getErrorMessage(cond, trim = F)
+    })
+  })
+}
+
+#' Filter function
+plsda_filterByLoadings <- function(input, output, dataSelection, classSelection, result, tunedVals, multiDataset, tables){
+  req(dataSelection$data$filtered)
+  req(classSelection$data)
+  
+  withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
     
-    msg <- checkDataNcompCompatibility(dataset$data$filtered, input$ncomp) 
+    error <- F
+    #get optimal number of components
+    error <- tryCatch({
+      Y <- classSelection$data[,2]
+      result <- mixOmics::plsda(dataSelection$data$filtered, Y = Y,
+                                ncomp = input$ncomp , scale = input$scale)
+      
+      #get optimal number of components and number of features per component
+      grid.keepX <- getTestKeepX(ncol(dataSelection$data$filtered))
+      tune.splsda.result <- mixOmics::tune.splsda(dataSelection$data$filtered,Y = Y, ncomp = input$ncomp,
+                                                  test.keepX = grid.keepX, scale = input$scale,
+                                                  validation = c('Mfold'),
+                                                  folds = getFolds(Y),
+                                                  dist = 'max.dist',
+                                                  nrepeat = 50,
+                                                  progressBar = TRUE)
+      
+      # max. possible number is input$ncomp
+      ncomp <- tune.splsda.result$choice.ncomp$ncomp
+      keepX <- tune.splsda.result$choice.keepX[1:ncomp]
+      
+      incProgress(1/3)
+      
+      #filter dataset
+      splsda.result <- mixOmics::splsda(dataSelection$data$filtered, Y = Y, ncomp = ncomp, keepX = keepX, scale = input$scale)
+      
+      sel_feature <- c()
+      for (comp in 1:ncomp){
+        loadings <- mixOmics::plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
+        sel_feature <- c(sel_feature, rownames(loadings$X))
+      }
+      
+      feature_cols <- (names(dataSelection$data$unfiltered) %in% sel_feature)
+      result <- dataSelection$data$unfiltered[, feature_cols]
+      multiDataset$data[[paste0(dataSelection$name, "_plsda_filtered")]] <- list(filtered = result, unfiltered = result, name = dataSelection$data$name)
+      
+      tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_plsda_filtered"), "-", nrow(result), ncol(result),
+                                     FALSE, "multi", dataSelection$data$name)
+      
+      #set error rate plot    
+      errorPlot <- plot(tune.splsda.result)
+      output$ErrorRate <- renderPlot(errorPlot)
+      output$ErrorRate.download <- getDownloadHandler("PLSDA_error_rates.png", function(){errorPlot})
+      
+      incProgress(1/3)
+      error <- F
+    }, error = function(cond){
+      getErrorMessage(cond)
+      return(T)
+    })
+    
+    if (error){
+      tunedVals <- NULL
+    } else{
+      tunedVals$ncomp <- ncomp
+      tunedVals$keepX <- keepX
+      tunedVals$scale <- input$scale
+    }
+  })
+}
+
+#' Run analysis
+run_plsda_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
+  result <- reactive({
+    req(dataSelection$data$filtered)
+    req(classSelection$data)
+    req(nrow(classSelection$data) == nrow(dataSelection$data$filtered))
+    req(identical(classSelection$data[,1], rownames(dataSelection$data$filtered)))
+    
+    msg <- checkDataNcompCompatibility(dataSelection$data$filtered, input$ncomp) 
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
       tryCatch({
-        result <- mixOmics::plsda(dataset$data$filtered, Y = classes$data[,2],
+        result <- mixOmics::plsda(dataSelection$data$filtered, Y = classSelection$data[,2],
                                   ncomp = input$ncomp , scale = input$scale)
       }, error = function(cond){
         getErrorMessage(cond)
@@ -118,20 +280,91 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     } else {
       result <- NULL
     }
+    result
   })
   
-  #' plot functions
-  plot.indiv <- function(result, comp.indiv, indNames){
-    req(classes$data)
-    if (!is.null(result)){
-      legend.title = colnames(classes$data)[2]
-      if (ncol(classes$data) == 3){
-        colors = getGroupColors(classes$data)
-        plotIndiv(result, classes = classes$data[,2], title = paste("PLS-DA on", dataset$data$name ,"data"), 
-                  legend.title = legend.title, comp = comp.indiv, indNames = indNames, col.per.group = colors)
+  result.tuned <- reactive({
+    if (useTunedVals()){
+      req(dataSelection$data$filtered)
+      req(classSelection$data)
+      req(nrow(classSelection$data) == nrow(dataSelection$data$filtered))
+      req(identical(classSelection$data[,1], rownames(dataSelection$data$filtered)))
+      
+      msg <- checkDataNcompCompatibility(dataSelection$data$filtered, input$ncomp) 
+      output$parameters.error <- renderText(msg)
+      
+      if(msg == ""){
+        tryCatch({
+          result.tuned <- mixOmics::splsda(dataSelection$data$filtered, Y = classSelection$data[,2],
+                                          ncomp = tunedVals$ncomp, keepX = tunedVals$keepX,
+                                          scale = tunedVals$scale)
+        }, error = function(cond){
+          getErrorMessage(cond)
+          result.tuned <- NULL
+        })
       } else {
-        plotIndiv(result, classes = classes$data[,2], title = paste("PLS-DA on", dataset$data$name ,"data"), 
-                  legend.title = legend.title, comp = comp.indiv, indNames = indNames)
+        result.tuned <- NULL
+      }
+      result.tuned
+    }
+  })
+  
+  return(list(result = result, resultTuned = result.tuned))
+}
+
+#' Generate the error messages
+generate_plsda_error_messages <- function(output, dataset, classes, dataSelection, classSelection){
+  # Error message when selection is incompatible or  data or classes are missing
+  inputSelChange <- reactive({  #change of input values or selected values
+    list(dataSelection$data, classSelection$data)
+  })
+  
+  observeEvent(inputSelChange(), {
+    output$errorMsg <- renderText({
+      if(length(dataset$data) == 0){
+        "Please upload some data to be able to use the analysis!"
+      } else if(length(classes$data) == 0){
+        "Please upload some classes/label information to be able to use the analysis!"
+      } else {
+        class <- classSelection$data
+        data <- dataSelection$data$filtered
+        
+        req(data)
+        req(class)
+        if (length(data) != 0 && nrow(class) != nrow(data)){
+          "The selected data and classes are incompatible due to their different amount of samples! 
+            Please change your selection!"
+        } else if(!identical(class[,1], rownames(data))){
+          "The selected data and classes are incompatible as they do not contain the same sample(name)s! 
+            Please change your selection!"
+        } else {
+          ""
+        }
+      }
+    })
+  })
+}
+
+#' Business logic functions
+generate_plsda_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals, multiDataset, tables){
+  #' Create reactive values
+  comp.indiv <- getCompIndivReactive(input)
+  comp.var <- getCompVarReactive(input)
+  comp.indiv.tuned <- getCompIndivReactive(input, tuned = TRUE)
+  comp.var.tuned <- getCompVarReactive(input, tuned = TRUE)
+
+  #' plot functions
+  plot.indiv <- function(){
+    req(classSelection$data)
+    if (!is.null(result())){
+      legend.title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
+        colors = getGroupColors(classSelection$data)
+        plotIndiv(result(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
+                  legend.title = legend.title, comp = comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+      } else {
+        plotIndiv(result(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
+                  legend.title = legend.title, comp = comp.indiv(), indNames = input$indiv.names)
       }
     }
   }
@@ -143,11 +376,11 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
   }
   
   plot.load <- function(){
-    req(classes$data)
+    req(classSelection$data)
     req(input$load.comp)
     if (!is.null(result())){
-      if (ncol(classes$data) == 3){
-        colors = getGroupColors(classes$data)
+      if (ncol(classSelection$data) == 3){
+        colors = getGroupColors(classSelection$data)
         plotLoadings(result(), as.numeric(input$load.comp),
                      contrib = input$load.cont, method = input$load.method, legend.color = colors)
       } else {
@@ -164,9 +397,59 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     }
   }
   
+  plot.indiv.tuned <- function(){
+    req(classSelection$data)
+    if (!is.null(resultTuned())){
+      legend.title = colnames(classSelection$data)[2]
+      if (ncol(classSelection$data) == 3){
+        colors = getGroupColors(classSelection$data)
+        plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
+                  legend.title = legend.title, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, col.per.group = colors)
+      } else {
+        plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
+                  legend.title = legend.title, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned)
+      }
+    }
+  }
+  
+  plot.var.tuned <- function(){
+    if (!is.null(resultTuned())){
+      #with only one component the plot does not work
+      if(max(comp.var.tuned()) == 1){
+        output$var.error.tuned <- renderText({
+          "There need to be at least two components to render this plot!"
+        })
+      } else {
+        plotVar(resultTuned(), comp.var.tuned(), input$var.names.tuned)
+      }
+    }
+  }
+  
+  plot.load.tuned <- function(){
+    req(classSelection$data)
+    req(input$load.comp.tuned)
+    if (!is.null(resultTuned())){
+      if (ncol(classSelection$data) == 3){
+        colors = getGroupColors(classSelection$data)
+        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                     contrib = input$load.cont.tuned, method = input$load.method.tuned, legend.color = colors)
+      } else {
+        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                     contrib = input$load.cont.tuned, method = input$load.method.tuned)    
+      }
+    }
+  }
+  
+  table.selVar.tuned <- function(){
+    req(input$sel.var.comp.tuned)
+    if (!is.null(resultTuned())){
+      selectVar(resultTuned(), as.numeric(input$sel.var.comp.tuned))
+    }
+  }
+  
   #'Sample plot
   output$Indiv <- renderPlot(
-    plot.indiv(result(), comp.indiv(), input$indiv.names)
+    plot.indiv()
   ) 
   
   #' Correlation Circle plot
@@ -184,137 +467,55 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
     table.selVar()
   )
   
-  #' Observe dataset change
-  observeEvent(dataset$data, {
-    output$indiv.x.comp.filtered <- renderUI("")
-
-    output$indiv.y.comp.filtered <- renderUI("")
-
-    output$names.filtered <- renderUI("")
-    
-    output$indiv.filtered.button <- renderUI("")
-
-    output$Indiv.filtered <- renderPlot(
-      plot.indiv(NULL)
-    )
-    
-    output$Var.filtered <- renderText("")
-  })
+  #'tuned
+  #'Sample plot
+  output$Indiv.tuned <- renderPlot(
+    plot.indiv.tuned()
+  ) 
   
-  dataName <- reactive({
-    dataset$name 
-  })
-  
-  #' Filter function
-  filterByLoadings <- function(){
-    req(dataset$data$filtered)
-    req(classes$data)
-    
-    withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
-      
-      Y <- classes$data[,2]
-      result <- mixOmics::plsda(dataset$data$filtered, Y = Y,
-                                ncomp = input$ncomp , scale = input$scale)
-      
-      #get optimal number of components and number of features per component
-      grid.keepX <- getTestKeepX(ncol(dataset$data$filtered))
-      tune.splsda.result <- mixOmics::tune.splsda(dataset$data$filtered,Y = Y, ncomp = input$ncomp,
-                                                  test.keepX = grid.keepX, scale = input$scale,
-                                                  validation = c('Mfold'),
-                                                  folds = getFolds(Y),
-                                                  dist = 'max.dist',
-                                                  nrepeat = 50,
-                                                  progressBar = TRUE)
-      
-      # max. possible number is input$ncomp
-      ncomp <- tune.splsda.result$choice.ncomp$ncomp
-      keepX <- tune.splsda.result$choice.keepX[1:ncomp]
-      
-      incProgress(1/3)
-      
-      #filter dataset
-      splsda.result <- mixOmics::splsda(dataset$data$filtered, Y = Y, ncomp = ncomp, keepX = keepX, scale = input$scale)
-      
-      sel_feature <- c()
-      for (comp in 1:ncomp){
-        loadings <- mixOmics::plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
-        sel_feature <- c(sel_feature, rownames(loadings$X))
-      }
-      
-      feature_cols <- (names(dataset$data$unfiltered) %in% sel_feature)
-      result <- dataset$data$unfiltered[, feature_cols]
-      multiDataset$data[[paste0(dataset$name, "_plsda_filtered")]] <- list(filtered = result, unfiltered = result, name = dataset$data$name)
-      
-      tables$data <- extendDataTable(tables$data, paste0(dataset$name, "_plsda_filtered"), "-", nrow(result), ncol(result),
-                                     FALSE, "multi", dataset$data$name)
-      
-      incProgress(1/3)
-      
-      errorPlot <- plot(tune.splsda.result)
-    })
-    
-    #set output components
-    output$Var.filtered <- renderText(sprintf("Number of resulting variables: %s", ncol(result)))
-    
-    output$ErrorRate <- renderPlot(errorPlot)
-    
-    output$ErrorRate.download <- getDownloadHandler("PLSDA_error_rates.png", function(){errorPlot})
-    
-    output$indiv.x.comp.filtered <- renderUI({
-      selectInput(ns("indiv.x.filtered"), "X-Axis component:", seq(1, ncomp, 1))
-    })
-    
-    output$indiv.y.comp.filtered <- renderUI({
-      selectInput(ns("indiv.y.filtered"), "Y-Axis component:", seq(1, ncomp, 1), selected = 2)
-    })
-    
-    comp.indiv.filtered <- reactive({
-      req(input$indiv.x.filtered)
-      req(input$indiv.y.filtered)
-      as.numeric(c(input$indiv.x.filtered,input$indiv.y.filtered))
-    })
-    
-    output$names.filtered <- renderUI({
-      awesomeCheckbox(ns("indiv.names.filtered"), "Sample names", value = FALSE)
-    })
-    
-    output$Indiv.filtered <- renderPlot(
-      plot.indiv(splsda.result, comp.indiv.filtered(), input$indiv.names.filtered)
-    )
-    
-    output$indiv.filtered.button <- renderUI({
-      downloadButton(ns("Indiv.filtered.download"), "Save plot")             
-    })  
-    
-    output$Indiv.filtered.download <- downloadHandler(
-      filename = "PLS-DA_filtered_Sampleplot.png",
-      content = function(file){
-        png(file, 1800, 1200, res = 300)
-        plot.indiv(splsda.result, comp.indiv.filtered(), input$indiv.names.filtered)
-        dev.off()
-      }
-    )
-  }
-  
-  #Start filtering
-  observeEvent(input$Filter.start, {
-    shinyjs::hide("Filter.download")
-    filterByLoadings()
-    shinyjs::show("Filter.download")
-  })
-  
-  #' Download handler
-  output$Indiv.download <- downloadHandler(
-    filename = "PLS-DA_Sampleplot.png",
-    content = function(file){
-      png(file, 1800, 1200, res = 300)
-      plot.indiv(result(), comp.indiv(), input$indiv.names)
-      dev.off()
-    }
+  #' Correlation Circle plot
+  output$Var.tuned <- renderPlot(
+    plot.var.tuned()
   )
+  
+  #' Loading plot
+  output$Load.tuned <- renderPlot( 
+    plot.load.tuned()
+  )
+  
+  #' Selected Variables Tables
+  output$Sel.Var.tuned <- DT::renderDataTable(
+    table.selVar.tuned()
+  )
+  
+  #' Tuned parameters
+  output$ncomp.tuned <- renderText(
+    paste("Number of components: ", tunedVals$ncomp)
+  )
+  
+  output$keepX.tuned <- renderText(
+    paste("Variables of dataset 1: ",  paste(tunedVals$keepX, collapse = ", "))
+  )
+  
+  output$scale.tuned <- renderText(
+    paste("scaled: ",  tunedVals$scale)
+  )
+
+  #' Download handler
+  dataName <- reactive({
+    dataSelection$name 
+  })
+  
+  output$Indiv.download <- getDownloadHandler("PLS-DA_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS-DA_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedVariables.csv", table.selVar, type = "csv")
+  
+  output$Indiv.download.tuned <- getDownloadHandler("PLS-DA_filtered_Sampleplot.png", plot.indiv.tuned)
+  output$Var.download.tuned <- getDownloadHandler("PLS-DA_filtered_Variableplot.png", plot.var.tuned)
+  output$Load.download.tuned <- getDownloadHandler("PLS-DA_filtered_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$SelVar.download.tuned <- getDownloadHandler("PLS-DA_filtered  _SelectedVariables.csv", table.selVar.tuned, type = "csv")
+  
   output$Filter.download <- downloadHandler(
     filename = function() {
       paste0(dataName(), "_plsda_filtered.xlsx")
@@ -324,4 +525,19 @@ generate_plsda_plots <- function(ns, input, output, dataset, classes, multiDatas
                            file, rowNames = TRUE, colNames = TRUE)
     }
   )
+}
+
+#' Information texts
+render_plsda_infotexts <- function(output){
+  output$PLSDAinfotext <- renderText({
+    HTML("The <b>P</b>artial <b>L</b>east-<b>S</b>quares <b>D</b>iscriminant <b>A</b>nalysis is a tool used for multivariate dimension reduction of large datasets. 
+      It is similar to the PCA, but with a supervised approach for reducing the input data dimension. This means that the PLS-DA knows the label of each sample when reducing the dimension. 
+      The PLS-DA works with the matrix containing the sample and features information and the dataset with the classes of each sample. 
+      In the context of multi-omics analyses, it is used to get a first impression of the input data and find the key features of the datasets.<br/>
+      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/plsda.html' target='_blank'>mixOmics website</a> and
+      in several scientific papers (e.g. <a class='ref-link' href='https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-3310-7' target='_blank'>Ruiz-Perez et.al. (2020)</a>).
+      More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+      <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
+      <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>")
+  })
 }

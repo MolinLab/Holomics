@@ -26,7 +26,10 @@ app_ui <- function(request) {
           
           bs4Dash::menuItem("Home", tabName = "home", icon = icon("house")),
           bs4Dash::menuItem("Upload data", tabName = "upload", icon = icon("upload")),
-          bs4Dash::menuItem("Single-omics", tabName = "singleOmics", icon = icon("window-minimize")),
+          bs4Dash::menuItem("Single-omics", tabName = "singleOmics", icon = icon("window-minimize"),
+                            bs4Dash::menuSubItem("PCA", tabName = "PCA"),
+                            bs4Dash::menuSubItem("PLS-DA", tabName = "PLSDA")
+          ),
           bs4Dash::menuItem("Pairwise", tabName = "sPLS", icon = icon("layer-group")),
           bs4Dash::menuItem("Multi-omics", tabName = "DIABLO", icon = icon("layer-group")),
           bs4Dash::menuItem("Help", tabName = "help", icon = icon("info"), startExpanded = F,
@@ -46,7 +49,8 @@ app_ui <- function(request) {
                                     includeMarkdown(app_sys("app/www/01-home.md")))
                            )),
           bs4Dash::tabItem(tabName = "upload", mod_Upload_ui("upload")),
-          bs4Dash::tabItem(tabName = "singleOmics", mod_SingleOmics_ui("singleOmics")),
+          bs4Dash::tabItem(tabName = "PCA", mod_PCA_ui("PCA")),
+          bs4Dash::tabItem(tabName = "PLSDA", mod_PLSDA_ui("PLSDA")),
           bs4Dash::tabItem(tabName = "sPLS", mod_sPLS_ui("sPLS")),
           bs4Dash::tabItem(tabName = "DIABLO", mod_DIABLO_ui("DIABLO")),
           bs4Dash::tabItem(tabName = "help-plots", 
