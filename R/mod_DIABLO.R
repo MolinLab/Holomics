@@ -36,7 +36,7 @@ mod_DIABLO_ui <- function(id){
                                                               bs4Dash::column(width = 4,
                                                                               fluidRow(
                                                                                 tags$label("Design matrix value"),
-                                                                                getTooltip(ns("matrix-info"), "Correlation values that indicates how strong
+                                                                                getTooltip(ns("matrix-info"), "Correlation value that indicates how strong
                                                                                            the connection between the datasets is")
                                                                               ),
                                                                               fluidRow(
