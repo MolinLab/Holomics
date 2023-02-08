@@ -164,7 +164,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
             unfiltered_data <- df_data
   
             if(input$transposed){ #check for transposed file format
-              df_data <- t(df_data)
+              df_data <- as.data.frame(t(df_data))
               unfiltered_data <- df_data
             }
             
