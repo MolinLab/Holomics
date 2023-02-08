@@ -44,7 +44,8 @@ mod_PCA_ui <- function(id){
 
       ),
       bs4Dash::column(width = 2,
-                      getFilterBox(ns, "Filter dataset", "TODO"),
+                      getFilterBox(ns, "Filter dataset", "Automatically filter the dataset by the optimal number of components 
+                                     and the number of features per component."),
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                        fluidRow(style = "padding-left: 7.5px;",
@@ -189,7 +190,6 @@ observe_pca_ui_components <- function(ns, input, output, dataset, dataSelection,
     tryCatch({
       pca_filterByLoadings(input, output, dataSelection, result, tunedVals, multiDataset, tables)
     
-      print(tunedVals)
       if (!is.null(tunedVals$ncomp)){
         shinyjs::show("tunedCol")
         shinyjs::show("Filter.download")
@@ -575,9 +575,18 @@ render_pca_infotexts <- function(output){
       It helps to identify characteristics of the data and eventual biases and artefacts by visualising the PCs with the respective features and samples. <br/>
       Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pca.html' target='_blank'>mixOmics website</a> and
       in several scientific papers (e.g. <a class='ref-link' href='https://link.springer.com/article/10.1186/1471-2105-13-24' target='_blank'>Yao et.al. (2012)</a>).
-      More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+      More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
       <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
       <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b> 
       We recommend to use a number of components that explains at least 80% of the dataset variance.")
+  })
+  
+  output$PCAfilteredinfotext <- renderText({
+    HTML("The dataset filtering algorithm calculates the optimal number of components (number of components which explain at least 80% variance) 
+         and the optimal number of features per component.<br/>
+         According to this information the dataset was filtered and the filtered dataset is used for the plots. <br/>
+         More detailed information can be found on our 
+         <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.
+         ")
   })
 }

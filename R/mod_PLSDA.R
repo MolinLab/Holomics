@@ -43,7 +43,8 @@ mod_PLSDA_ui <- function(id){
                       
       ),
       bs4Dash::column(width = 2,
-                      getFilterBox(ns, "Filter dataset", "TODO"),
+                      getFilterBox(ns, "Filter dataset", "Automatically filter the dataset by the optimal number of components 
+                                     and the number of features per component."),
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(style = "padding-left: 7.5px;",
@@ -51,7 +52,7 @@ mod_PLSDA_ui <- function(id){
                       ),
                       fluidRow(
                         bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
-                                     htmlOutput(ns("plsdafilteredinfotext"))
+                                     htmlOutput(ns("PLSDAfilteredinfotext"))
                         )
                       ),
                       fluidRow(width = 12,
@@ -539,5 +540,13 @@ render_plsda_infotexts <- function(output){
       More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
       <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
       <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>")
+  })
+  
+  output$PLSDAfilteredinfotext <- renderText({
+    HTML("The dataset filtering algorithm calculates the optimal number of components and the optimal number of features per component.<br/>
+         According to this information the dataset was filtered and the filtered dataset is used for the plots. <br/>
+         More detailed information can be found on our 
+         <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.
+         ")
   })
 }
