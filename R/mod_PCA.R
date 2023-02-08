@@ -188,8 +188,9 @@ observe_pca_ui_components <- function(ns, input, output, dataset, dataSelection,
   observeEvent(input$tune, {
     tryCatch({
       pca_filterByLoadings(input, output, dataSelection, result, tunedVals, multiDataset, tables)
-
-      if (!is.null(tunedVals)){
+    
+      print(tunedVals)
+      if (!is.null(tunedVals$ncomp)){
         shinyjs::show("tunedCol")
         shinyjs::show("Filter.download")
         useTunedVals(T)
@@ -219,7 +220,7 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
     
 
     if (error){
-      tunedVals <- NULL
+      tunedVals$ncomp <- NULL
     } else{
       if (ncomp <= 15){
         #get optimal number of features per component
@@ -268,7 +269,7 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
         incProgress(1/3)
       } else {
         
-        tunedVals <- NULL
+        tunedVals$ncomp <- NULL
         
         getShinyWarningAlert("The number of components for filtering this dataset would be above 15, 
                                which would result in a huge runtime to filter the dataset. 

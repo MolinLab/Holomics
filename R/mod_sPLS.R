@@ -211,7 +211,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
     tryCatch({
       tune_values(dataSelection, result, tunedVals, input, output)
 
-      if (!is.null(tunedVals)){
+      if (!is.null(tunedVals$ncomp)){
         shinyjs::show("switchRow")
         output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
       }
@@ -374,7 +374,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
   })
   
   if(error){
-    tunedVals <- NULL
+    tunedVals$ncomp <- NULL
   } else {
     #' Tuning plots
     output$Tuned.ncomp <- renderPlot(plot(tune.spls, criterion = 'Q2.total'))

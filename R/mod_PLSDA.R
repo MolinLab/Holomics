@@ -179,7 +179,7 @@ observe_plsda_ui_components <- function(ns, input, output, dataset, dataSelectio
     tryCatch({
       plsda_filterByLoadings(input, output, dataSelection, classSelection, result, tunedVals, multiDataset, tables)
       
-      if (!is.null(tunedVals)){
+      if (!is.null(tunedVals$ncomp)){
         shinyjs::show("tunedCol")
         shinyjs::show("Filter.download")
         useTunedVals(T)
@@ -249,7 +249,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
     })
     
     if (error){
-      tunedVals <- NULL
+      tunedVals$ncomp <- NULL
     } else{
       tunedVals$ncomp <- ncomp
       tunedVals$keepX <- keepX

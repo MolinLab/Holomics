@@ -251,7 +251,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
     if (!is.null(input$dataSelection)){
       tryCatch({
         tune_diablo_values(dataSelection, classSelection, result, tunedVals, input, output)
-        if (!is.null(tunedVals)){
+        if (!is.null(tunedVals$ncomp)){
           shinyjs::show("switchRow")
           output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
         }
@@ -354,7 +354,7 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
     })
     
     if (error){
-      tunedVals <- NULL
+      tunedVals$ncomp <- NULL
     } else {
       tunedVals$ncomp <- ncomp
       tunedVals$keepX <- keepX
