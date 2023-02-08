@@ -87,7 +87,7 @@ mod_sPLS_server <- function(id, data, classes){
     dataSelection <- reactiveValues()
     classSelection <- reactiveValues()
     useTunedVals <- reactiveVal(FALSE)
-    tunedVals <- reactiveValues(ncomp = 2, keepX = NULL)
+    tunedVals <- reactiveValues(ncomp = 2, keepX = NULL, keepY = NULL, scale = F)
     
     results <- run_spls_analysis(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals)
     
@@ -304,7 +304,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
       validation <- "Mfold"
       while (!finished && !error){
         res <- tryCatch({
-          tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
+          tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp, scale= input$scale,
                                         validation = validation,
                                         test.keepX = list_keepX, 
                                         measure = "cor", BPPARAM = BPPARAM,
@@ -340,7 +340,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
         validation <- "Mfold"
         while (!finished && !error){
           res <- tryCatch({
-            tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp,
+            tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp, scale = input$scale,
                                           validation = "Mfold",
                                           test.keepY = list_keepY, 
                                           measure = "cor", BPPARAM = BPPARAM,
@@ -376,11 +376,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
   if(error){
     tunedVals <- NULL
   } else {
-    tunedVals$ncomp = ncomp
-    tunedVals$keepX = keepX
-    tunedVals$keepY = keepY
-    
-    #' Loading plot
+    #' Tuning plots
     output$Tuned.ncomp <- renderPlot(plot(tune.spls, criterion = 'Q2.total'))
     
     output$Tuned.keepX <- renderPlot(plot(tune.X))
@@ -390,6 +386,11 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     output$Tuned.ncomp.download <- getDownloadHandler("PLS_Q2_Components_Plot.png", function(){plot(tune.spls, criterion = 'Q2.total')})
     output$Tuned.keepX.download <- getDownloadHandler("PLS_keepX_Plot.png", function(){plot(tune.X)})
     output$Tuned.keepY.download <- getDownloadHandler("PLS_keepY_Plot.png", function(){plot(tune.Y)})
+    
+    tunedVals$ncomp <- ncomp
+    tunedVals$keepX <- keepX
+    tunedVals$keepY <- keepY
+    tunedVals$scale <- input$scale
     
     if(all(tune.spls$measures$Q2.total$summary$mean < 0)){
       getShinyWarningAlert(HTML("Unfortunately, the Q2 score for all the components is below 0, 
@@ -444,7 +445,7 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
       Y <- dataSelection$data2
     
         tryCatch({
-        spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedVals$ncomp, 
+        spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedVals$ncomp, scale = tunedVals$scale,
                                             keepX = tunedVals$keepX, keepY = tunedVals$keepY)
       }, error = function(cond){
         getErrorMessage(cond)
@@ -754,6 +755,10 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   output$keepY.tuned <- renderText(
     paste("Variables of dataset 2: ",  paste(tunedVals$keepY, collapse = ", "))
+  )
+  
+  output$scale.tuned <- renderText(
+    paste("scaled: ",  tunedVals$scale)
   )
   
   #' Download handler

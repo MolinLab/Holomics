@@ -110,7 +110,7 @@ mod_DIABLO_server <- function(id, data, classes){
     nodesTuned <- reactiveValues()
     
     useTunedVals <- reactiveVal(FALSE)
-    tunedVals <- reactiveValues(ncomp = 2, keepX = NULL)
+    tunedVals <- reactiveValues(ncomp = 2, keepX = NULL, scale = F)
     
     results <- run_diablo_analysis(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals)
     
@@ -344,7 +344,7 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
         }
         
         BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
-        tune.diablo = mixOmics::tune.block.splsda(X, Y, ncomp = ncomp,
+        tune.diablo = mixOmics::tune.block.splsda(X, Y, ncomp = ncomp, scale = input$scale,
                                                   test.keepX = test.keepX, design = design,
                                                   validation = 'Mfold', folds = getFolds(Y), nrepeat = 1,
                                                   BPPARAM = BPPARAM, dist = "centroids.dist", progressBar = TRUE)
@@ -358,6 +358,7 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
     } else {
       tunedVals$ncomp <- ncomp
       tunedVals$keepX <- keepX
+      tunedVals$scale <- input$scale
       
       output$ErrorRate <- renderPlot(plot(perf.diablo))
       output$ErrorRate.download <- getDownloadHandler("DIABLO_classification_error.png", function(){plot(perf.diablo)})
@@ -415,7 +416,8 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
         diag(design) <- 0
         
         tryCatch({
-          result <- mixOmics::block.splsda(X, Y, ncomp = tunedVals$ncomp, keepX = tunedVals$keepX, design = design)
+          result <- mixOmics::block.splsda(X, Y, ncomp = tunedVals$ncomp, scale = tunedVals$scale,
+                                           keepX = tunedVals$keepX, design = design)
         }, error = function(cond){
           getErrorMessage(cond)
           result <- NULL
@@ -748,6 +750,10 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   output$keepX.tuned <- renderText(
     paste("Variables of dataset ", names(dataSelection$data), ": ",  tunedVals$keepX)
+  )
+  
+  output$scale.tuned <- renderText(
+    paste("scaled: ",  tunedVals$scale)
   )
   
   #' Download handler

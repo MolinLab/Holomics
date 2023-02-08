@@ -134,7 +134,8 @@ getTunedParametersComponent <- function(ns, keepY = FALSE){
                     fluidRow(style = "column-gap: 1rem",
                              textOutput(ns("ncomp.tuned")),
                              textOutput(ns("keepX.tuned")),
-                             textOutput(ns("keepY.tuned"))
+                             textOutput(ns("keepY.tuned")),
+                             textOutput(ns("scale.tuned"))
                     )
        )
     )
@@ -143,7 +144,8 @@ getTunedParametersComponent <- function(ns, keepY = FALSE){
       bs4Dash::box(title = "Tuned analysis parameters", width = 12, collapsed = TRUE,
                    fluidRow(style = "column-gap: 1rem",
                             textOutput(ns("ncomp.tuned")),
-                            textOutput(ns("keepX.tuned"))
+                            textOutput(ns("keepX.tuned")),
+                            textOutput(ns("scale.tuned"))
                    )
       )
     )
