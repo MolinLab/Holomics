@@ -537,7 +537,7 @@ render_plsda_infotexts <- function(output){
       In the context of multi-omics analyses, it is used to get a first impression of the input data and find the key features of the datasets.<br/>
       Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/plsda.html' target='_blank'>mixOmics website</a> and
       in several scientific papers (e.g. <a class='ref-link' href='https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-3310-7' target='_blank'>Ruiz-Perez et.al. (2020)</a>).
-      More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+      More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
       <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
       <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>")
   })

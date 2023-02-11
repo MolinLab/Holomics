@@ -786,7 +786,7 @@ render_spls_infotexts <- function(output){
    It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis. <br/>
    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a> and
    in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>Lê Cao et.al. (2008)</a>).
-   More information about the plots and filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+   More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
    <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
    <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>  
    We recommend using here a rather high number of components and then perform parameter tuning.") 

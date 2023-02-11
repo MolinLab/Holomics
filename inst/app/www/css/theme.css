@@ -35,14 +35,8 @@
 /* Sidebar */
 #sidebarId{
   background-color: var(--grey);
+  overflow-y: auto;
 }
-
-@media only screen and (max-height: 550px){
-  #sidebarId{
-    overflow-y: auto;
-  }
-}
-
 
 #sidebarItemExpanded{
   background-color: var(--green);
@@ -252,4 +246,18 @@ button[id*='-info']{
 /* Scale info buttons */
 button[id*='scale-info']{
   margin-left: -.8rem
+}
+
+/* Scrollbar */
+* {
+  scrollbar-width: thin;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 12px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 20px;
 }
