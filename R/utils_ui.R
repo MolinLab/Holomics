@@ -145,7 +145,8 @@ getTunedParametersComponent <- function(ns, keepY = FALSE){
                    fluidRow(style = "column-gap: 1rem",
                             textOutput(ns("ncomp.tuned")),
                             textOutput(ns("keepX.tuned")),
-                            textOutput(ns("scale.tuned"))
+                            textOutput(ns("scale.tuned")),
+                            textOutput(ns("matrix.tuned"))
                    )
       )
     )

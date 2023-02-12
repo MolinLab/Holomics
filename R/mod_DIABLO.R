@@ -110,7 +110,7 @@ mod_DIABLO_server <- function(id, data, classes){
     nodesTuned <- reactiveValues()
     
     useTunedVals <- reactiveVal(FALSE)
-    tunedVals <- reactiveValues(ncomp = 2, keepX = NULL, scale = F)
+    tunedVals <- reactiveValues(ncomp = 2, keepX = NULL, scale = F, matrix = NULL)
     
     results <- run_diablo_analysis(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals)
     
@@ -359,9 +359,10 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
       tunedVals$ncomp <- ncomp
       tunedVals$keepX <- keepX
       tunedVals$scale <- input$scale
+      tunedVals$matrix <- input$matrix
       
       output$ErrorRate <- renderPlot(plot(perf.diablo))
-      output$ErrorRate.download <- getDownloadHandler("DIABLO_classification_error.png", function(){plot(perf.diablo)})
+      output$ErrorRate.download <- getDownloadHandler("DIABLO_classification_error.png", function(){plot(perf.diablo)}, width = 2592, height = 1944)
     }
   }
 }
@@ -411,7 +412,7 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
       X <- dataSelection$data
       Y <- classSelection$data[,2]  #only second column contains label information
       if (!is.null(X)){
-        design <- matrix(input$matrix, ncol = length(X), nrow = length(X),
+        design <- matrix(tunedVals$matrix, ncol = length(X), nrow = length(X),
                          dimnames = list(names(X), names(X)))
         diag(design) <- 0
         
@@ -754,6 +755,10 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   output$scale.tuned <- renderText(
     paste("scaled: ",  tunedVals$scale)
+  )
+  
+  output$matrix.tuned <- renderText(
+    paste("design matrix: ",  tunedVals$matrix)
   )
   
   #' Download handler
