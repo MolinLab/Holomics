@@ -48,6 +48,9 @@ getDataUploadUI <- function(ns){
                                                 "Name that will be used in the plots")
                                    ),
                                    fluidRow(
+                                     tags$div("Delete the text of the selection to be able to insert a custom name", style = "font-size: 11px; margin-top: -0.5rem")
+                                   ),
+                                   fluidRow(
                                      selectizeInput(ns("plotName"), label = "", 
                                                            choices = c("Metabolomics"= "Metabolomics", "Microbiomics"= "Microbiomics",
                                                                        "Transcriptomics" = "Transcriptomics", "Proteomics" = "Proteomics",
