@@ -27,31 +27,31 @@ button[id*='Filter.start']:before{
 
 /* Network navigation parameters */
 div.vis-network div.vis-navigation div.vis-button.vis-up{
-  background-image: url("img/diablo_navigation/arrow_up.png");
+  background-image: url("../img/diablo_navigation/arrow_up.png");
 }
 
 div.vis-network div.vis-navigation div.vis-button.vis-down{
-  background-image: url("img/diablo_navigation/arrow_down.png");
+  background-image: url("../img/diablo_navigation/arrow_down.png");
 }
 
 div.vis-network div.vis-navigation div.vis-button.vis-left{
-  background-image: url("img/diablo_navigation/arrow_left.png");
+  background-image: url("../img/diablo_navigation/arrow_left.png");
 }
 
 div.vis-network div.vis-navigation div.vis-button.vis-right{
-  background-image: url("img/diablo_navigation/arrow_right.png");
+  background-image: url("../img/diablo_navigation/arrow_right.png");
 }
 
 div.vis-network div.vis-navigation div.vis-button.vis-zoomIn{
-  background-image: url("img/diablo_navigation/plus.png");
+  background-image: url("../img/diablo_navigation/plus.png");
 }
 
 div.vis-network div.vis-navigation div.vis-button.vis-zoomOut{
-  background-image: url("img/diablo_navigation/minus.png");
+  background-image: url("../img/diablo_navigation/minus.png");
 }
 
 div.vis-network div.vis-navigation div.vis-button.vis-zoomExtends{
-    background-image: url("img/diablo_navigation/window.png");
+    background-image: url("../img/diablo_navigation/window.png");
 }
 
 div.vis-network div.vis-navigation div.vis-button:hover{
