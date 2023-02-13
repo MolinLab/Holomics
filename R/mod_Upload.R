@@ -53,8 +53,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
                                                 columnDefs = list(list(className = 'dt-body-right', targets = 2:4),
                                                                   list(className = 'dt-body-center', targets = 0:1),
                                                                   list(className = 'dt-center', targets = "_all"))
-                                                ),
-                    editable = list(target = "column", disable = list(columns = c(0:5)))
+                                                )
                     )
     })
 
@@ -233,19 +232,6 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         tables$data <- removeRowsFromMatrix(tables$data, selRows, initDataMatrix)
       }
     })
-    
-    #Save edited value
-    observeEvent(input$dataTable_cell_edit, {
-      row  <- input$dataTable_cell_edit$row
-      name <- tables$data[row]
-      
-      if (!is.null(singleData$data[[name]])){
-        singleData$data[[name]]$name <- input$dataTable_cell_edit$value
-      } else {
-        multiData$data[[name]]$name <- input$dataTable_cell_edit$value
-      }
-    })
-    
     
     #save classes
     observeEvent(input$saveClass, {
