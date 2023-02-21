@@ -1,22 +1,19 @@
+Type: Package
 Package: Holomics
-Title: An Amazing Shiny App
-Version: 0.0.0.9000
+Title: Shiny App to perform multi-omics analyses
+Version: 0.1.0.
 Authors@R: 
-    person(given = "Katharina",
-           family = "Munk",
-           role = c("aut", "cre"),
-           email = "patrick.woryna@gmail.com")
-Description: Shiny app for the integration of plant metagenomic, metabolomic and transcriptomic data.
+    person(given = "Katharina", family = "Munk", role = c("aut", "cre"), email = "kathimunk@gmail.com")
+Description: Shiny app, which allows its user to perform single- and multi-omics analyses using different datasets.
 License: What license is it under?
-Imports: 
-    attempt,
+URL: https://github.com/evasehr/Holomics
+BugReports: https://github.com/evasehr/Holomics/issues
+Depends: 
+    R (>= 4.0)
+Imports:
+    shiny,
     bs4Dash (>= 2.0.2),
-    config (>= 0.3.1),
     DT,
-    glue,
-    golem (>= 0.3.1),
-    mixOmics (>= 6.16.3),
-    htmltools,
     pkgload,
     processx,
     rgl,
@@ -29,16 +26,14 @@ Imports:
     shinyjs,
     shinyalert,
     shinyvalidate, 
-    openxlsx
+    openxlsx,
+    markdown,
+    readxl
+biocViews:
+    mixOmics (>= 6.16.3)
+VignetteBuilder:
+    knitr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
-Suggests: 
-    spelling,
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
 Language: en-US
-Remotes: 
-    git::https://github.com/RinteRface/bs4Dash.git@master,
-Depends: 
-    R (>= 2.10)
