@@ -118,6 +118,7 @@ mod_PCA_server <- function(id, dataset, classes, multiDataset, tables){
 }
 
 #' Render Ui functions
+#' @noRd
 render_pca_ui_components <- function(ns, input, output, tunedVals){
   
   renderIndivComps(ns, input, output, TRUE, tunedVals)
@@ -129,7 +130,8 @@ render_pca_ui_components <- function(ns, input, output, tunedVals){
   renderSelVarComp(ns, input, output, TRUE, tunedVals)
 }
 
-#'Observe different ui components
+#' Observe different ui components
+#' @noRd
 observe_pca_ui_components <- function(ns, input, output, dataset, dataSelection, classes, classSelection, result, useTunedVals, tunedVals, multiDataset, tables){
   observeEvent(dataset$data, {
     output$dataSelComp <- renderUI({
@@ -202,6 +204,7 @@ observe_pca_ui_components <- function(ns, input, output, dataset, dataSelection,
 }
 
 #' Filter function
+#' @noRd
 pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals, multiDataset, tables){
   req(dataSelection$data$filtered)
 
@@ -282,6 +285,7 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
 }
 
 #' Run analysis
+#' @noRd
 run_pca_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   result <- reactive({
     req(dataSelection$data$filtered)
@@ -347,6 +351,7 @@ run_pca_analysis <- function(ns, input, output, dataSelection, classSelection, u
 }
 
 #' Generate the error messages
+#' @noRd
 generate_pca_error_messages <- function(output, dataset, classes, dataSelection, classSelection){
   # Error message when selection is incompatible or  data or classes are missing
   inputSelChange <- reactive({  #change of input values or selected values
@@ -380,6 +385,7 @@ generate_pca_error_messages <- function(output, dataset, classes, dataSelection,
 }
 
 #' Business logic functions
+#' @noRd
 generate_pca_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals, multiDataset, tables){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
@@ -566,6 +572,7 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
 }
 
 #' Information texts
+#' @noRd
 render_pca_infotexts <- function(output){
   output$PCAinfotext <- renderText({
     HTML("The <b>P</b>rincipal <b>C</b>omponent <b>A</b>nalysis decreases the size of the high-dimensional dataset, 

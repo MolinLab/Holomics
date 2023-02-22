@@ -77,6 +77,7 @@ mod_sPLS_ui <- function(id){
 }
 
 #' PLS Server Functions
+#' @noRd
 mod_sPLS_server <- function(id, data, classes){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -104,6 +105,7 @@ mod_sPLS_server <- function(id, data, classes){
 }
 
 #' Render Ui functions
+#' @noRd
 render_spls_ui_components <- function(ns, input, output, tunedVals){
   renderIndivComps(ns, input, output, TRUE, tunedVals)
   
@@ -116,7 +118,8 @@ render_spls_ui_components <- function(ns, input, output, tunedVals){
   renderImgComp(ns, input, output, TRUE, tunedVals)
 }
 
-#'Observe different ui components
+#' Observe different ui components
+#' @noRd
 observe_spls_ui_components <- function(ns, input, output, data, dataSelection, classes, classSelection, result, useTunedVals, tunedVals){
   
   #' Observe data  
@@ -232,6 +235,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
 }
 
 #' Tune the ncomp and keepX parameter for the given dataset
+#' @noRd
 tune_values <- function(dataSelection, result, tunedVals, input, output){
   error <- F
   withProgress(message = 'Tuning parameters .... Please wait!', value = 1/4, {
@@ -397,7 +401,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
                                  which could be the result of a too low number of samples or that X does not explain Y 
                                 (for more information see: 
                                 <a class='mixOmics-link' href='https://mixomics-users.discourse.group/t/q2-total-negative-in-perf-pls/138/6' 
-                                target='_blank'>Q2.total negative in perf.pls (Lê Cao, 2020)</a>) </br>.
+                                target='_blank'>Q2.total negative in perf.pls (L\u00EA Cao, 2020)</a>) </br>.
                                 In general, please consider using the untuned version."), html = T
       )
     }
@@ -405,6 +409,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
 }
 
 #' Run analysis
+#' @noRd
 run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   spls.result <- reactive({
     req(dataSelection$data1)
@@ -458,6 +463,7 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
 }
 
 #' Generate the error messages
+#' @noRd
 generate_spls_error_messages <- function(input, output, data, classes, dataSelection, classSelection, tunedVals){
   
   # Error message when selection is incompatible or  data or classes are missing
@@ -504,6 +510,7 @@ generate_spls_error_messages <- function(input, output, data, classes, dataSelec
 }
 
 #' Business logic functions
+#' @noRd
 generate_spls_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
@@ -778,6 +785,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
 }
 
 #' Information texts
+#' @noRd
 render_spls_infotexts <- function(output){
   output$sPLSinfotext <- renderText({
    HTML("The standard PLS is a multivariate analysis used to analyse two datasets by maximising the covariance between the datasets components.
@@ -785,7 +793,7 @@ render_spls_infotexts <- function(output){
    which combines the correlation calculation and final variable selection into one step instead of two like the standard PLS has. 
    It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis. <br/>
    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a> and
-   in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>Lê Cao et.al. (2008)</a>).
+   in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>L\u00EA Cao et.al. (2008)</a>).
    More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
    <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
    <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>  

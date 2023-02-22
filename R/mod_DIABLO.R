@@ -127,6 +127,7 @@ mod_DIABLO_server <- function(id, data, classes){
 }
 
 #' Render Ui components
+#' @noRd
 render_diablo_ui_components <- function(ns, input, output, dataSelection, tunedVals, nodes, nodesTuned){
   renderIndivComps(ns, input, output, TRUE, tunedVals)
 
@@ -160,7 +161,8 @@ render_diablo_ui_components <- function(ns, input, output, dataSelection, tunedV
   })
 }
 
-#'Observe different ui components
+#' Observe different ui components
+#' @noRd
 observe_diablo_ui_components <- function(ns, session, input, output, data, dataSelection, classes, classSelection, result, useTunedVals, tunedVals){
   #' Observe data input change
   observeEvent(data$data, {
@@ -273,6 +275,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
 }
 
 #' Tune the ncomp and keepX parameter for the given dataset
+#' @noRd
 tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals, input, output){
   X <- dataSelection$data
   if (!is.null(X)){
@@ -368,6 +371,7 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
 }
 
 #' Run analysis
+#' @noRd
 run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   diablo.result <- reactive({
     req(dataSelection$data)
@@ -431,6 +435,7 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
 }
 
 #' Business logic functions
+#' @noRd
 generate_diablo_plots <- function(ns, input, output, dataSelection, classSelection, result, result.tuned, tunedVals, nodes, nodesTuned){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
@@ -782,6 +787,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
 }
 
 #' Generate the error messages
+#' @noRd
 generate_diablo_error_messages <- function(input, output, data, classes, dataSelection, classSelection, tunedVals){
   # Error message when selection is incompatible or  data or classes are missing
   inputSelChange <- reactive({
@@ -882,6 +888,7 @@ generate_diablo_error_messages <- function(input, output, data, classes, dataSel
 }
 
 #' Information texts
+#' @noRd
 render_diablo_infotexts <- function(output){
   output$DIABLOinfotext <- renderText({
     HTML("<b>D</b>ata <b>I</b>ntegration <b>A</b>nalysis for <b>B</b>iomarker discovery using <b>L</b>atent c<b>O</b>mponents is a 

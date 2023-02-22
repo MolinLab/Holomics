@@ -109,6 +109,7 @@ mod_PLSDA_server <- function(id, dataset, classes, multiDataset, tables){
 }
 
 #' Render Ui functions
+#' @noRd
 render_plsda_ui_components <- function(ns, input, output, tunedVals){
   renderIndivComps(ns, input, output, TRUE, tunedVals)
   
@@ -119,8 +120,10 @@ render_plsda_ui_components <- function(ns, input, output, tunedVals){
   renderSelVarComp(ns, input, output, TRUE, tunedVals)
 }
 
-#'Observe different ui components
-observe_plsda_ui_components <- function(ns, input, output, dataset, dataSelection, classes, classSelection, result, useTunedVals, tunedVals, multiDataset, tables){
+#' Observe different ui components
+#' @noRd
+observe_plsda_ui_components <- function(ns, input, output, dataset, dataSelection, classes, classSelection, 
+                                        result, useTunedVals, tunedVals, multiDataset, tables){
   observeEvent(dataset$data, {
     output$dataSelComp <- renderUI({
       choice <- ""
@@ -192,6 +195,7 @@ observe_plsda_ui_components <- function(ns, input, output, dataset, dataSelectio
 }
 
 #' Filter function
+#' @noRd
 plsda_filterByLoadings <- function(input, output, dataSelection, classSelection, result, tunedVals, multiDataset, tables){
   req(dataSelection$data$filtered)
   req(classSelection$data)
@@ -260,6 +264,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
 }
 
 #' Run analysis
+#' @noRd
 run_plsda_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   result <- reactive({
     req(dataSelection$data$filtered)
@@ -314,6 +319,7 @@ run_plsda_analysis <- function(ns, input, output, dataSelection, classSelection,
 }
 
 #' Generate the error messages
+#' @noRd
 generate_plsda_error_messages <- function(output, dataset, classes, dataSelection, classSelection){
   # Error message when selection is incompatible or  data or classes are missing
   inputSelChange <- reactive({  #change of input values or selected values
@@ -347,6 +353,7 @@ generate_plsda_error_messages <- function(output, dataset, classes, dataSelectio
 }
 
 #' Business logic functions
+#' @noRd
 generate_plsda_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals, multiDataset, tables){
   #' Create reactive values
   comp.indiv <- getCompIndivReactive(input)
@@ -529,6 +536,7 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
 }
 
 #' Information texts
+#' @noRd
 render_plsda_infotexts <- function(output){
   output$PLSDAinfotext <- renderText({
     HTML("The <b>P</b>artial <b>L</b>east-<b>S</b>quares <b>D</b>iscriminant <b>A</b>nalysis is a tool used for multivariate dimension reduction of large datasets. 
