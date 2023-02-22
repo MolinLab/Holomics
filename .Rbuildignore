@@ -12,3 +12,4 @@ $run_dev.*
 ^rsconnect$
 ^Dockerfile$
 ^\.dockerignore$
+^testdata$
