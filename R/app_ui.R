@@ -95,7 +95,14 @@ app_ui <- function(request) {
 #' resources inside the Shiny application. 
 #' 
 #' @import shiny
+#' @import visNetwork
+#' @import shinyvalidate
+#' @import shinyWidgets
+#' @import dplyr
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
+#' @importFrom grDevices col2rgb dev.off png
+#' @importFrom stats mad
+#' @importFrom utils read.csv write.csv2
 #' @noRd
 golem_add_external_resources <- function(){
   

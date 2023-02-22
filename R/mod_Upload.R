@@ -1,5 +1,3 @@
-library(shinyvalidate)
-
 #' upload UI Function
 #'
 #' @description A shiny Module.

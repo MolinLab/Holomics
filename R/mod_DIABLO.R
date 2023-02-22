@@ -1,6 +1,3 @@
-library(visNetwork)
-library(shinyWidgets)
-
 #' DIABLO UI Function
 #'
 #' @description A shiny Module.
@@ -698,7 +695,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   #' Network plot
   output$Network <- renderVisNetwork({
     if(!is.null(result()) & length(dataSelection$data) > 1){
-      networkResult = diabloGenerateNetwork(ns, "", result, dataSelection, input$cutoffNetwork, input$fullName)
+      networkResult <- diabloGenerateNetwork(ns, "", result, dataSelection, input$cutoffNetwork, input$fullName)
       nodes$data <- networkResult$data
       diabloNetwork$mixNetwork <- networkResult$mixNetwork
       diabloNetwork$visNetwork <- networkResult$visNetwork
@@ -743,7 +740,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   #' Network plot tuned
   output$Network.tuned <- renderVisNetwork({
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
-      networkResult = diabloGenerateNetwork(ns, ".tuned", result.tuned, dataSelection, input$cutoffNetwork.tuned, input$fullName.tuned)
+      networkResult <- diabloGenerateNetwork(ns, ".tuned", result.tuned, dataSelection, input$cutoffNetwork.tuned, input$fullName.tuned)
       nodesTuned$data <- networkResult$data
       diabloNetworkTuned$mixNetwork <- networkResult$mixNetwork
       diabloNetworkTuned$visNetwork <- networkResult$visNetwork

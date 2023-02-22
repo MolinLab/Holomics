@@ -143,8 +143,7 @@ diabloGetNetworkDownloadHandler <- function(filename, network, type){
         if (type == "html"){
           visNetwork::visSave(network$visNetwork, file)
         } else if (type == "gml"){
-          library(igraph)
-          write.graph(network$mixNetwork$gR, file, format = "gml")
+          igraph::write.graph(network$mixNetwork$gR, file, format = "gml")
         }
       }
     )
