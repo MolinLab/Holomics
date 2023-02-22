@@ -122,7 +122,7 @@ render_spls_ui_components <- function(ns, input, output, tunedVals){
 #' @noRd
 observe_spls_ui_components <- function(ns, input, output, data, dataSelection, classes, classSelection, result, useTunedVals, tunedVals){
   
-  #' Observe data  
+  # Observe data  
   observeEvent(data$data, {
     output$dataSelComp1 <- renderUI({
       choices <- generateChoices(data$data)
@@ -161,7 +161,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
     })
   })
   
-  #' Observe classes
+  # Observe classes
   observeEvent(classes$data, {
     output$classSelComp <- renderUI({
       choices <- generateChoices(classes$data)
@@ -181,7 +181,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
     })
   })
 
-  #' Observe change of data selection
+  # Observe change of data selection
   observeEvent(input$dataSelection1, {
     dataSelection$data1 <- data$data[[input$dataSelection1]]$filtered
     dataSelection$data1Name <- data$data[[input$dataSelection1]]$name
@@ -192,12 +192,12 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
     dataSelection$data2Name <- data$data[[input$dataSelection2]]$name
   })
   
-  #' Observe change of class selection
+  # Observe change of class selection
   observeEvent(input$classSelection, {
     classSelection$data <- classes$data[[input$classSelection]]
   })
   
-  #' Observe change of data
+  # Observe change of data
   observeDataset <- reactive({
     list(dataSelection$data1, dataSelection$data2)
   })
@@ -209,7 +209,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
     shinyjs::hide("switchRow")
   })
   
-  #' Observe tune button
+  # Observe tune button
   observeEvent(input$tune, {
     tryCatch({
       tune_values(dataSelection, result, tunedVals, input, output)
@@ -223,7 +223,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
     })
   })
   
-  #' Observe tune switch
+  # Observe tune switch
   observeEvent(input$tuneSwitch,{
     useTunedVals(input$tuneSwitch)
     if(input$tuneSwitch){
@@ -380,7 +380,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
   if(error){
     tunedVals$ncomp <- NULL
   } else {
-    #' Tuning plots
+    # Tuning plots
     output$Tuned.ncomp <- renderPlot(plot(tune.spls, criterion = 'Q2.total'))
     
     output$Tuned.keepX <- renderPlot(plot(tune.X))
@@ -512,7 +512,7 @@ generate_spls_error_messages <- function(input, output, data, classes, dataSelec
 #' Business logic functions
 #' @noRd
 generate_spls_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals){
-  #' Create reactive values
+  # Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
   comp.img <- getCompImgReactive(input)
@@ -540,7 +540,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   })
   
   
-  #' generate output plots
+  # generate output plots
   plot.indiv <- function(){
     req(classSelection$data)
     if(!is.null(result())){
@@ -685,22 +685,22 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     selVarTable.tuned()$Y
   }
   
-  #' Sample plot
+  # Sample plot
   output$Indiv <- renderPlot(
     plot.indiv()
   )
   
-  #' Correlation Circle plot
+  # Correlation Circle plot
   output$Var <- renderPlot(
     plot.var()
   )
   
-  #' Loading plot
+  # Loading plot
   output$Load <- renderPlot(
     plot.load()
   )
   
-  #' Selected Variables Table
+  # Selected Variables Table
   output$X.Sel.Var <- DT::renderDataTable(
     table.selVarX()
   )
@@ -708,33 +708,33 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     table.selVarY()
   )
   
-  #' CIM plot
+  # CIM plot
   output$Img <- renderPlot(
     plot.img()
   )
   
-  #' Arrow plot
+  # Arrow plot
   output$Arrow <- renderPlot(
     plot.arrow()
   )
   
   #tuned
-  #' Sample plot
+  # Sample plot
   output$Indiv.tuned <- renderPlot(
     plot.indiv.tuned()
   )
   
-  #' Correlation Circle plot
+  # Correlation Circle plot
   output$Var.tuned <- renderPlot(
     plot.var.tuned()
   )
   
-  #' Loading plot
+  # Loading plot
   output$Load.tuned <- renderPlot(
     plot.load.tuned()
   )
   
-  #' Selected variables table
+  # Selected variables table
   output$X.Sel.Var.tuned <- DT::renderDataTable(
     table.selVarX.tuned()
   )
@@ -742,12 +742,12 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     table.selVarY.tuned()
   )
   
-  #' CIM plot
+  # CIM plot
   output$Img.tuned <- renderPlot(
     plot.img.tuned()
   )
   
-  #' Arrow plot
+  # Arrow plot
   output$Arrow.tuned <- renderPlot(
     plot.arrow.tuned()
   )
@@ -768,7 +768,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     paste("scaled: ",  tunedVals$scale)
   )
   
-  #' Download handler
+  # Download handler
   output$Indiv.download <- getDownloadHandler("PLS_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS_Loadingsplot.png", plot.load, width = 2592, height = 1944)

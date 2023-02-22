@@ -187,7 +187,7 @@ observe_pca_ui_components <- function(ns, input, output, dataset, dataSelection,
     shinyjs::hide("Filter.download")
   })
   
-  #' Observe tune button
+  # Observe tune button
   observeEvent(input$tune, {
     tryCatch({
       pca_filterByLoadings(input, output, dataSelection, result, tunedVals, multiDataset, tables)
@@ -387,13 +387,13 @@ generate_pca_error_messages <- function(output, dataset, classes, dataSelection,
 #' Business logic functions
 #' @noRd
 generate_pca_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals, multiDataset, tables){
-  #' Create reactive values
+  # Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
   comp.indiv.tuned <- getCompIndivReactive(input, tuned = TRUE)
   comp.var.tuned <- getCompVarReactive(input, tuned = TRUE)
   
-  #' plot functions
+  # plot functions
   plot.scree <- function() {
     if(!is.null(result())){
       plot(result())
@@ -477,59 +477,59 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
     }
   }
   
-  #'output plots
-   #' Scree plot
+  #output plots
+  # Scree plot
   output$Scree <- renderPlot(
     plot.scree()
   )
   
-  #' Sample plot
+  # Sample plot
   output$Indiv <- renderPlot(
     plot.indiv()
   )
   
-  #' Correlation Circle plot
+  # Correlation Circle plot
   output$Var <- renderPlot(
     plot.var() 
   )
   
-  #' Loading plot
+  # Loading plot
   output$Load <- renderPlot(
     plot.load()
   )
   
-  #'Selected Variables Tables
+  #Selected Variables Tables
   output$Sel.Var <- DT::renderDataTable(
     table.selVar()
   )
   
   #filtered/tuned
-  #' Scree plot
+  # Scree plot
   output$Scree.tuned <- renderPlot(
     plot.scree.tuned()
   )
   
-  #' Sample plot
+  # Sample plot
   output$Indiv.tuned <- renderPlot(
     plot.indiv.tuned()
   )
   
-  #' Correlation Circle plot
+  # Correlation Circle plot
   output$Var.tuned <- renderPlot(
     plot.var.tuned() 
   )
   
-  #' Loading plot
+  # Loading plot
   output$Load.tuned <- renderPlot(
     plot.load.tuned()
   )
   
-  #'Selected Variables Tables
+  #Selected Variables Tables
   output$Sel.Var.tuned <- DT::renderDataTable(
     table.selVar.tuned()
   )
   
-  #' Tuned parameters
+  # Tuned parameters
   output$ncomp.tuned <- renderText(
     paste("Number of components: ", tunedVals$ncomp)
   )
@@ -542,7 +542,7 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
     paste("scaled: ",  tunedVals$scale)
   )
   
-  #' Download handler
+  # Download handler
   dataName <- reactive({
     dataSelection$name 
   })

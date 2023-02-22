@@ -161,7 +161,7 @@ render_diablo_ui_components <- function(ns, input, output, dataSelection, tunedV
 #' Observe different ui components
 #' @noRd
 observe_diablo_ui_components <- function(ns, session, input, output, data, dataSelection, classes, classSelection, result, useTunedVals, tunedVals){
-  #' Observe data input change
+  #Observe data input change
   observeEvent(data$data, {
     output$dataSelComp <- renderUI({
       choices <- generateChoices(data$data)
@@ -181,7 +181,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
     dataSelection$data <- dataList
   })
   
-  #' Observe class input change
+  #Observe class input change
   observeEvent(classes$data, {
     output$classSelComp <- renderUI({
       choices <- generateChoices(classes$data)
@@ -205,7 +205,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
     classSelection$data <- classes$data[[input$classSelection]]
   })
   
-  #' Observe data change
+  #Observe data change
   observeEvent(dataSelection$data, {
     output$tune.switch <- renderUI({})
     useTunedVals(FALSE)
@@ -213,7 +213,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
     shinyjs::hide("switchRow")
   })
   
-  #' Observe node name selection
+  #Observe node name selection
   observeEvent(input$nodeNames, {
     if (input$nodeNames == "null"){
       visNetworkProxy(ns("Network")) %>%
@@ -236,7 +236,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
     shinyjs::runjs(paste0("Shiny.setInputValue('", ns('clicked_node.tuned'), "', '", input$nodeNames.tuned, "')"))
   })
   
-  #' Observe node clicked
+  # Observe node clicked
   observeEvent(input$clicked_node, {
     updateSelectizeInput(session, "nodeNames", selected = input$clicked_node)
   })
@@ -245,7 +245,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
     updateSelectizeInput(session, "nodeNames.tuned", selected = input$clicked_node.tuned)
   })
   
-  #' Observe tune button
+  # Observe tune button
   observeEvent(input$tune, {
     if (!is.null(input$dataSelection)){
       tryCatch({
@@ -260,7 +260,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
     }
   })
   
-  #' Observe tune switch
+  # Observe tune switch
   observeEvent(input$tuneSwitch,{
     useTunedVals(input$tuneSwitch)
     if(input$tuneSwitch){
@@ -434,7 +434,7 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
 #' Business logic functions
 #' @noRd
 generate_diablo_plots <- function(ns, input, output, dataSelection, classSelection, result, result.tuned, tunedVals, nodes, nodesTuned){
-  #' Create reactive values
+  # Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
   comp.img <- getCompImgReactive(input)
@@ -464,7 +464,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   diabloNetwork <- reactiveValues()
   diabloNetworkTuned <- reactiveValues()
   
-  #'  plot functions
+  #  plot functions
   plot.indiv <- function(){
     if(!is.null(result()) & input$ncomp >= 2){
       req(classSelection$data)
@@ -656,43 +656,43 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     }
   }
   
-  #'Set output plots
-  #' Sample plot
+  #Set output plots
+  # Sample plot
   output$Indiv <- renderPlot(
     plot.indiv()
   )
   
-  #' Correlation Circle plot
+  # Correlation Circle plot
   output$Var <- renderPlot(
     plot.var()
   )
   
-  #' Loading plot
+  # Loading plot
   output$Load <- renderPlot(
     plot.load()
   )
   
-  #' CIM plot
+  # CIM plot
   output$Img <- renderPlot(
     plot.img()
   )
   
-  #' Arrow plot
+  # Arrow plot
   output$Arrow <- renderPlot(
     plot.arrow()
   )
   
-  #' Diablo plot
+  # Diablo plot
   output$Diablo <- renderPlot(
     plot.diablo()
   )
   
-  #' Circos plot
+  # Circos plot
   output$Circos <- renderPlot(
     plot.circos()
   )
   
-  #' Network plot
+  # Network plot
   output$Network <- renderVisNetwork({
     if(!is.null(result()) & length(dataSelection$data) > 1){
       networkResult <- diabloGenerateNetwork(ns, "", result, dataSelection, input$cutoffNetwork, input$fullName)
@@ -702,42 +702,42 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     }
   })
   
-  #' Sample plot tuned
+  # Sample plot tuned
   output$Indiv.tuned <- renderPlot(
     plot.indiv.tuned()
   )
   
-  #' Correlation Circle plot tuned
+  # Correlation Circle plot tuned
   output$Var.tuned <- renderPlot(
     plot.var.tuned()
   )
   
-  #' Loading plot tuned
+  # Loading plot tuned
   output$Load.tuned <- renderPlot(
     plot.load.tuned()
   )
   
-  #' CIM plot tuned
+  # CIM plot tuned
   output$Img.tuned <- renderPlot(
     plot.img.tuned()
   )
   
-  #' Arrow plot tuned
+  # Arrow plot tuned
   output$Arrow.tuned <- renderPlot(
     plot.arrow.tuned()
   )
   
-  #' Diablo plot tuned
+  # Diablo plot tuned
   output$Diablo.tuned <- renderPlot(
     plot.diablo.tuned()
   )
   
-  #' Circos plot tuned
+  # Circos plot tuned
   output$Circos.tuned <- renderPlot(
     plot.circos.tuned()
   )
   
-  #' Network plot tuned
+  # Network plot tuned
   output$Network.tuned <- renderVisNetwork({
     if(!is.null(result.tuned()) & length(dataSelection$data) > 1){
       networkResult <- diabloGenerateNetwork(ns, ".tuned", result.tuned, dataSelection, input$cutoffNetwork.tuned, input$fullName.tuned)
@@ -763,7 +763,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     paste("design matrix: ",  tunedVals$matrix)
   )
   
-  #' Download handler
+  # Download handler
   output$Indiv.download <- getDownloadHandler("DIABLO_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("DIABLO_Variableplot.png", plot.var)
   output$Load.download <- getDownloadHandler("DIABLO_Loadingsplot.png", plot.load, width = 2592, height = 1944)

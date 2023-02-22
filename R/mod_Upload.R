@@ -210,14 +210,14 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       shinyjs::enable("saveData")      
     })
     
-    #' Delete all uploaded omics data
+    #Delete all uploaded omics data
     observeEvent(input$deleteAllData, {
       singleData$data <- list()
       multiData$data <- list()
       tables$data <- initDataMatrix()
     })
     
-    #' Delete selected omics data
+    #Delete selected omics data
     observeEvent(input$deleteSelectedData, {
       if(!is.null(input$dataTable_rows_selected)){
         selRows = as.numeric(input$dataTable_rows_selected)
@@ -279,14 +279,14 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       shinyjs::enable("saveClass")
     })
     
-    #' Delete all uploaded classes/labels
+    #Delete all uploaded classes/labels
     observeEvent(input$deleteAllClass, {
       singleClasses$data <- list()
       multiClasses$data <- list()
       tables$classes <- initClassMatrix()
     })
     
-    #' Delete selected, uploaded classes/labels
+    #Delete selected, uploaded classes/labels
     observeEvent(input$deleteSelectedClass, {
       if(!is.null(input$classTable_rows_selected)){
         selRows <- as.numeric(input$classTable_rows_selected)

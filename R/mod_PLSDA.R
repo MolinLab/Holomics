@@ -178,7 +178,7 @@ observe_plsda_ui_components <- function(ns, input, output, dataset, dataSelectio
     shinyjs::hide("Filter.download")
   })
   
-  #' Observe tune button
+  # Observe tune button
   observeEvent(input$tune, {
     tryCatch({
       plsda_filterByLoadings(input, output, dataSelection, classSelection, result, tunedVals, multiDataset, tables)
@@ -355,13 +355,13 @@ generate_plsda_error_messages <- function(output, dataset, classes, dataSelectio
 #' Business logic functions
 #' @noRd
 generate_plsda_plots <- function(ns, input, output, dataSelection, classSelection, result, resultTuned, tunedVals, multiDataset, tables){
-  #' Create reactive values
+  # Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
   comp.indiv.tuned <- getCompIndivReactive(input, tuned = TRUE)
   comp.var.tuned <- getCompVarReactive(input, tuned = TRUE)
 
-  #' plot functions
+  # plot functions
   plot.indiv <- function(){
     req(classSelection$data)
     if (!is.null(result())){
@@ -455,48 +455,48 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
     }
   }
   
-  #'Sample plot
+  #Sample plot
   output$Indiv <- renderPlot(
     plot.indiv()
   ) 
   
-  #' Correlation Circle plot
+  # Correlation Circle plot
   output$Var <- renderPlot(
     plot.var()
   )
   
-  #' Loading plot
+  # Loading plot
   output$Load <- renderPlot( 
     plot.load()
   )
   
-  #' Selected Variables Tables
+  # Selected Variables Tables
   output$Sel.Var <- DT::renderDataTable(
     table.selVar()
   )
   
-  #'tuned
-  #'Sample plot
+  #tuned
+  #Sample plot
   output$Indiv.tuned <- renderPlot(
     plot.indiv.tuned()
   ) 
   
-  #' Correlation Circle plot
+  # Correlation Circle plot
   output$Var.tuned <- renderPlot(
     plot.var.tuned()
   )
   
-  #' Loading plot
+  # Loading plot
   output$Load.tuned <- renderPlot( 
     plot.load.tuned()
   )
   
-  #' Selected Variables Tables
+  # Selected Variables Tables
   output$Sel.Var.tuned <- DT::renderDataTable(
     table.selVar.tuned()
   )
   
-  #' Tuned parameters
+  # Tuned parameters
   output$ncomp.tuned <- renderText(
     paste("Number of components: ", tunedVals$ncomp)
   )
@@ -509,7 +509,7 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
     paste("scaled: ",  tunedVals$scale)
   )
 
-  #' Download handler
+  # Download handler
   dataName <- reactive({
     dataSelection$name 
   })
