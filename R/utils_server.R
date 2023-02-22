@@ -1,18 +1,3 @@
-#' @description A utils function, which gets the dataset according to the selection
-#'
-#' @return dataframe with the data
-#'
-#' @noRd
-getDataset <- function(selection){
-  if(selection == "t"){
-    return (Holomics::data.transcriptomic_small)
-  } else if (selection == "me"){
-    return (Holomics::data.metabolomic_small)
-  } else if (selection == "mi"){
-    return (Holomics::data.microbiomic_small)
-  }
-}
-
 #' @description A utils function, generates the list for the
 #' datase choices
 #'
