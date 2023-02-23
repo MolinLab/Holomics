@@ -437,8 +437,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   # Create reactive values
   comp.indiv <- getCompIndivReactive(input)
   comp.var <- getCompVarReactive(input)
-  comp.img <- getCompImgReactive(input)
-  
+
   comp.diablo <- reactive({
     req(input$diablo.comp)
     comp.diablo <- as.numeric(input$diablo.comp)
@@ -496,13 +495,12 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.img <- function(){
     if(!is.null(result()) & length(dataSelection$data) > 1){
-      comp.img <- checkCompNcompCombination(result()$ncomp, comp.img())
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        mixOmics::cimDiablo(result(), comp = comp.img, margin=c(8,20), legend.position = "right",
+        mixOmics::cimDiablo(result(), comp = 1, margin=c(8,20), legend.position = "right",
                             size.legend = 1, color.Y = colors)
       } else {
-        mixOmics::cimDiablo(result(), comp = comp.img, margin=c(8,20), legend.position = "right",
+        mixOmics::cimDiablo(result(), comp = 1, margin=c(8,20), legend.position = "right",
                             size.legend = 1)
       }
     }    

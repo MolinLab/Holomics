@@ -68,6 +68,11 @@ label[id*='ncomp-label'], label[id*='matrix-label'], label[for='upload-omicsAnal
   margin-bottom: 0;
 }
 
+/* Remove untuned DIABLO CIM button */
+div#DIABLO-img\.comp{
+  display: none;
+}
+
 /* Remove not working buttons */
 #PLSDA-ErrorRate\.download, #sPLS-Tuned\.ncomp\.download,
 #sPLS-Tuned\.keepX\.download, #sPLS-Tuned\.keepY\.download{
