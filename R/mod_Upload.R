@@ -142,36 +142,33 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         ext <- tools::file_ext(input$dataFile$name)
         
         switch(ext,
-          xlsx = df_data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE)),
-          csv = df_data <- read.csv(input$dataFile$datapath),
+          xlsx = data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE)),
+          csv = data <- read.csv(input$dataFile$datapath),
           validate("Invalid file format!")
         )
         
         #Three cols because one is the row names and at least two with variable data
-        if (ncol(df_data) < 3 || nrow(df_data) < 1){
+        if (ncol(data) < 3 || nrow(data) < 1){
           getShinyErrorAlert("The input needs to have at least one row and three columns!")
-        } else if(sum(duplicated(df_data[,1])) != 0){ #there should not be duplicates in the first column
+        } else if(sum(duplicated(data[,1])) != 0){ #there should not be duplicates in the first column
           getShinyErrorAlert("The sample names cannot contain duplicates!")
         } else {
-          rownames(df_data) <- df_data[,1]   #all rows, first column
-          df_data <- df_data[,-1]
+          rownames(data) <- data[,1]   #all rows, first column
+          data <- data[,-1]
           
           #values can only be numeric
-          if(all(sapply(df_data, is.numeric))){
-            unfiltered_data <- df_data
-  
+          if(all(sapply(data, is.numeric))){
+
             if(input$transposed){ #check for transposed file format
-              df_data <- as.data.frame(t(df_data))
-              unfiltered_data <- df_data
+              data <- as.data.frame(t(data))
             }
             
             if(input$isMicrobiome && !input$prevFiltered){ #check for microbiome data and if it was not previously filtered
-              df_data <- performMixMC(df_data)
+              data <- performMixMC(data)
             }
             
-            if (ncol(df_data) > 10000){  #mixOmics recommends to use only 10.000 features
-              df_data  <- filterToTenThousand(df_data)
-              unfiltered_data <- df_data  #also the unfiltered data can only contain 10.000 features
+            if (ncol(data) > 10000){  #mixOmics recommends to use only 10.000 features
+              data  <- filterToTenThousand(data)
             }
             
             #save data and write to table
@@ -179,7 +176,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
             
             if("single" %in% input$omicsAnalysis){
               if (!is.null(singleData)){
-                singleData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data, name = input$plotName)
+                singleData$data[[input$dataName]] <- list(omicsData = data, name = input$plotName)
               }
               analysisText = "single"
               
@@ -187,13 +184,13 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
             
             if("multi" %in% input$omicsAnalysis && input$prevFiltered){
               if (!is.null(multiData)){
-                multiData$data[[input$dataName]] <- list(filtered = df_data, unfiltered = unfiltered_data, name = input$plotName)
+                multiData$data[[input$dataName]] <- list(omicsData = data, name = input$plotName)
               }
               
               analysisText = ifelse(analysisText == "", "multi", "both")
             }
             
-            tables$data <- extendDataTable(tables$data, input$dataName, input$dataFile$name, nrow(df_data), ncol(df_data),
+            tables$data <- extendDataTable(tables$data, input$dataName, input$dataFile$name, nrow(data), ncol(data),
                             input$isMicrobiome && !input$prevFiltered, analysisText, input$plotName)
             
             #reset UI

@@ -135,7 +135,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
       #same choice name as before but the data is not necessarily the same!
       #observeEvent of input$dataSelection will not be triggered
       if(!is.null(selection) && selection == choice){
-        dataSelection$data1 <- data$data[[choice]]$filtered
+        dataSelection$data1 <- data$data[[choice]]$omicsData
         dataSelection$data1Name <- data$data[[choice]]$name
       }
       
@@ -153,7 +153,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
       #same choice name as before but the data is not necessarily the same!
       #observeEvent of input$dataSelection will not be triggered
       if(!is.null(selection) && selection == choice){
-        dataSelection$data2 <- data$data[[choice]]$filtered
+        dataSelection$data2 <- data$data[[choice]]$omicsData
         dataSelection$data2Name <- data$data[[choice]]$name
       }
       
@@ -183,12 +183,12 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
 
   # Observe change of data selection
   observeEvent(input$dataSelection1, {
-    dataSelection$data1 <- data$data[[input$dataSelection1]]$filtered
+    dataSelection$data1 <- data$data[[input$dataSelection1]]$omicsData
     dataSelection$data1Name <- data$data[[input$dataSelection1]]$name
   })
   
   observeEvent(input$dataSelection2, {
-    dataSelection$data2 <- data$data[[input$dataSelection2]]$filtered
+    dataSelection$data2 <- data$data[[input$dataSelection2]]$omicsData
     dataSelection$data2Name <- data$data[[input$dataSelection2]]$name
   })
   

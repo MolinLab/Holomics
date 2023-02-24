@@ -176,7 +176,7 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
     names <- make.unique(unlist(namesList), sep = " ")
     for (i in 1:length(token)){
       orgName <- token[[i]]
-      dataList[[names[[i]]]] <- data$data[[orgName]]$filtered
+      dataList[[names[[i]]]] <- data$data[[orgName]]$omicsData
     }
     dataSelection$data <- dataList
   })

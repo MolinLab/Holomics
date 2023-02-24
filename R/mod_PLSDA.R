@@ -197,7 +197,7 @@ observe_plsda_ui_components <- function(ns, input, output, dataset, dataSelectio
 #' Filter function
 #' @noRd
 plsda_filterByLoadings <- function(input, output, dataSelection, classSelection, result, tunedVals, multiDataset, tables){
-  req(dataSelection$data$filtered)
+  req(dataSelection$data$omicsData)
   req(classSelection$data)
   
   withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
@@ -206,12 +206,12 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
     #get optimal number of components
     error <- tryCatch({
       Y <- classSelection$data[,2]
-      result <- mixOmics::plsda(dataSelection$data$filtered, Y = Y,
+      result <- mixOmics::plsda(dataSelection$data$omicsData, Y = Y,
                                 ncomp = input$ncomp , scale = input$scale)
       
       #get optimal number of components and number of features per component
-      grid.keepX <- getTestKeepX(ncol(dataSelection$data$filtered))
-      tune.splsda.result <- mixOmics::tune.splsda(dataSelection$data$filtered,Y = Y, ncomp = input$ncomp,
+      grid.keepX <- getTestKeepX(ncol(dataSelection$data$omicsData))
+      tune.splsda.result <- mixOmics::tune.splsda(dataSelection$data$omicsData,Y = Y, ncomp = input$ncomp,
                                                   test.keepX = grid.keepX, scale = input$scale,
                                                   validation = c('Mfold'),
                                                   folds = getFolds(Y),
@@ -226,7 +226,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       incProgress(1/3)
       
       #filter dataset
-      splsda.result <- mixOmics::splsda(dataSelection$data$filtered, Y = Y, ncomp = ncomp, keepX = keepX, scale = input$scale)
+      splsda.result <- mixOmics::splsda(dataSelection$data$omicsData, Y = Y, ncomp = ncomp, keepX = keepX, scale = input$scale)
       
       sel_feature <- c()
       for (comp in 1:ncomp){
@@ -234,9 +234,9 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
         sel_feature <- c(sel_feature, rownames(loadings$X))
       }
       
-      feature_cols <- (names(dataSelection$data$unfiltered) %in% sel_feature)
-      result <- dataSelection$data$unfiltered[, feature_cols]
-      multiDataset$data[[paste0(dataSelection$name, "_plsda_filtered")]] <- list(filtered = result, unfiltered = result, name = dataSelection$data$name)
+      feature_cols <- (names(dataSelection$data$omicsData) %in% sel_feature)
+      result <- dataSelection$data$omicsData[, feature_cols]
+      multiDataset$data[[paste0(dataSelection$name, "_plsda_filtered")]] <- list(omicsData = result, name = dataSelection$data$name)
       
       tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_plsda_filtered"), "-", nrow(result), ncol(result),
                                      FALSE, "multi", dataSelection$data$name)
@@ -267,17 +267,17 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
 #' @noRd
 run_plsda_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   result <- reactive({
-    req(dataSelection$data$filtered)
+    req(dataSelection$data$omicsData)
     req(classSelection$data)
-    req(nrow(classSelection$data) == nrow(dataSelection$data$filtered))
-    req(identical(classSelection$data[,1], rownames(dataSelection$data$filtered)))
+    req(nrow(classSelection$data) == nrow(dataSelection$data$omicsData))
+    req(identical(classSelection$data[,1], rownames(dataSelection$data$omicsData)))
     
-    msg <- checkDataNcompCompatibility(dataSelection$data$filtered, input$ncomp) 
+    msg <- checkDataNcompCompatibility(dataSelection$data$omicsData, input$ncomp) 
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
       tryCatch({
-        result <- mixOmics::plsda(dataSelection$data$filtered, Y = classSelection$data[,2],
+        result <- mixOmics::plsda(dataSelection$data$omicsData, Y = classSelection$data[,2],
                                   ncomp = input$ncomp , scale = input$scale)
       }, error = function(cond){
         getErrorMessage(cond)
@@ -291,17 +291,17 @@ run_plsda_analysis <- function(ns, input, output, dataSelection, classSelection,
   
   result.tuned <- reactive({
     if (useTunedVals()){
-      req(dataSelection$data$filtered)
+      req(dataSelection$data$omicsData)
       req(classSelection$data)
-      req(nrow(classSelection$data) == nrow(dataSelection$data$filtered))
-      req(identical(classSelection$data[,1], rownames(dataSelection$data$filtered)))
+      req(nrow(classSelection$data) == nrow(dataSelection$data$omicsData))
+      req(identical(classSelection$data[,1], rownames(dataSelection$data$omicsData)))
       
-      msg <- checkDataNcompCompatibility(dataSelection$data$filtered, input$ncomp) 
+      msg <- checkDataNcompCompatibility(dataSelection$data$omicsData, input$ncomp) 
       output$parameters.error <- renderText(msg)
       
       if(msg == ""){
         tryCatch({
-          result.tuned <- mixOmics::splsda(dataSelection$data$filtered, Y = classSelection$data[,2],
+          result.tuned <- mixOmics::splsda(dataSelection$data$omicsData, Y = classSelection$data[,2],
                                           ncomp = tunedVals$ncomp, keepX = tunedVals$keepX,
                                           scale = tunedVals$scale)
         }, error = function(cond){
@@ -334,7 +334,7 @@ generate_plsda_error_messages <- function(output, dataset, classes, dataSelectio
         "Please upload some classes/label information to be able to use the analysis!"
       } else {
         class <- classSelection$data
-        data <- dataSelection$data$filtered
+        data <- dataSelection$data$omicsData
         
         req(data)
         req(class)
@@ -529,7 +529,7 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
       paste0(dataName(), "_plsda_filtered.xlsx")
     },
     content = function(file){
-      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_plsda_filtered")]]$filtered, 
+      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_plsda_filtered")]]$omicsData, 
                            file, rowNames = TRUE, colNames = TRUE)
     }
   )

@@ -206,14 +206,14 @@ observe_pca_ui_components <- function(ns, input, output, dataset, dataSelection,
 #' Filter function
 #' @noRd
 pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals, multiDataset, tables){
-  req(dataSelection$data$filtered)
+  req(dataSelection$data$omicsData)
 
   withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
     
     error <- F
     #get optimal number of components
     error <- tryCatch({
-      tune <- mixOmics::tune.pca(dataSelection$data$filtered, scale = input$scale)
+      tune <- mixOmics::tune.pca(dataSelection$data$omicsData, scale = input$scale)
       ncomp <- min(which(tune$cum.var > 0.8))
       error <- F
     }, error = function(cond){
@@ -227,12 +227,12 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
     } else{
       if (ncomp <= 15){
         #get optimal number of features per component
-        grid.keepX <- getTestKeepX(ncol(dataSelection$data$filtered))
-        folds <- floor(nrow(dataSelection$data$filtered)/3)
+        grid.keepX <- getTestKeepX(ncol(dataSelection$data$omicsData))
+        folds <- floor(nrow(dataSelection$data$omicsData)/3)
         
         BPPARAM <- BiocParallel::SnowParam(workers = max(parallel::detectCores()-1, 2))
         suppressWarnings({
-          tune.spca.result <- mixOmics::tune.spca(dataSelection$data$filtered, ncomp = ncomp,
+          tune.spca.result <- mixOmics::tune.spca(dataSelection$data$omicsData, ncomp = ncomp,
                                                   test.keepX = grid.keepX, scale = input$scale,
                                                   nrepeat = 10, folds = folds, BPPARAM = BPPARAM)
           
@@ -241,7 +241,7 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
           incProgress(1/3)
           
           #filter dataset
-          spca.result <- mixOmics::spca(dataSelection$data$filtered, ncomp = ncomp, keepX = tune.spca.result$choice.keepX[1:ncomp],
+          spca.result <- mixOmics::spca(dataSelection$data$omicsData, ncomp = ncomp, keepX = tune.spca.result$choice.keepX[1:ncomp],
                                         input$scale, max.iter = 10000)
         })
         
@@ -251,10 +251,9 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
           sel_feature <- c(sel_feature, loadings)
         }
         
-        feature_cols <- (names(dataSelection$data$unfiltered) %in% sel_feature)
-        result <- dataSelection$data$unfiltered[, feature_cols]
-        multiDataset$data[[paste0(dataSelection$name, "_pca_filtered")]] <- list(filtered = result, unfiltered = result, 
-                                                                                 name = dataSelection$data$name)
+        feature_cols <- (names(dataSelection$data$omicsData) %in% sel_feature)
+        result <- dataSelection$data$omicsData[, feature_cols]
+        multiDataset$data[[paste0(dataSelection$name, "_pca_filtered")]] <- list(omicsData = result, name = dataSelection$data$name)
         
         # extend table in upload with available datasets
         tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_pca_filtered"), "-", nrow(result), ncol(result),
@@ -288,15 +287,15 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
 #' @noRd
 run_pca_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   result <- reactive({
-    req(dataSelection$data$filtered)
-    req(nrow(classSelection$data) == nrow(dataSelection$data$filtered))
-    req(identical(classSelection$data[,1], rownames(dataSelection$data$filtered)))
+    req(dataSelection$data$omicsData)
+    req(nrow(classSelection$data) == nrow(dataSelection$data$omicsData))
+    req(identical(classSelection$data[,1], rownames(dataSelection$data$omicsData)))
     
-    msg <- checkDataNcompCompatibility(dataSelection$data$filtered, input$ncomp) 
+    msg <- checkDataNcompCompatibility(dataSelection$data$omicsData, input$ncomp) 
     output$parameters.error <- renderText(msg)
     
     if(msg == ""){
-      X <- dataSelection$data$filtered
+      X <- dataSelection$data$omicsData
       finished = F
       while(!finished){
         X <- tryCatch({
@@ -325,11 +324,11 @@ run_pca_analysis <- function(ns, input, output, dataSelection, classSelection, u
   
   result.tuned <- reactive({
     if (useTunedVals()){
-      req(dataSelection$data$filtered)
-      req(nrow(classSelection$data) == nrow(dataSelection$data$filtered))
-      req(identical(classSelection$data[,1], rownames(dataSelection$data$filtered)))
+      req(dataSelection$data$omicsData)
+      req(nrow(classSelection$data) == nrow(dataSelection$data$omicsData))
+      req(identical(classSelection$data[,1], rownames(dataSelection$data$omicsData)))
       
-      X <- dataSelection$data$filtered
+      X <- dataSelection$data$omicsData
       finished = F
       while(!finished){
         tryCatch({
@@ -366,7 +365,7 @@ generate_pca_error_messages <- function(output, dataset, classes, dataSelection,
         "Please upload some classes/label information to be able to use the analysis!"
       } else {
         class <- classSelection$data
-        data <- dataSelection$data$filtered
+        data <- dataSelection$data$omicsData
         
         req(data)
         req(class)
@@ -564,7 +563,7 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
       paste0(dataName(), "_pca_filtered.xlsx")
     },
     content = function(file){
-      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_pca_filtered")]]$filtered, 
+      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_pca_filtered")]]$omicsData, 
                            file, rowNames = TRUE, colNames = TRUE)
     }
   )
