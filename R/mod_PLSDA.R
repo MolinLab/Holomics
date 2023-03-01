@@ -231,7 +231,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       sel_feature <- c()
       for (comp in 1:ncomp){
         loadings <- mixOmics::plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
-        sel_feature <- c(sel_feature, rownames(loadings$X))
+        sel_feature <- c(sel_feature, rownames(loadings))
       }
       
       feature_cols <- (names(dataSelection$data$omicsData) %in% sel_feature)
