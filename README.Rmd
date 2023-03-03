@@ -14,8 +14,12 @@ knitr::opts_chunk$set(
 ```
 
 # Holomics
+Holomics is a R Shiny application, which enables its users to perform single- and multi-omics analyses. Therefore, Holomics provides a user-friendly interface to upload the different datasets, choose and perform the various analyses and then presents the results to the user. To perform the various analyses Holomics uses the R package mixOmics. This means Holomics takes the input files, forwards them to the mixOmics algorithms and takes the resulting plots/tables and presents them to user. 
 
-Holomics is a web application, which allows you to perform single and multi omics analyses. <br>
-The used analyses methods are based on the <a href="http://mixomics.org/" rel="noreferrer noopener" target="_blank">mixOmics</a> package.
+mixOmics provides numerous analyses algorithms, but Holomics only integrates the two single-omics algorithms "Principle Component Analysis (PCA)" and "Partial Least Squares Discriminant Analysis (PLS-DA)", one pairwise omics analysis called "sparse Partial Least Squares (sPLS)" and one multi-omics analysis called "Data Integration Analysis for Biomarker discovery using Latent variable approaches for Omics studies (DIABLO)".
 
-With the current version Holomics can only be used with a test dataset. In the future you will be able to upload your data and use it.
+## Install Holomics
+<!-- TODO -->
+
+## Further information
+For further information on how to use Holomics please take a look at our vignette.
