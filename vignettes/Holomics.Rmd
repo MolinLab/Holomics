@@ -4,10 +4,14 @@ author:
   - name: Katharina Munk
 package: Holomics
 output: 
-  html_document:
+  bookdown::html_document2:
     self_contained: yes
     toc: yes
     toc_float: true
+    number_sections: false
+bibliography: ["bibliography.bib"]
+biblio-style: apalike
+link-citations: true
 vignette: >
   %\VignetteIndexEntry{Holomics}
   %\VignetteEngine{knitr::rmarkdown}
@@ -47,13 +51,47 @@ knitr::opts_chunk$set(
 </style>
 
 ## Introduction
-<!-- TODO general introduction-->
+Holomics is a R Shiny application, which enables its users to perform single- and multi-omics analyses. Therefore, Holomics provides a user-friendly interface to upload the different datasets, choose and perform the various analyses and then presents the results to the user. To perform the various analyses Holomics uses the R package mixOmics [@rohart2017mixomics]. This means Holomics takes the input files, forwards them to the mixOmics algorithms and takes the resulting plots/tables and presents them to user. 
 
+mixOmics provides numerous analyses algorithms, but Holomics only integrates the two single-omics algorithms "Principle Component Analysis (PCA)" and "Partial Least Squares Discriminant Analysis (PLS-DA)", one pairwise omics analysis called "sparse Partial Least Squares (sPLS)" and one multi-omics analysis called "Data Integration Analysis for Biomarker discovery using Latent variable approaches for Omics studies (DIABLO)".
 
 
 ## Getting started
 ### Installation
 ### Data preparation
+To be able to use Holomics there are at least two input files needed. On one side the dataset(s) with the measured values of the omes that need to be analysed and on the other side a file with the labels/classes information associated to the 
+
+#### Omics data
+The omics dataset has to be a numeric matrix in an excel or csv file, whereas the rows have to be the samples and the columns the measured features.
+The first column has to contain the sample names and the first row the features names.
+If the data contains more variables/columns then excel allows the matrix can be saved in the transposed format.
+Additionally, if the dataset contains more than 10.000 features, Holomics will filter the dataset to 10.000 or less features as mixOmics suggests to use their package with max. 10.000 features [@le2023mixomics]. If this is not wanted the dataset needs to be split into multiple files, separatly filtered and the merged togehter manually. 
+In addition any wanted/necessary normalisation needs to be done before using Holomics.
+
+Table \@ref(tab:omicsData) shows an example of a valid, but very small, omics dataset. Other valid datasets need to have the same format, which means only the number of rows/columns, the row and column names and the values themself can be changed.
+
+Table:  (\#tab:omicsData) Example of a valid omics dataset.
+```{r message=F}
+data <- as.data.frame(readxl::read_excel("data/asv_small.xlsx", col_names = T))
+rownames(data) <- data[, 1]   #all rows, first column
+data <- data[,-1]
+knitr::kable(data)
+```
+
+
+#### Labels/classes file
+The labels/classes file has to be an excel or csv file with at least two columns.
+The first column contains the sample names, which have to be exactly the same as in the associated omics datasets.
+The second columns contains the classes of the samples (e.g. bad, good, ...). The column name of the second column has to be the name of the attribute the classes describe (e.g. Storability, Quality, ...).
+Additionally, in a third column, a color name / hex code per class can be added, which will be used in the plots. The column name of this column has to be either 'Color' or 'Colorcodes'.
+
+Table \@ref(tab:labels) shows an example of a valid labels/classes file associated to the dataset in Table \@ref(tab:omicsData). Column one and two are mandatory, only column three can be omitted.
+
+Table:  (\#tab:labels) Example of a valid labels/classes file.
+```{r message=F}
+data <- as.data.frame(readxl::read_excel("data/labels.xlsx", col_names = T))
+knitr::kable(data)
+```
 
 ## Workflow
 To make use of all the functionality provided, the below described workflow should be followed. Firstly, the user needs to upload the datasets to be able to use them for the (single) omics analysis. Afterwards, the user should go with the datasets into the single-omics analysis, where key variables are identified and the datasets are filtered accordingly. After the single-omics analyses, the user can apply the multi-omics analyses to identify correlations between 2-n datasets. NOTE: If the user already uploaded pre-filtered (ideally by Holomics at an earlier time) datasets, it is possible to go directly into the multi-omics analysis. 
@@ -75,7 +113,7 @@ Lastly, the name which should be used in the plots for this dataset can be selec
 
 After filling in the upload form the user can click save and the dataset will be saved in the Holomics application and a summary of the uploaded information will be added to the table on the right side of the page.
 
-Figure \ref{fig:uploadData} shows on the right side the summary of an already uploaded dataset and on the left side the filled-in form with a new dataset before saving it.
+Figure \@ref(fig:uploadData) shows on the right side the summary of an already uploaded dataset and on the left side the filled-in form with a new dataset before saving it.
 ```{r uploadData, fig.cap = "Upload page - omics data", out.width="100%"}
 knitr::include_graphics("images/Upload_data.png")
 ```
@@ -85,7 +123,7 @@ To upload the metadata file with the labels/classes of the samples of the differ
 
 After filling in the upload form the user can click save and the labels file will be saved in the Holomics application and a summary of the uploaded information will be added to the table on the right side of the page.
 
-Figure \ref{fig:uploadClasses} shows on the right side the summary of an already uploaded labels file and on the left side the form to upload a new/additional file.
+Figure \@ref(fig:uploadClasses) shows on the right side the summary of an already uploaded labels file and on the left side the form to upload a new/additional file.
 ```{r uploadClasses, fig.cap = "Upload page - labels/classes", out.width="100%"}
 knitr::include_graphics("images/Upload_labels.png")
 ```
@@ -103,7 +141,7 @@ Additionally, the user can download the filtered dataset as a .xlsx file by clic
 
 Generally, it is essential to know that if the filtering process calculates that the PCA needs more than 15 components to reach the minimum of 80% the filtering process will be aborted, as the calculation would take way too long. It is then recommended to use the PLS-DA function for filtering the dataset instead. 
 
-Figure \ref{fig:PCA} shows the PCA page with a test dataset.
+Figure \@ref(fig:PCA) shows the PCA page with a test dataset.
 ```{r PCA, fig.cap = "PCA page", out.width="100%"}
 knitr::include_graphics("images/PCA.png")
 ```
@@ -123,7 +161,7 @@ Once more on the right side, the information about the result of the PLS-DA with
 
 Additionally, the user can download the filtered dataset as a .xlsx file by clicking the button "Save filtered data", which will appear below the "Filter dataset" button after the filtering process has finished. Also, the filtered dataset will automatically be saved in the running Holomics application and can be used later for multi-omics analyses.
 
-Figure \ref{fig:PLSDA} shows the PLS-DA page with a test dataset.
+Figure \@ref(fig:PLSDA) shows the PLS-DA page with a test dataset.
 ```{r PLSDA, fig.cap = "PLSDA page", out.width="100%"}
 knitr::include_graphics("images/PLSDA.png")
 ```
@@ -135,7 +173,7 @@ Instead of the filter button, there is now a "Tune parameters" button in the mid
 
 When the tuning process has finished a switch will appear under the "Tune parameters" button, which when switched on leads to the visualisation of the results on the right side of the page that use the tuned parameters. Same as with the single-omics pages the top two boxes provide some general information and the resulting tuned parameters and below the plots are shown.
 
-Figure \ref{fig:sPLS} shows the pairwise analysis / sPLS with two test datasets before (left side) and after the tuning process (right side).
+Figure \@ref(fig:sPLS) shows the pairwise analysis / sPLS with two test datasets before (left side) and after the tuning process (right side).
 ```{r sPLS, fig.cap = "Pairwise analysis / sPLS page", out.width="100%"}
 knitr::include_graphics("images/sPLS.png")
 ```
@@ -147,7 +185,7 @@ Like before for the sPLS analysis, in the middle of the page is the "Tune parame
 
 When the tuning process has finished, again a switch will appear under the "Tune parameters" button, which when switched on leads to the visualisation of the results on the right side of the page that use the tuned parameters.
 
-Figure \ref{fig:DIABLO} shows the multi-omics analysis / DIABLO with three test datasets before (left side) and after the tuning process (right side).    
+Figure \@ref(fig:DIABLO) shows the multi-omics analysis / DIABLO with three test datasets before (left side) and after the tuning process (right side).    
 ```{r DIABLO, fig.cap = "Multi-omics analysis / DIABLO page", out.width="100%"}
 knitr::include_graphics("images/DIABLO.png")
 ```
@@ -156,7 +194,14 @@ knitr::include_graphics("images/DIABLO.png")
 The help pages provide short descriptions of the used plot and the filtering and tuning processes. Additionally, there are several links to the mixOmics website or to multiple papers, where the user can get even more detailed information if desired.
 
 ## License
+<!-- TODO -->
 
 ## Cite
+<!-- TODO -->
 
 ## Session info
+```{r, echo = FALSE}
+sessionInfo()
+```
+
+## References
