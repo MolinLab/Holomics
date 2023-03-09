@@ -1,7 +1,7 @@
 ---
 title: "Holomics"
 author:
-  - name: Katharina Munk
+  - name: Katharina Munk and Eva M. Molin
 package: Holomics
 output: 
   bookdown::html_document2:
@@ -50,6 +50,8 @@ knitr::opts_chunk$set(
 
 </style>
 
+<img align="right" src="../inst/app/www/img/logo.png" width=300> 
+
 ## Introduction
 Holomics is a R Shiny application, which enables its users to perform single- and multi-omics analyses. Therefore, Holomics provides a user-friendly interface to upload the different datasets, choose and perform the various analyses and then presents the results to the user. To perform the various analyses Holomics uses the R package mixOmics [@rohart2017mixomics]. This means Holomics takes the input files, forwards them to the mixOmics algorithms and takes the resulting plots/tables and presents them to user. 
 
@@ -58,6 +60,35 @@ mixOmics provides numerous analyses algorithms, but Holomics only integrates the
 
 ## Getting started
 ### Installation
+#### CRAN
+~~~
+install.packages("Holomics")
+~~~
+
+#### Github
+~~~
+# Install devtools if it is not already installed
+install.packages("devtools")
+library(devtools)
+
+# Install Holomics package 
+install_github("evasehr/Holomics")
+~~~
+
+### Start application
+Either with 
+
+~~~
+library(Holomics)
+runApp()
+~~~
+
+or 
+
+~~~
+Holomics::runApp()
+~~~
+
 ### Data preparation
 To be able to use Holomics there are at least two input files needed. On one side the dataset(s) with the measured values of the omes that need to be analysed and on the other side a file with the labels/classes information associated to the 
 
@@ -194,7 +225,7 @@ knitr::include_graphics("images/DIABLO.png")
 The help pages provide short descriptions of the used plot and the filtering and tuning processes. Additionally, there are several links to the mixOmics website or to multiple papers, where the user can get even more detailed information if desired.
 
 ## License
-<!-- TODO -->
+The Holomics package is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3).
 
 ## Cite
 <!-- TODO -->
