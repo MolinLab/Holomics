@@ -137,6 +137,11 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
       #additional validation of the name
       if(!isValidName(input$dataName, c(names(singleData$data), names(multiData$data)))){
         getShinyErrorAlert("This name is already in use, please choose another one!")
+        #only invalid selection case
+      } else if ("multi" %in% input$omicsAnalysis && !input$prevFiltered){ 
+        getShinyErrorAlert("Unfortunately, this selection is not valid. 
+                            You have to either check the \"was previously filtered\" checkbox 
+                            or select only the \"single\" checkbox.")
       } else {
         
         ext <- tools::file_ext(input$dataFile$name)
