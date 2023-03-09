@@ -65,10 +65,10 @@ To be able to use Holomics there are at least two input files needed. On one sid
 The omics dataset has to be a numeric matrix in an excel or csv file, whereas the rows have to be the samples and the columns the measured features.
 The first column has to contain the sample names and the first row the features names.
 If the data contains more variables/columns then excel allows the matrix can be saved in the transposed format.
-Additionally, if the dataset contains more than 10.000 features, Holomics will filter the dataset to 10.000 or less features as mixOmics suggests to use their package with max. 10.000 features [@le2023mixomics]. If this is not wanted the dataset needs to be split into multiple files, separatly filtered and the merged togehter manually. 
+Additionally, if the dataset contains more than 10.000 features, Holomics will pre-filter the dataset to 10.000 or less features as mixOmics suggests to use their package with max. 10.000 features [@le2023mixomics]. If this is not wanted the dataset needs to be split into multiple files, separately pre-filtered and the merged together manually. 
 In addition any wanted/necessary normalisation needs to be done before using Holomics.
 
-Table \@ref(tab:omicsData) shows an example of a valid, but very small, omics dataset. Other valid datasets need to have the same format, which means only the number of rows/columns, the row and column names and the values themself can be changed.
+Table \@ref(tab:omicsData) shows an example of a valid, but very small, omics dataset. Other valid datasets need to have the same format, which means only the number of rows/columns, the row and column names and the values themselves can be changed.
 
 Table:  (\#tab:omicsData) Example of a valid omics dataset.
 ```{r message=F}
@@ -85,7 +85,7 @@ The first column contains the sample names, which have to be exactly the same as
 The second columns contains the classes of the samples (e.g. bad, good, ...). The column name of the second column has to be the name of the attribute the classes describe (e.g. Storability, Quality, ...).
 Additionally, in a third column, a color name / hex code per class can be added, which will be used in the plots. The column name of this column has to be either 'Color' or 'Colorcodes'.
 
-Table \@ref(tab:labels) shows an example of a valid labels/classes file associated to the dataset in Table \@ref(tab:omicsData). Column one and two are mandatory, only column three can be omitted.
+Table \@ref(tab:labels) shows an example of a valid labels/classes file associated to the dataset in Table \@ref(tab:omicsData). Column one and two are mandatory, only column three can be omitted. Important is also that the order of the samples has to be the same as in the associated dataset.
 
 Table:  (\#tab:labels) Example of a valid labels/classes file.
 ```{r message=F}
@@ -179,7 +179,7 @@ knitr::include_graphics("images/sPLS.png")
 ```
 
 ## Multi-omics analysis
-The multi-omics analyis is done by applying the DIABLO framework, which can take two or more datasets (theoretically also only one) as its input and tries to find any correlations between the datasets. The structure of the page is the same as previously described. On the top, the user can select the datasets and the corresponding metadata file. On the left the user can find again some general information, the possibility to manipulate the analysis parameters and the resulting plots. Specifically, the user is able to manipulate the value of the design matrix used by the analysis in the "Analysis parameters" box. The design matrix indicates whether there are prior known or calculated correlations between the datasets, which should be taken into consideration when analysing the datasets. For now, Holomics only allows the user to set one correlation value over the entire matrix, which will be used for all pairwise correlations.
+The multi-omics analysis is done by applying the DIABLO framework, which can take two or more datasets (theoretically also only one) as its input and tries to find any correlations between the datasets. The structure of the page is the same as previously described. On the top, the user can select the datasets and the corresponding metadata file. On the left the user can find again some general information, the possibility to manipulate the analysis parameters and the resulting plots. Specifically, the user is able to manipulate the value of the design matrix used by the analysis in the "Analysis parameters" box. The design matrix indicates whether there are prior known or calculated correlations between the datasets, which should be taken into consideration when analysing the datasets. For now, Holomics only allows the user to set one correlation value over the entire matrix, which will be used for all pairwise correlations.
 
 Like before for the sPLS analysis, in the middle of the page is the "Tune parameters" button, which triggers the tuning process. The tuning process works exactly like the one for sPLS (calculates the ideal number of components and the number of features per dataset).
 
