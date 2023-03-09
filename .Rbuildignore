@@ -13,3 +13,4 @@ $run_dev.*
 ^Dockerfile$
 ^\.dockerignore$
 ^testdata$
+^LICENSE\.md$
