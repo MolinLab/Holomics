@@ -46,8 +46,11 @@ knitr::opts_chunk$set(
   .active {
     background-color: var(--green);
   }
-
-
+  
+  .caption{
+    color: #777;
+    text-align: left;
+  }
 </style>
 
 <img align="right" src="../inst/app/www/img/logo.png" width=300> 
