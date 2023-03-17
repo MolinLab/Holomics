@@ -5,7 +5,7 @@
 
 <img align="right" src="inst/app/www/img/logo.png" width=300>
 
-Holomics is a R Shiny application, which enables its users to perform
+Holomics is an R Shiny application, which enables its users to perform
 single- and multi-omics analyses. Therefore, Holomics provides a
 user-friendly interface to upload the different datasets, choose and
 perform the various analyses and then presents the results to the user.
