@@ -1,7 +1,6 @@
 # Welcome to Holomics
-
-Holomics is a web application, which allows you to perform single- and multi-omics analyses. <br>
-The used analyses algorithms are based on the <a class='mixOmics-link' href="http://mixomics.org/" rel="noreferrer noopener" target="_blank">mixOmics</a> package.
+Holomics is an R Shiny application that allows its users to perform single- and multi-omics analyses by providing a user-friendly interface to upload the different omics datasets and select and run the implemented algorithms. Holomics is built mainly on the R package <a class='mixOmics-link' href="http://mixomics.org/" rel="noreferrer noopener" target="_blank">mixOmics</a>. The app takes the input files, passes them to the mixOmics algorithms and presents the resulting graphs and tables to the user. <br>
+mixOmics provides numerous analysis algorithms for the integrative analysis of omics datasets and the two single-omics algorithms "Principle Component Analysis" (PCA) and "Partial Least Squares Discriminant Analysis" (PLS-DA), the pairwise-omics analysis "sparse Partial Least Squares" (sPLS) and the multi-omics framework DIABLO ("Data Integration Analysis for Biomarker discovery using Latent variable approaches for Omics studies") have been implemented in Holomics so far.
 
 ### Functionality overview
 
@@ -27,6 +26,5 @@ As an alternative you can directly go into the multi-omics analyses if you alrea
 
 <p class="workflow-step">Multi-omics analyses: </p> With the multi-omics analyses you are finally able to identify potential correlations between your datasets <br>
 
-### About
-
-Holomics has been developed at the Austrian Institute of Technology as part of the <a href="https://metabolomics-ifa.boku.ac.at/OMICS40Project/" rel="noreferrer noopener" target="_blank" style="color: var(--green)"> Omics 4.0 project</a>.
+### Acknowledgement
+Holomics has been developed at the <a class='mixOmics-link' href="https://www.ait.ac.at/" rel="noreferrer noopener" target="_blank">AIT - Austrian Institute of Technology</a> within the research project <a class='mixOmics-link' href="https://metabolomics-ifa.boku.ac.at/omics40project/" rel="noreferrer noopener" target="_blank">OMICs 4.0</a>, which is funded by the Federal State of Lower Austria as part of the RTI-Strategy Lower Austria.
