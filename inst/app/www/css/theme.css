@@ -42,6 +42,10 @@
   background-color: var(--green);
 }
 
+#sidebarId::-webkit-scrollbar {
+  width: 0px;
+}
+
 /* Top of sidebar */
 .brand-link{
   background-color: var(--green) !important;
@@ -246,18 +250,4 @@ button[id*='-info']{
 /* Scale info buttons */
 button[id*='scale-info']{
   margin-left: -.8rem
-}
-
-/* Scrollbar */
-* {
-  scrollbar-width: thin;
-}
-
-/* Works on Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  width: 12px;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: 20px;
 }
