@@ -98,8 +98,7 @@ mod_DIABLO_server <- function(id, data, classes){
     ns <- session$ns
     
     shinyjs::hide("tunedCol")
-    shinyjs::hide("switchRow")
-    
+
     dataSelection <- reactiveValues()
     classSelection <- reactiveValues()
     
@@ -207,10 +206,8 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   
   #Observe data change
   observeEvent(dataSelection$data, {
-    output$tune.switch <- renderUI({})
     useTunedVals(FALSE)
     shinyjs::hide("tunedCol")
-    shinyjs::hide("switchRow")
   })
   
   #Observe node name selection
@@ -251,22 +248,12 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
       tryCatch({
         tune_diablo_values(dataSelection, classSelection, result, tunedVals, input, output)
         if (!is.null(tunedVals$ncomp)){
-          shinyjs::show("switchRow")
-          output$tune.switch <- renderUI({materialSwitch(ns("tuneSwitch"), "Use tuned parameters", value = FALSE)})
+          shinyjs::show("tunedCol")
+          useTunedVals(T)
         }
       }, error = function(cond){
         getErrorMessage(cond, trim = F)
       })
-    }
-  })
-  
-  # Observe tune switch
-  observeEvent(input$tuneSwitch,{
-    useTunedVals(input$tuneSwitch)
-    if(input$tuneSwitch){
-      shinyjs::show("tunedCol")
-    }else{
-      shinyjs::hide("tunedCol")
     }
   })
 }

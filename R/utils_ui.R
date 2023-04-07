@@ -68,8 +68,7 @@ getAnalysisParametersComponent <- function(ns, designMatrix = NULL){
 getTuneBox <- function(ns, name, infotext){
   return(
     bs4Dash::box(id = ns("tuneBox"), width = 12,
-                 getTuneButtonRow(ns, name, infotext),
-                 getSwitchRow(ns)
+                 getTuneButtonRow(ns, name, infotext)
     )
   )
 }
@@ -106,18 +105,6 @@ getTuneButtonRow <- function(ns, name, infotext){
            bs4Dash::column(width = 1, style = "padding-left: 0",
                            getTooltip(ns("tune-info"), infotext)
            )
-  )
-}
-
-#' @description A utils function to get the row with 
-#' the tune switch
-#'
-#' @return row with switch
-#'
-#' @noRd
-getSwitchRow <- function(ns){
-  fluidRow(id = ns("switchRow"),
-           uiOutput(ns("tune.switch"))
   )
 }
 

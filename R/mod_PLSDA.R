@@ -172,7 +172,6 @@ observe_plsda_ui_components <- function(ns, input, output, dataset, dataSelectio
   })
   
   observeEvent(dataSelection$data, {
-    output$tune.switch <- renderUI({})
     useTunedVals(FALSE)
     shinyjs::hide("tunedCol")
     shinyjs::hide("Filter.download")
