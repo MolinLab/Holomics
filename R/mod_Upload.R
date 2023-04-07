@@ -118,11 +118,8 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     observeEvent(input$prevFiltered, {
       if(isTRUE(input$prevFiltered)){
         shinyjs::hide("microbiomeRow")
-        shinyjs::enable("omicsAnalysismulti")
       } else {
         shinyjs::show("microbiomeRow")
-        shinyjs::disable("omicsAnalysismulti")
-        updateCheckboxInput(session, "omicsAnalysismulti", value = FALSE)
       }
     }, ignoreNULL = F)
     
