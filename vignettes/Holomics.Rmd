@@ -28,6 +28,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+
 <style>
   :root {
     --grey: #f1f3f2;
@@ -134,7 +135,10 @@ To make use of all the functionality provided by <b>Holomics</b>, the below desc
 NOTE: If already  pre-filtered (ideally by <b>Holomics</b> at an earlier time) datasets are uploaded, it is possible to jump directly to the multi-omics analysis step.  
 
 <br>
-```{r workflow, fig.cap = "Holomics workflow", out.width="100%"}
+
+(ref:workflow) Visualisation of the Holomics workflow, which goes from uploading the input datasets to performing single-omics analyses and finally going into the multi-omics analyses.
+
+```{r workflow, fig.cap = "(ref:workflow)", out.width="100%"}
 knitr::include_graphics("images/workflow.png")
 ```
 <br>
@@ -150,7 +154,10 @@ Next, the user needs to select for which analyses the dataset(s) should be used,
 By clicking the save button after filling in the upload form, the dataset will be saved in the <b>Holomics</b> application and a summary of the uploaded information is added to the table on the right side of the page. Figure \@ref(fig:uploadData) shows on the right side the summary of an already uploaded dataset and on the left side the filled-in form with a new dataset before saving it.
 
 <br>
-```{r uploadData, fig.cap = "Upload page - omics data", out.width="100%"}
+
+(ref:uploadData) Visualisation of the upload page for the omics datasets. On the left side is an example of an filled-in form with a new dataset before saving it and on the right side is a summary of the already uploaded ones.
+
+```{r uploadData, fig.cap = "(ref:uploadData)", out.width="100%"}
 knitr::include_graphics("images/Upload_data.png")
 ```
 <br>
@@ -161,7 +168,10 @@ To upload the metadata file with the labels or class information of each sample 
 To finalize the upload, the save button is clicked and the file is then saved in the <b>Holomics</b> application. A summary of the uploaded information is added to the table on the right side of the page. Figure \@ref(fig:uploadClasses) shows on the right side the summary of an already uploaded metadata file and on the left side the form to upload a new/additional file.
 
 <br>
-```{r uploadClasses, fig.cap = "Upload page - labels/classes", out.width="100%"}
+
+(ref:uploadClasses) Visualisation of the upload page for the metadata files. On the left side is the form for uploading new metadata files and on the right side is a summary of an already uploaded one.
+
+```{r uploadClasses, fig.cap = "(ref:uploadClasses)", out.width="100%"}
 knitr::include_graphics("images/Upload_labels.png")
 ```
 <br>
@@ -180,7 +190,10 @@ Additionally, the filtered dataset can be downloaded in the XLS(X) file format t
 NOTE: if the filtering process calculates that the PCA needs more than 15 components to reach the minimum of 80% of the explained variance, the filtering process will be aborted, as the calculation would take too long. It is then recommended to use the PLS-DA function for filtering the dataset instead. 
 
 <br>
-```{r PCA, fig.cap = "PCA page", out.width="100%"}
+
+(ref:PCA) Visualisation of the PCA page used with a metabolites dataset. On the left side the original dataset is used for the plots. Here, three components were calculated and the scree plot is opened. On the right side the filtered dataset is used and there were apparently three components necessary to achieve at least 80% explained variance, which can also be seen in the opened correlation plot.
+
+```{r PCA, fig.cap = "(ref:PCA)", out.width="100%"}
 knitr::include_graphics("images/PCA.png")
 ```
 <br>
@@ -195,7 +208,10 @@ For feature selection, in the middle of the page, the "Filter dataset" button is
 Additionally, the filtered dataset can be downloaded in the XLS(X) file format through the "Save filtered data" button, which will appear after the filtering process has finished. Also, the filtered dataset will automatically be saved in the running <b>Holomics</b> application to be used later for the multi-omics analysis.
 
 <br>
-```{r PLSDA, fig.cap = "PLSDA page", out.width="100%"}
+
+(ref:PLSDA) Visualisation of the PLS-DA page used with a metabolites dataset. On the left side the original dataset is used for the plots. Here, three components were calculated and the sample plot is opened. On the right side the filtered dataset is used. For the filtering process three components where calculated (number was set on the left side) and the error rates plot shows the performance of the models using the different number of components.
+
+```{r PLSDA, fig.cap = "(ref:PLSDA)", out.width="100%"}
 knitr::include_graphics("images/PLSDA.png")
 ```
 <br>
@@ -205,8 +221,10 @@ For the pairwise omics analysis (integration of two different omics datasets), t
 
 On the left the user can find some general information, the possibility to manipulate the analysis parameters and the resulting plots. Instead of the filter button described in the PCA and PLS-DA chapter, there is a "Tune parameters" button in the middle of the page. The tuning process is generally similar to the filtering process described in the PCA and PLS-DA chapter. It calculates the ideal number of components for the given datasets and the number of important features per dataset. "Ideal" means the number of components and features per component, where the model, which is built in the background, has the lowest error rate. Like the filtering process of the PLS-DA, the tuning algorithm of the sPLS tests 1 to n (number of components set on the left side) components and chooses one of these as the "ideal". When the tuning process has finished the results using the tuned parameters will be visualised on the right side of the page. Some general information and the resulting tuned parameters are provided in the boxes above the plots.
 
+(ref:sPLS) Visualisation of the sPLS page used with a metabolites and transcriptomics dataset. On the left side the original datasets are used for the plots. Here, the heatmap plot is opened. On the right side the tuned datasets are used. For the tuning process three components where calculated (number was set on the left side) and also here the heatmap plot is opened and shows the effect of the tuning process.
+
 <br>
-```{r sPLS, fig.cap = "Pairwise analysis / sPLS page", out.width="100%"}
+```{r sPLS, fig.cap = "(ref:sPLS)", out.width="100%"}
 knitr::include_graphics("images/sPLS.png")
 ```
 <br>
@@ -218,8 +236,10 @@ On the top, the datasets are added and  the corresponding metadata file is selec
 
 The "Tune parameters" button in the middle of the page triggers the tuning process. This process works exactly like the one previously described for sPLS (calculates the ideal number of components and the number of features per dataset). When the tuning process has finished the results using the tuned parameters will be visualised on the right side of the page. Some general information and the resulting tuned parameters are provided in the boxes above the plots.
 
+(ref:DIABLO) Visualisation of the DIABLO page used with a metabolites, transcriptomics and microbiomics dataset. On the left side the original datasets are used for the plots. Here, the circos plot is opened, which shows the correlation between the features of the datasets. On the right side the tuned datasets are used. For the tuning process three components where calculated (number was set on the left side) and also here the ciros plot is opened and shows the effect of the tuning process.
+
 <br>   
-```{r DIABLO, fig.cap = "Multi-omics analysis / DIABLO page", out.width="100%"}
+```{r DIABLO, fig.cap = "(ref:DIABLO)", out.width="100%"}
 knitr::include_graphics("images/DIABLO.png")
 ```
 <br>
