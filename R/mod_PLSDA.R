@@ -243,8 +243,15 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       #set error rate plot    
       errorPlot <- plot(tune.splsda.result)
       output$ErrorRate <- renderPlot(errorPlot)
-      output$ErrorRate.download <- getDownloadHandler("PLSDA_error_rates.png", function(){errorPlot})
-      
+      output$ErrorRate.download <- downloadHandler(
+        filename = 'PLSDA_error_rates.png',
+        content = function(file) {
+          device <- function(..., width, height) {
+            grDevices::png(..., width = 1800, height = 1200, res = 300)
+          }
+          ggplot2::ggsave(file, plot = errorPlot, device = device)
+      })
+        
       incProgress(1/3)
       error <- F
     }, error = function(cond){

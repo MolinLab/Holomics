@@ -368,16 +368,44 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     tunedVals$ncomp <- NULL
   } else {
     # Tuning plots
-    output$Tuned.ncomp <- renderPlot(plot(tune.spls, criterion = 'Q2.total'))
     
-    output$Tuned.keepX <- renderPlot(plot(tune.X))
+    q2plot <- plot(tune.spls, criterion = 'Q2.total')
+    tuneXplot <- plot(tune.X)
+    tuneYplot <- plot(tune.Y)
     
-    output$Tuned.keepY <- renderPlot(plot(tune.Y))
+    output$Tuned.ncomp <- renderPlot(q2plot)
     
-    output$Tuned.ncomp.download <- getDownloadHandler("PLS_Q2_Components_Plot.png", function(){plot(tune.spls, criterion = 'Q2.total')})
-    output$Tuned.keepX.download <- getDownloadHandler("PLS_keepX_Plot.png", function(){plot(tune.X)})
-    output$Tuned.keepY.download <- getDownloadHandler("PLS_keepY_Plot.png", function(){plot(tune.Y)})
+    output$Tuned.keepX <- renderPlot(tuneXplot)
     
+    output$Tuned.keepY <- renderPlot(tuneYplot)
+    
+    output$Tuned.ncomp.download <- downloadHandler(
+      filename = 'PLS_Q2_Components_Plot.png',
+      content = function(file) {
+        device <- function(..., width, height) {
+          grDevices::png(..., width = 1800, height = 1200, res = 300)
+        }
+        ggplot2::ggsave(file, plot = q2plot, device = device)
+    })
+    
+    output$Tuned.keepX.download <- downloadHandler(
+      filename = 'PLS_keepX_Plot.png',
+      content = function(file) {
+        device <- function(..., width, height) {
+          grDevices::png(..., width = 1800, height = 1200, res = 300)
+        }
+        ggplot2::ggsave(file, plot = tuneXplot, device = device)
+    })
+    
+    output$Tuned.keepY.download <- downloadHandler(
+      filename = 'PLS_keepY_Plot.png',
+      content = function(file) {
+        device <- function(..., width, height) {
+          grDevices::png(..., width = 1800, height = 1200, res = 300)
+        }
+        ggplot2::ggsave(file, plot = tuneYplot, device = device)
+    })
+      
     tunedVals$ncomp <- ncomp
     tunedVals$keepX <- keepX
     tunedVals$keepY <- keepY
