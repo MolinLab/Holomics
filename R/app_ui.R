@@ -35,7 +35,8 @@ app_ui <- function(request) {
                             bs4Dash::menuSubItem("Plots", tabName = "help-plots"),
                             bs4Dash::menuSubItem("Filtering and tuning", tabName = "help-tuning"),
                             bs4Dash::menuSubItem("DIABLO design matrix", tabName = "help-designmatrix")
-          )
+          ),
+          bs4Dash::menuItem("About", tabName = "about", icon = icon("info"))
         )
       ),
       
@@ -67,6 +68,11 @@ app_ui <- function(request) {
                            fluidRow(
                              column(width = 10,
                                     includeMarkdown(app_sys("app/www/help-designmatrix.md")))
+                           )),
+          bs4Dash::tabItem(tabName = "about",
+                           fluidRow(
+                             column(width = 10,
+                                    includeMarkdown(app_sys("app/www/about.md")))
                            ))
         )
         
@@ -80,8 +86,7 @@ app_ui <- function(request) {
                  target = "_blank", rel="noreferrer noopener"), 
 
                 br(),
-               "Copyright (C) 2022" #add license
-               #add github link
+               "Copyright (C) 2023" 
         )
       )
     )

@@ -25,6 +25,3 @@ To make use of all the functionality provided by Holomics, a certain workflow sh
 As an alternative you can directly go into the multi-omics analyses if you already uploaded pre-filtered datasets and do not want to filter them any further. <br>
 
 <p class="workflow-step">Multi-omics analyses: </p> With the multi-omics analyses you are finally able to identify potential correlations between your datasets <br>
-
-### Acknowledgement
-Holomics has been developed at the <a class='mixOmics-link' href="https://www.ait.ac.at/" rel="noreferrer noopener" target="_blank">AIT - Austrian Institute of Technology</a> within the research project <a class='mixOmics-link' href="https://metabolomics-ifa.boku.ac.at/omics40project/" rel="noreferrer noopener" target="_blank">OMICs 4.0</a>, which is funded by the Federal State of Lower Austria as part of the RTI-Strategy Lower Austria.
