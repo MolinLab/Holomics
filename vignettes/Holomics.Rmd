@@ -251,8 +251,7 @@ The help pages that can be found in the application provide short descriptions o
 The <b>Holomics</b> package is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3).
 
 ## Cite
-<!-- TODO -->
-Munk, K., Brader, G. & Molin, E.M. (2023). Holomics: ...tbd.... R package version x.x.x. https://CRAN.R-project.org/package=Holomics
+Munk, K., Brader, G. & Molin, E.M. (2023). Holomics: an R Shiny application for the holistic integration and analysis of multiple omics data R package version 1.0.0. https://CRAN.R-project.org/package=Holomics
 
 ## Acknowledgements
 Holomics has been developed at the <a href="https://www.ait.ac.at/" rel="noreferrer noopener" target="_blank">AIT - Austrian Institute of Technology</a> within the research project <a href="https://metabolomics-ifa.boku.ac.at/omics40project/" rel="noreferrer noopener" target="_blank">OMICs 4.0</a>, which is funded by the Federal State of Lower Austria as part of the FTI-Strategy Lower Austria.
