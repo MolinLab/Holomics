@@ -356,6 +356,14 @@ getNetworkPlot <- function(ns, postfix = ""){
                bs4Dash::column(width = 12,
                                textOutput(paste0(ns("network.error"), postfix)),
                                visNetworkOutput(paste0(ns("Network"), postfix)),
+                               fluidRow(
+                                 tags$div(
+                                   tags$span(class="line line-blue"),
+                                   tags$text("Negative correlation", style="margin-right: .5rem"),
+                                   tags$span(class="line line-red"),
+                                   tags$text("Positive correlation")
+                                 )
+                               ),
                                downloadButton(paste0(ns("NetworkGml.download"), postfix), "Save as gml"),
                                downloadButton(paste0(ns("NetworkHtml.download"), postfix), "Save as html")
                )

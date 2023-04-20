@@ -251,3 +251,20 @@ button[id*='-info']{
 button[id*='scale-info']{
   margin-left: -.8rem
 }
+
+/* Correlation legend dots */
+.line{
+  height: 2px;
+  width: 30px;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.line-blue{
+  background-color: #5995fa;
+}
+
+.line-red{
+  background-color: #de4236;
+} 

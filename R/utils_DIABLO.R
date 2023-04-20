@@ -90,6 +90,17 @@ diabloGenerateNetwork <- function(ns, postfix, result, dataset, cutoff, fullName
   unlink("tmp.jpeg")
   graph <- toVisNetworkData(mixNetwork$gR, idToLabel = FALSE)
   
+  #color the network connection red and blue according to correlation
+  idx = 1
+  for (w in graph$edges$weight){
+    if (w < 0){
+      graph$edges$color[idx] = "#5995fa"
+    } else {
+      graph$edges$color[idx] = "#de4236"
+    }
+    idx = idx + 1
+  }
+  
   data <- list(label = graph$nodes$label, id = graph$nodes$id)
   
   clickedFunc = paste0("function(ng_nodes){
