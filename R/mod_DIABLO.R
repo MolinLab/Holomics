@@ -58,7 +58,7 @@ mod_DIABLO_ui <- function(id){
       ),
       bs4Dash::column(width = 2,
                       getTuneBox(ns, "Tune parameters", "Automatically calculate the optimal number of components 
-                                     and the number of variables per component.")
+                                     and the number of features per component.")
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(style = "padding-left: 7.5px;",
@@ -737,7 +737,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   )
   
   output$keepX.tuned <- renderText(
-    paste("Variables of dataset ", names(dataSelection$data), ": ",  tunedVals$keepX)
+    paste("Features of dataset ", names(dataSelection$data), ": ",  tunedVals$keepX)
   )
   
   output$scale.tuned <- renderText(
@@ -750,7 +750,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   # Download handler
   output$Indiv.download <- getDownloadHandler("DIABLO_Sampleplot.png", plot.indiv)
-  output$Var.download <- getDownloadHandler("DIABLO_Variableplot.png", plot.var)
+  output$Var.download <- getDownloadHandler("DIABLO_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("DIABLO_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo)
@@ -759,7 +759,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$NetworkGml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.gml", diabloNetwork, "gml")
   
   output$Indiv.download.tuned <- getDownloadHandler("DIABLO_tuned_Sampleplot.png", plot.indiv.tuned)
-  output$Var.download.tuned <- getDownloadHandler("DIABLO_tuned_Variableplot.png", plot.var.tuned)
+  output$Var.download.tuned <- getDownloadHandler("DIABLO_tuned_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("DIABLO_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
   output$Img.download.tuned <- getDownloadHandler("DIABLO_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$Diablo.download.tuned <- getDownloadHandler("DIABLO_tuned_Diabloplot.png", plot.diablo.tuned)
@@ -888,8 +888,8 @@ render_diablo_infotexts <- function(output){
   })
   
   output$DIABLOtunedinfotext <- renderText({
-    HTML("The mixOmics offers parameter tuning for the DIABLO analyses, like for the sPLS. 
-    Again the number of components and variables for each component on each dataset can be tuned using repeated cross-validation. <br/>
+    HTML("The mixOmics package offers parameter tuning for the DIABLO analyses. 
+    This means the number of components and features for each component on each dataset can be tuned using repeated cross-validation. <br/>
     More detailed information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/diablo.html#tuning-parameters-1' target='_blank'>mixOmics website</a> 
     and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.")
   })

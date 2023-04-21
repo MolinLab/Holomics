@@ -127,7 +127,7 @@ getCompImgReactive <- function(input, tuned = FALSE){
 #' @noRd
 checkDataNcompCompatibility <- function(data, ncomp){
   if(ncol(data) < ncomp){
-    return("You cannot use more components than the dataset has variables!")
+    return("You cannot use more components than the dataset has features!")
   } else if(nrow(data) < ncomp){
     return("You cannot use more components than the dataset has samples!")
   } else {

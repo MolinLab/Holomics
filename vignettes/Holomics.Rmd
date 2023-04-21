@@ -57,9 +57,9 @@ knitr::opts_chunk$set(
 <img align="right" src="../inst/app/www/img/logo.png" width=300> 
 
 ## Introduction
-<b>Holomics</b> is an R Shiny application that allows its users to perform single- and multi-omics analyses by providing a user-friendly interface to upload the different omics datasets and select and run the implemented algorithms. <b>Holomics</b> is built mainly on the R package mixOmics [@rohart2017mixomics]. The app takes the input files, passes them to the mixOmics algorithms and presents the resulting graphs and tables to the user. 
+<b>Holomics</b> is an R Shiny application that allows its users to perform single- and multi-omics analyses by providing a user-friendly interface to upload the different omics datasets and select and run the implemented algorithms. <b>Holomics</b> is mainly built on the R package mixOmics [@rohart2017mixomics]. The app takes the input files, passes them to the mixOmics algorithms and presents the resulting graphs and tables to the user. 
 
-mixOmics provides numerous analysis algorithms for the integrative analysis of omics datasets and the two single-omics algorithms "Principle Component Analysis" (PCA) and "Partial Least Squares Discriminant Analysis" (PLS-DA), the pairwise-omics analysis "sparse Partial Least Squares" (sPLS) and the multi-omics framework DIABLO ("Data Integration Analysis for Biomarker discovery using Latent variable approaches for Omics studies") have been implemented in <b>Holomics</b> so far.
+mixOmics provides numerous analysis algorithms for the integrative analysis of omics datasets. The two single-omics algorithms "Principle Component Analysis" (PCA) and "Partial Least Squares Discriminant Analysis" (PLS-DA), the pairwise-omics analysis "sparse Partial Least Squares" (sPLS) and the multi-omics framework DIABLO ("Data Integration Analysis for Biomarker discovery using Latent variable approaches for Omics studies") have been implemented in <b>Holomics</b> so far.
 
 
 ## Getting started
@@ -99,7 +99,7 @@ Holomics::runApp()
 #### Omics dataset
 Omics datasets can contain molecular features measured on a continuous scale (e.g. microarray, mass spectrometry-based metabolomics) or sequenced-based count data (e.g. RNA-seq, 16S) that become continuous data after pre-processing and normalisation. Generally, the omics dataset has to be a numeric matrix (basically a count table) in an XLS(X) or CSV file format, where the rows have to be the samples and the columns the measured features.
 The first column has to contain the sample names and the first row the feature names. There are generally no restrictions regarding characters and symbols that are allowed in the names. It is recommended to keep the number of special characters and symbols to a minimum. Important is that all the omics datasets that belong together in the analyses have the same samples names. 
-If the data contains more variables/columns than excel allows, the matrix also can be uploaded in the transposed format.
+If the data contains more features/columns than excel allows, the matrix also can be uploaded in the transposed format.
 Additionally, if the omics dataset contains more than 10.000 features, <b>Holomics</b> will pre-filter the dataset to 10.000 or less features as mixOmics is able to process a maximum of 10.000 features per dataset [@le2023mixomics]. An optional workaround would be to split the omics dataset into two parts, upload them, let the pre-filtering do its work and merge them manually afterwards. 
 In addition any wanted/necessary normalisation needs to be done for each omics dataset separately before using <b>Holomics</b>. An example of a valid omics dataset is given in Table \@ref(tab:omicsData).
 
@@ -130,7 +130,7 @@ knitr::kable(data)
 ```
 
 ## Workflow overview
-To make use of all the functionality provided by <b>Holomics</b>, the below described workflow should be followed. Firstly, the datasets are uploaded where an eventual pre-filtering/pre-processing step takes place. Afterwards, the user should perform the single-omics analysis, where key variables are identified and the datasets are filtered accordingly. With these filtered datasets, the multi-omics analyses is applied to identify correlations between 2-n datasets. 
+To make use of all the functionality provided by <b>Holomics</b>, the below described workflow should be followed. Firstly, the datasets are uploaded where an eventual pre-filtering/pre-processing step takes place. Afterwards, the user should perform the single-omics analysis, where key features are identified and the datasets are filtered accordingly. With these filtered datasets, the multi-omics analyses is applied to identify correlations between 2-n datasets. 
 
 NOTE: If already  pre-filtered (ideally by <b>Holomics</b> at an earlier time) datasets are uploaded, it is possible to jump directly to the multi-omics analysis step.  
 

@@ -25,7 +25,7 @@ getDataUploadUI <- function(ns){
           ), 
           fluidRow(style = "margin-left: 0;",
                    awesomeCheckbox(ns("transposed"), "Has transposed format", width = "auto"),
-                   getTooltip(ns("transposed-info"), "Uploaded data has the samples as the columns and the variables as the rows")
+                   getTooltip(ns("transposed-info"), "Uploaded data has the samples as the columns and the features as the rows")
           ),
           fluidRow(style = "margin-left: 0;",
                    bs4Dash::column(width = 12,
@@ -85,7 +85,7 @@ getClassUploadUI <- function(ns){
         ),
         fluidRow(style = "margin-left: 0;",
           awesomeCheckbox(ns("colorCode"), "Includes color code", width = "auto"),
-          getTooltip(ns("colorCode-info"), "Uploaded data has a second column with color names / hex codes 
+          getTooltip(ns("colorCode-info"), "Uploaded data has a third column with color names / hex codes 
           that will be used later on in the plots")
         ),
         fluidRow(style = "margin-left: 0;",

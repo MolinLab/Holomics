@@ -34,7 +34,7 @@ getsPLSSamplePlot <- function(ns, postfix = ""){
 #' @noRd
 getsPLSSelectedVarsPlot <- function(ns, postfix = ""){
   return(
-    tabPanel("Selected variables",
+    tabPanel("Selected features",
              fluidRow(
                uiOutput(paste0(ns("sel.var.comp"), postfix))
              ),
@@ -69,11 +69,11 @@ getsPLSTuningPlots <- function(ns){
                                         plotOutput(ns("Tuned.ncomp")),
                                         downloadButton(ns("Tuned.ncomp.download"), "Save plot")
                                ),
-                               tabPanel("Variables dataset 1",
+                               tabPanel("Features dataset 1",
                                         plotOutput(ns("Tuned.keepX")),
                                         downloadButton(ns("Tuned.keepX.download"), "Save plot")
                                ),
-                               tabPanel("Variables dataset 2",
+                               tabPanel("Features dataset 2",
                                         plotOutput(ns("Tuned.keepY")),
                                         downloadButton(ns("Tuned.keepY.download"), "Save plot")
                                )

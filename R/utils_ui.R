@@ -47,8 +47,8 @@ getAnalysisParametersComponent <- function(ns, designMatrix = NULL){
                           ),
                           bs4Dash::column(width = 3, style = "display: flex; column-gap: inherit",
                             awesomeCheckbox(ns("scale"), "Scaling", value = TRUE, width = "fit-content"),
-                            getTooltip(ns("scale-info"), "Variables will be standardized to have zero means 
-                                       and unit variance before the analysis takes place")
+                            getTooltip(ns("scale-info"), "Features will be standardized to have a mean of zero 
+                                       and a unit variance before the analysis takes place")
                           ),
                           designMatrix,
                  ),
@@ -188,11 +188,11 @@ getSamplePlot <- function(ns, postfix = ""){
 #' @noRd
 getVariablePlot <- function(ns, postfix = ""){
   return(
-    tabPanel("Correlation Circle plot",
+    tabPanel("Correlation circle plot",
              fluidRow(style = "display: flex; column-gap: 1rem",
                       uiOutput(paste0(ns("var.x.comp"), postfix)),
                       uiOutput(paste0(ns("var.y.comp"), postfix)),
-                      awesomeCheckbox(paste0(ns("var.names"), postfix), "Variable names", value = FALSE)
+                      awesomeCheckbox(paste0(ns("var.names"), postfix), "Feature names", value = FALSE)
              ),
              fluidRow(
                bs4Dash::column(width = 12,
@@ -234,7 +234,7 @@ getLoadingsPlot <- function(ns, postfix = ""){
 #' @noRd
 getSelectedVarsPlot <- function(ns, postfix = ""){
   return(
-    tabPanel("Selected variables",
+    tabPanel("Selected features",
              fluidRow(
                uiOutput(paste0(ns("sel.var.comp"), postfix))
              ),
@@ -396,20 +396,20 @@ getErrorRatePlot <- function(ns){
 #' @noRd
 renderIndivComps <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
   output$indiv.x.comp <- renderUI({
-    selectInput(ns("indiv.x"), "X-Axis component:", seq(1, input$ncomp, 1))
+    selectInput(ns("indiv.x"), "X-axis component:", seq(1, input$ncomp, 1))
   })
   
   output$indiv.y.comp <- renderUI({
-    selectInput(ns("indiv.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("indiv.y"), "Y-axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
 
   if (tuned){
     output$indiv.x.comp.tuned <- renderUI({
-      selectInput(ns("indiv.x.tuned"), "X-Axis component:", seq(1, tunedInput$ncomp, 1))
+      selectInput(ns("indiv.x.tuned"), "X-axis component:", seq(1, tunedInput$ncomp, 1))
     })
     
     output$indiv.y.comp.tuned <- renderUI({
-      selectInput(ns("indiv.y.tuned"), "Y-Axis component:", seq(1, tunedInput$ncomp, 1), selected = 2)
+      selectInput(ns("indiv.y.tuned"), "Y-axis component:", seq(1, tunedInput$ncomp, 1), selected = 2)
     })
   }
 }
@@ -420,20 +420,20 @@ renderIndivComps <- function(ns, input, output, tuned = FALSE, tunedInput = NULL
 #' @noRd
 renderVarComps <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
   output$var.x.comp <- renderUI({
-    selectInput(ns("var.x"), "X-Axis component:", seq(1, input$ncomp, 1))
+    selectInput(ns("var.x"), "X-axis component:", seq(1, input$ncomp, 1))
   })
   
   output$var.y.comp <- renderUI({
-    selectInput(ns("var.y"), "Y-Axis component:", seq(1, input$ncomp, 1), selected = 2)
+    selectInput(ns("var.y"), "Y-axis component:", seq(1, input$ncomp, 1), selected = 2)
   })
   
   if (tuned) {
     output$var.x.comp.tuned <- renderUI({
-      selectInput(ns("var.x.tuned"), "X-Axis component:", seq(1, tunedInput$ncomp, 1))
+      selectInput(ns("var.x.tuned"), "X-axis component:", seq(1, tunedInput$ncomp, 1))
     })
     
     output$var.y.comp.tuned <- renderUI({
-      selectInput(ns("var.y.tuned"), "Y-Axis component:", seq(1, tunedInput$ncomp, 1), selected = 2)
+      selectInput(ns("var.y.tuned"), "Y-axis component:", seq(1, tunedInput$ncomp, 1), selected = 2)
     })
   }
 }

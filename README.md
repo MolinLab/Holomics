@@ -53,7 +53,7 @@ To make use of all the functionality provided, the below described
 workflow should be followed. Firstly, the user needs to upload the
 datasets to be able to use them for the (single) omics analysis.
 Afterwards, the user should go with the datasets into the single-omics
-analysis, where key variables are identified and the datasets are
+analysis, where key features are identified and the datasets are
 filtered accordingly. After the single-omics analyses, the user can
 apply the multi-omics analyses to identify correlations between 2-n
 datasets. NOTE: If the user already uploaded pre-filtered (ideally by

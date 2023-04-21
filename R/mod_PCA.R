@@ -533,7 +533,7 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
   )
   
   output$keepX.tuned <- renderText(
-    paste("Variables of dataset 1: ",  paste(tunedVals$keepX, collapse = ", "))
+    paste("Features of dataset: ",  paste(tunedVals$keepX, collapse = ", "))
   )
   
   output$scale.tuned <- renderText(
@@ -547,15 +547,15 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
 
   output$Indiv.download <- getDownloadHandler("PCA_Sampleplot.png", plot.indiv)
   output$Scree.download <- getDownloadHandler("PCA_Screeplot.png", plot.scree)
-  output$Var.download <- getDownloadHandler("PCA_Variableplot.png", plot.var)
+  output$Var.download <- getDownloadHandler("PCA_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
-  output$SelVar.download <- getDownloadHandler("PCA_SelectedVariables.csv", table.selVar, type = "csv")
+  output$SelVar.download <- getDownloadHandler("PCA_SelectedFeatures.csv", table.selVar, type = "csv")
   
   output$Indiv.download.tuned <- getDownloadHandler("PCA_filtered_Sampleplot.png", plot.indiv.tuned)
   output$Scree.download.tuned <- getDownloadHandler("PCA_filtered_Screeplot.png", plot.scree.tuned)
-  output$Var.download.tuned <- getDownloadHandler("PCA_filtered_Variableplot.png", plot.var.tuned)
+  output$Var.download.tuned <- getDownloadHandler("PCA_filtered_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PCA_filtered_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
-  output$SelVar.download.tuned <- getDownloadHandler("PCA_filtered_SelectedVariables.csv", table.selVar.tuned, type = "csv")
+  output$SelVar.download.tuned <- getDownloadHandler("PCA_filtered_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
   
   output$Filter.download <- downloadHandler(
     filename = function() {

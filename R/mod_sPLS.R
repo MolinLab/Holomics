@@ -46,7 +46,7 @@ mod_sPLS_ui <- function(id){
       ),
       bs4Dash::column(width = 2,
                       getTuneBox(ns, "Tune parameters", "Automatically calculate the optimal number of components 
-                                     and the number of variables per component.")
+                                     and the number of features per component.")
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(style = "padding-left: 7.5px;",
@@ -772,11 +772,11 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   )
   
   output$keepX.tuned <- renderText(
-    paste("Variables of dataset 1: ",  paste(tunedVals$keepX, collapse = ", "))
+    paste("Features of dataset 1: ",  paste(tunedVals$keepX, collapse = ", "))
   )
   
   output$keepY.tuned <- renderText(
-    paste("Variables of dataset 2: ",  paste(tunedVals$keepY, collapse = ", "))
+    paste("Features of dataset 2: ",  paste(tunedVals$keepY, collapse = ", "))
   )
   
   output$scale.tuned <- renderText(
@@ -785,18 +785,18 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   # Download handler
   output$Indiv.download <- getDownloadHandler("PLS_Sampleplot.png", plot.indiv)
-  output$Var.download <- getDownloadHandler("PLS_Variableplot.png", plot.var)
+  output$Var.download <- getDownloadHandler("PLS_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$Img.download <- getDownloadHandler("PLS_Heatmap.png", plot.img, width = 2592, height = 1944)
-  output$SelVarX.download <- getDownloadHandler("PLS_SelectedVariable1.csv", table.selVarX, type = "csv")
-  output$SelVarY.download <- getDownloadHandler("PLS_SelectedVariables2.csv", table.selVarY, type = "csv")
+  output$SelVarX.download <- getDownloadHandler("PLS_SelectedFeatures1.csv", table.selVarX, type = "csv")
+  output$SelVarY.download <- getDownloadHandler("PLS_SelectedFeatures2.csv", table.selVarY, type = "csv")
   
   output$Indiv.download.tuned <- getDownloadHandler("PLS_tuned_Sampleplot.png", plot.indiv.tuned)
-  output$Var.download.tuned <- getDownloadHandler("PLS_tuned_Variableplot.png", plot.var.tuned)
+  output$Var.download.tuned <- getDownloadHandler("PLS_tuned_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
   output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
-  output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariable1.csv", table.selVarX.tuned, type = "csv")
-  output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedVariables2.csv", table.selVarY.tuned, type = "csv")
+  output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedFeatures1.csv", table.selVarX.tuned, type = "csv")
+  output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedFeatures2.csv", table.selVarY.tuned, type = "csv")
 }
 
 #' Information texts
@@ -805,7 +805,7 @@ render_spls_infotexts <- function(output){
   output$sPLSinfotext <- renderText({
    HTML("The standard PLS is a multivariate analysis used to analyse two datasets by maximising the covariance between the datasets components.
    The <b>s</b>parse <b>P</b>rojection to <b>L</b>atent <b>S</b>tructure is a variant of the PLS, 
-   which combines the correlation calculation and final variable selection into one step instead of two like the standard PLS has. 
+   which combines the correlation calculation and final features selection into one step instead of two like the standard PLS has. 
    It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis. <br/>
    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a> and
    in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>L\u00EA Cao et.al. (2008)</a>).

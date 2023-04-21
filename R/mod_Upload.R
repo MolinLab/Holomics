@@ -70,10 +70,10 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         output$infotext <- renderText(
           "The dataset has to be a matrix in an excel or csv file, whereas the rows have to be the samples and the columns the measured features. <br/>
 	         The first column has to contain the sample names and the first row the features names. <br/>
-	         If the data contains more variables/columns then excel allows, please transpose the data format and select the 'transposed format' checkbox.<br/>
+	         If the dataset contains more features/columns then excel allows, please transpose the matrix in the file and select the 'transposed format' checkbox.<br/>
            Also if the dataset contains more than 10.000 features, Holomics will filter the dataset to 10.000 or less features as mixOmics suggests to use
           their package with max. 10.000 features. </br>
-          In addition any wanted/necessary normalisation needs to be done before using Holomics."
+          In addition, any wanted/necessary normalisation needs to be done before using Holomics."
         )
         
         output$inputFields <- renderUI({

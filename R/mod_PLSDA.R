@@ -508,7 +508,7 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   )
   
   output$keepX.tuned <- renderText(
-    paste("Variables of dataset 1: ",  paste(tunedVals$keepX, collapse = ", "))
+    paste("Features of dataset: ",  paste(tunedVals$keepX, collapse = ", "))
   )
   
   output$scale.tuned <- renderText(
@@ -521,14 +521,14 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   })
   
   output$Indiv.download <- getDownloadHandler("PLS-DA_Sampleplot.png", plot.indiv)
-  output$Var.download <- getDownloadHandler("PLS-DA_Variableplot.png", plot.var)
+  output$Var.download <- getDownloadHandler("PLS-DA_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
-  output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedVariables.csv", table.selVar, type = "csv")
+  output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedFeatures.csv", table.selVar, type = "csv")
   
   output$Indiv.download.tuned <- getDownloadHandler("PLS-DA_filtered_Sampleplot.png", plot.indiv.tuned)
-  output$Var.download.tuned <- getDownloadHandler("PLS-DA_filtered_Variableplot.png", plot.var.tuned)
+  output$Var.download.tuned <- getDownloadHandler("PLS-DA_filtered_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PLS-DA_filtered_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
-  output$SelVar.download.tuned <- getDownloadHandler("PLS-DA_filtered  _SelectedVariables.csv", table.selVar.tuned, type = "csv")
+  output$SelVar.download.tuned <- getDownloadHandler("PLS-DA_filtered_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
   
   output$Filter.download <- downloadHandler(
     filename = function() {
