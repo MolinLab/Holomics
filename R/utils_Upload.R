@@ -287,6 +287,8 @@ performMixMC <- function(data){
   keep.asv <- which(colSums(data)*100/(sum(colSums(data)))>0.01)
   data <- data[,keep.asv]
   data <- mixOmics::logratio.transfo(as.matrix(data), logratio = "CLR")
+  class(data) <- "matrix"
+  data <- as.data.frame(data)
   return (data)
 }
 
