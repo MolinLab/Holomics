@@ -660,7 +660,11 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.load.tuned <- function(){
     if (!is.null(resultTuned())){
       req(input$load.comp.tuned)
-      plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned))
+      names <- getDatasetNames(dataSelection$data1Name, dataSelection$data2Name)
+      plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned), 
+                   subtitle = lapply(c(names$name1, names$name2),
+                                     function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'"))
+      )
     }
   }
   

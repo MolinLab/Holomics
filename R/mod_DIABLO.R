@@ -632,11 +632,11 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = input$showLine, legend.title = title,
+        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = input$showLine.tuned, legend.title = title,
                              size.labels = input$datasetSizeCircos.tuned, size.variables = input$featureSizeCircos.tuned,
                              color.Y = colors)
       } else {
-        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = input$showLine, legend.title = title, 
+        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = input$showLine.tuned, legend.title = title, 
                              size.labels = input$datasetSizeCircos.tuned, size.variables = input$featureSizeCircos.tuned)
       }
     }
