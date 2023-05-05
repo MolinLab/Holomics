@@ -324,8 +324,21 @@ getCircosPlot <- function(ns, postfix = ""){
   return (
     tabPanel("Circos plot",
              fluidRow(
-               numericInput(paste0(ns("cutoffCircos"), postfix), "Cutoff value",
+               bs4Dash::column(width = 3,
+                numericInput(paste0(ns("cutoffCircos"), postfix), "Cutoff value",
                             min = 0, max = 1, step = 0.1, value = 0.7)
+               ),
+               bs4Dash::column(width = 4,
+                numericInput(paste0(ns("datasetSizeCircos"), postfix), "Dataset label size",
+                            min = 0.1, max = 2, step = 0.1, value = 1.2)
+               ),
+               bs4Dash::column(width = 4,
+                numericInput(paste0(ns("featureSizeCircos"), postfix), "Feature label size",
+                            min = 0.1, max = 1, step = 0.1, value = 0.7)
+               )
+             ),
+             fluidRow(
+               awesomeCheckbox(paste0(ns("showLine"), postfix), "Show expression line", value = TRUE)
              ),
              fluidRow(
                bs4Dash::column(width = 12,

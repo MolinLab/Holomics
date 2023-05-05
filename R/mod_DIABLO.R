@@ -534,10 +534,12 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = TRUE, legend.title = title,
-                             size.labels =1.5, size.variables = .85, color.Y = colors)
+        mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = input$showLine, legend.title = title,
+                             size.labels = input$datasetSizeCircos, size.variables = input$featureSizeCircos,
+                             color.Y = colors)
       } else {
-        mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = TRUE, legend.title = title)      
+        mixOmics::circosPlot(result(), cutoff = input$cutoffCircos, line = input$showLine, legend.title = title,
+                             size.labels = input$datasetSizeCircos, size.variables = input$featureSizeCircos)      
       }
     }
   }
@@ -630,13 +632,12 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
-                             legend.title = title, size.labels =1.5, 
-                             size.variables = .85, color.Y = colors)
+        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = input$showLine, legend.title = title,
+                             size.labels = input$datasetSizeCircos.tuned, size.variables = input$featureSizeCircos.tuned,
+                             color.Y = colors)
       } else {
-        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = TRUE,
-                             legend.title = title, size.labels =1.5, 
-                             size.variables = .85)
+        mixOmics::circosPlot(result.tuned(), cutoff = input$cutoffCircos.tuned, line = input$showLine, legend.title = title, 
+                             size.labels = input$datasetSizeCircos.tuned, size.variables = input$featureSizeCircos.tuned)
       }
     }
   }
