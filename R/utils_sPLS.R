@@ -66,16 +66,28 @@ getsPLSTuningPlots <- function(ns){
              fluidRow(
                bs4Dash::tabBox(width = 12,
                                tabPanel("Components",
-                                        plotOutput(ns("Tuned.ncomp")),
-                                        downloadButton(ns("Tuned.ncomp.download"), "Save plot")
+                                        fluidRow(
+                                          bs4Dash::column(width = 12,
+                                            plotOutput(ns("Tuned.ncomp")),
+                                            downloadButton(ns("Tuned.ncomp.download"), "Save plot")
+                                          )
+                                        )
                                ),
                                tabPanel("Features dataset 1",
-                                        plotOutput(ns("Tuned.keepX")),
-                                        downloadButton(ns("Tuned.keepX.download"), "Save plot")
+                                        fluidRow(
+                                          bs4Dash::column(width = 12,
+                                            plotOutput(ns("Tuned.keepX")),
+                                            downloadButton(ns("Tuned.keepX.download"), "Save plot")
+                                          )
+                                        )
                                ),
                                tabPanel("Features dataset 2",
-                                        plotOutput(ns("Tuned.keepY")),
-                                        downloadButton(ns("Tuned.keepY.download"), "Save plot")
+                                        fluidRow(
+                                          bs4Dash::column(width = 12,
+                                            plotOutput(ns("Tuned.keepY")),
+                                            downloadButton(ns("Tuned.keepY.download"), "Save plot")
+                                          )
+                                        )
                                )
                )
              )

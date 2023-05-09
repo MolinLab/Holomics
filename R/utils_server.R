@@ -299,6 +299,17 @@ getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800,
   )
 }
 
+getGgplotDownloadHandler <- function(filename, plot){
+  downloadHandler(
+    filename = filename,
+    content = function(file) {
+      device <- function(..., width, height) {
+        grDevices::png(..., width = 1800, height = 1200, res = 300)
+      }
+      ggplot2::ggsave(file, plot = plot, device = device)
+  })
+}
+
 #' @description A utils function that returns the error
 #' message according to the missing data
 #'

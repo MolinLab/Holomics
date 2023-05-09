@@ -286,8 +286,10 @@ getArrowPlot <- function(ns, postfix = ""){
              fluidRow(
                bs4Dash::column(width = 12,
                                textOutput(paste0(ns("arrow.error"), postfix)),
-                               plotOutput(paste0(ns("Arrow"), postfix)))
-             )
+                               plotOutput(paste0(ns("Arrow"), postfix)),
+                               downloadButton(paste0(ns("Arrow.download"), postfix), "Save plot"))
+    
+               )
     )
   )
 }
