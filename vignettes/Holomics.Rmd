@@ -130,7 +130,7 @@ knitr::kable(data)
 ```
 
 ## Workflow overview
-To make use of all the functionality provided by <b>Holomics</b>, the below described workflow should be followed. Firstly, the datasets are uploaded where an eventual pre-filtering/pre-processing step takes place. Afterwards, the single-omics analysis is performed, where key features are identified and the datasets are filtered accordingly. With these filtered datasets, the multi-omics analyses is applied to identify correlations between 2-n datasets. 
+To make use of all the functionality provided by <b>Holomics</b>, the below described workflow should be followed. Firstly, the datasets are uploaded where an eventual pre-filtering/transformation step takes place. Afterwards, the single-omics analysis is performed, where key features are identified and the datasets are filtered accordingly. With these filtered datasets, the multi-omics analyses is applied to identify correlations between 2-n datasets. 
 
 <br>
 

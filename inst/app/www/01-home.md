@@ -17,7 +17,7 @@ mixOmics provides numerous analysis algorithms for the integrative analysis of o
 ### Workflow
 To make use of all the functionality provided by Holomics, a certain workflow should be followed.
 
-<p class="workflow-step">Input datasets: </p> The needed datasets for the analyses have to be uploaded via the "Data upload" page. These datasets include the collected omics data itself (e.g. count tables) and a separate file containing the allocated classes (meta information) of the samples measured in the omics datasets. <br>
+<p class="workflow-step">Input datasets: </p> The needed datasets for the analyses have to be uploaded via the "Data upload" page. These datasets include the collected omics data itself (e.g. count tables) and a separate file containing the allocated classes (meta information) of the samples measured in the omics datasets. The uploaded omics datasets will optionally be pre-filtered/transformed before they can be used for the single-omics analyses. <br>
 
 <p class="workflow-step">Single-omics analyses: </p> With the single-omics analyses you can get a first impression of your data. You can identify the key features and filter your dataset accordingly.   <br>
 
