@@ -485,10 +485,10 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::cimDiablo(result(), comp = 1, margin=c(8,20), legend.position = "right",
-                            size.legend = 1, color.Y = colors)
+                            size.legend = 1, color.Y = colors, trim = F)
       } else {
         mixOmics::cimDiablo(result(), comp = 1, margin=c(8,20), legend.position = "right",
-                            size.legend = 1)
+                            size.legend = 1, trim = F)
       }
     }    
   }
@@ -582,10 +582,10 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, margin=c(8,20), legend.position = "right",
-                            size.legend = 1, color.Y = colors)
+                            size.legend = 1, color.Y = colors, trim = F)
       } else {
         mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, margin=c(8,20), legend.position = "right",
-                            size.legend = 1)
+                            size.legend = 1, trim = F)
       }
     }    
   }
@@ -754,7 +754,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Var.download <- getDownloadHandler("DIABLO_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("DIABLO_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 2592, height = 1944)
-  output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo)
+  output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo, width = 2592, height = 1944)
   output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 2592, height = 1944)
   output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", diabloNetwork, "html")
   output$NetworkGml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.gml", diabloNetwork, "gml")
@@ -766,7 +766,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Var.download.tuned <- getDownloadHandler("DIABLO_tuned_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("DIABLO_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
   output$Img.download.tuned <- getDownloadHandler("DIABLO_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
-  output$Diablo.download.tuned <- getDownloadHandler("DIABLO_tuned_Diabloplot.png", plot.diablo.tuned)
+  output$Diablo.download.tuned <- getDownloadHandler("DIABLO_tuned_Diabloplot.png", plot.diablo.tuned, width = 2592, height = 1944)
   output$Circos.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.png", plot.circos.tuned, width = 2592, height = 1944)
   output$NetworkHtml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.html", diabloNetworkTuned, "html")
   output$NetworkGml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.gml", diabloNetworkTuned, "gml")
