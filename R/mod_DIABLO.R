@@ -758,7 +758,8 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 2592, height = 1944)
   output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", diabloNetwork, "html")
   output$NetworkGml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.gml", diabloNetwork, "gml")
-  output$Arrow.download <- getGgplotDownloadHandler("DIABLO_Arrowplot.png", plot.arrow())
+  output$Arrow.download <- getDownloadHandler("DIABLO_Arrowplot.png", plot.arrow, type = "ggplot")
+  output$Img.table.download <- getDownloadHandler("DIABLO_Heatmap.csv", contentfct = plot.img, type = "csv", tablefct = cimToTable)
   
   
   output$Indiv.download.tuned <- getDownloadHandler("DIABLO_tuned_Sampleplot.png", plot.indiv.tuned)
@@ -769,8 +770,8 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Circos.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.png", plot.circos.tuned, width = 2592, height = 1944)
   output$NetworkHtml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.html", diabloNetworkTuned, "html")
   output$NetworkGml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.gml", diabloNetworkTuned, "gml")
-  output$Arrow.download.tuned <- getGgplotDownloadHandler("DIABLO_tuned_Arrowplot.png", plot.arrow.tuned())
-  
+  output$Arrow.download.tuned <- getDownloadHandler("DIABLO_tuned_Arrowplot.png", plot.arrow.tuned, type = "ggplot") 
+  output$Img.table.download.tuned <- getDownloadHandler("DIABLO_Heatmap_tuned.csv", contentfct = plot.img.tuned, type = "csv", tablefct = cimToTable)
 }
 
 #' Generate the error messages

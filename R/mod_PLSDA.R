@@ -243,7 +243,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       #set error rate plot    
       errorPlot <- plot(tune.splsda.result)
       output$ErrorRate <- renderPlot(errorPlot)
-      output$ErrorRate.download <- getGgplotDownloadHandler("PLSDA_error_rates.png", errorPlot)
+      output$ErrorRate.download <- getDownloadHandler("PLSDA_error_rates.png", type = "ggplot", plot = errorPlot)
         
       incProgress(1/3)
       error <- F

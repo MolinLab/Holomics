@@ -379,11 +379,11 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     
     output$Tuned.keepY <- renderPlot(tuneYplot)
     
-    output$Tuned.ncomp.download <- getGgplotDownloadHandler("PLS_Q2_Components_Plot.png", q2plot)
+    output$Tuned.ncomp.download <- getDownloadHandler("PLS_Q2_Components_Plot.png", type = "ggplot", plot = q2plot)
     
-    output$Tuned.keepX.download <- getGgplotDownloadHandler("PLS_keepX_Plot.png", tuneXplot)
+    output$Tuned.keepX.download <- getDownloadHandler("PLS_keepX_Plot.png", type = "ggplot", plot = tuneXplot)
     
-    output$Tuned.keepY.download <- getGgplotDownloadHandler("PLS_keepY_Plot.png", tuneYplot)
+    output$Tuned.keepY.download <- getDownloadHandler("PLS_keepY_Plot.png", type = "ggplot", plot = tuneYplot)
       
     tunedVals$ncomp <- ncomp
     tunedVals$keepX <- keepX
@@ -773,7 +773,8 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   output$Img.download <- getDownloadHandler("PLS_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$SelVarX.download <- getDownloadHandler("PLS_SelectedFeatures1.csv", table.selVarX, type = "csv")
   output$SelVarY.download <- getDownloadHandler("PLS_SelectedFeatures2.csv", table.selVarY, type = "csv")
-  output$Arrow.download <- getGgplotDownloadHandler("PLS_Arrowplot.png", plot.arrow())
+  output$Arrow.download <- getDownloadHandler("PLS_Arrowplot.png", plot.arrow, type = "ggplot")
+  output$Img.table.download <- getDownloadHandler("PLS_Heatmap.csv", contentfct = plot.img, type = "csv", tablefct = cimToTable)
   
   
   output$Indiv.download.tuned <- getDownloadHandler("PLS_tuned_Sampleplot.png", plot.indiv.tuned)
@@ -782,8 +783,8 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedFeatures1.csv", table.selVarX.tuned, type = "csv")
   output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedFeatures2.csv", table.selVarY.tuned, type = "csv")
-  output$Arrow.download.tuned <- getGgplotDownloadHandler("PLS_tuned_Arrowplot.png", plot.arrow.tuned())
-  
+  output$Arrow.download.tuned <- getDownloadHandler("PLS_tuned_Arrowplot.png", plot.arrow.tuned, type = "ggplot")
+  output$Img.table.download.tuned <- getDownloadHandler("PLS_Heatmap_tuned.csv", contentfct = plot.img.tuned, type = "csv", tablefct = cimToTable)
 }
 
 #' Information texts

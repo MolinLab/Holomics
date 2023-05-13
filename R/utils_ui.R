@@ -265,7 +265,9 @@ getCimPlot <- function(ns, postfix = ""){
                bs4Dash::column(width = 12,
                                textOutput(paste0(ns("img.error"), postfix)),
                                plotOutput(paste0(ns("Img"), postfix)),
-                               downloadButton(paste0(ns("Img.download"), postfix), "Save plot"))
+                               downloadButton(paste0(ns("Img.download"), postfix), "Save plot"),
+                               downloadButton(paste0(ns("Img.table.download"), postfix), "Save as table")
+              )
              )
     )
   )

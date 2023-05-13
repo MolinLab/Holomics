@@ -279,7 +279,7 @@ plotArrow <- function(result, classes, title, indNames, col.per.group) {
 #' @return downloadHandler
 #'
 #' @noRd
-getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800, height = 1200){
+getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800, height = 1200, plot = NULL, tablefct = NULL){
   return (
     downloadHandler(
       filename = filename,
@@ -289,25 +289,27 @@ getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800,
           contentfct()
           dev.off()
         }else if (type == "csv"){
-          write.csv2(contentfct(), file)
+          if (is.null(table)){
+            write.csv2(contentfct(), file)
+          } else {
+            write.csv2(tablefct(contentfct()), file)
+          }
         } else if (type == "xlsx"){
           df <- contentfct()
           openxlsx::write.xlsx(df, file, rowNames = TRUE, colNames = TRUE)
+        } else if (type == "ggplot"){
+          device <- function(..., width, height) {
+            grDevices::png(..., width = 1800, height = 1200, res = 300)
+          }
+          if (is.null(plot)){
+            ggplot2::ggsave(file, plot = contentfct(), device = device)
+          } else {
+            ggplot2::ggsave(file, plot = plot, device = device)
+          }
         }
       }
     )
   )
-}
-
-getGgplotDownloadHandler <- function(filename, plot){
-  downloadHandler(
-    filename = filename,
-    content = function(file) {
-      device <- function(..., width, height) {
-        grDevices::png(..., width = 1800, height = 1200, res = 300)
-      }
-      ggplot2::ggsave(file, plot = plot, device = device)
-  })
 }
 
 #' @description A utils function that returns the error
@@ -416,4 +418,17 @@ getDatasetNames <- function(name1, name2){
     name2 <- paste(name1, "2")
   }
   return(list(name1 = name1, name2 = name2))
+}
+
+#'
+#' @description A utils function, which generates the heatmap table
+#'
+#' @return matrix with the heatmap values
+#'
+#' @noRd
+cimToTable <- function(cimPlot){
+  hmp <- cimPlot$mat
+  rownames(hmp) <- cimPlot$row.names
+  colnames(hmp) <- cimPlot$col.names
+  return(as.data.frame(hmp))
 }
