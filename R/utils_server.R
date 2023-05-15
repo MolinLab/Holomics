@@ -289,7 +289,7 @@ getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800,
           contentfct()
           dev.off()
         }else if (type == "csv"){
-          if (is.null(table)){
+          if (is.null(tablefct)){
             write.csv2(contentfct(), file)
           } else {
             write.csv2(tablefct(contentfct()), file)
