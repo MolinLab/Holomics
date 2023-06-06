@@ -1,0 +1,16 @@
+^renv$
+^renv\.lock$
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+dev_history.R
+^dev$
+$run_dev.*
+^README\.Rmd$
+^\.github$
+^app\.R$
+^rsconnect$
+^Dockerfile$
+^\.dockerignore$
+^testdata$
+^LICENSE\.md$

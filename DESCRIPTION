@@ -1,0 +1,44 @@
+Type: Package
+Package: Holomics
+Title: Shiny App to perform multi-omics analyses
+Version: 0.1.0
+Authors@R: 
+    c(person(given = "Katharina", family = "Munk", role = c("aut", "cre"), email = "kathimunk@gmail.com"),
+    person(given = "Eva M.", family = "Molin", role = c("ctb")))
+Description: Shiny app, which allows its user to perform single- and multi-omics analyses using different datasets.
+License: GPL (>= 3)
+URL: https://github.com/evasehr/Holomics
+BugReports: https://github.com/evasehr/Holomics/issues
+Depends: 
+    R (>= 4.0)
+Imports:
+    golem,
+    bs4Dash (>= 2.0.2),
+    DT,
+    shiny (>= 1.6.0),
+    shinybusy,
+    visNetwork,
+    shinyWidgets,
+    shinyjs,
+    shinyalert,
+    shinyvalidate,
+    openxlsx,
+    readxl,
+    igraph,
+    dplyr,
+    BiocParallel,
+    config,
+    ggplot2,
+    stringr,
+    mixOmics
+biocViews:
+    mixOmics (>= 6.16.3)
+VignetteBuilder:
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
+Language: en-US
+Suggests: 
+    knitr,
+    rmarkdown
