@@ -1,0 +1,270 @@
+/** Defines the general color theme for the application **/
+
+:root {
+  --grey: #f1f3f2;
+  --green: #bfc531;
+  --blue: #39B6CA;
+  --orange: #e6a136;
+}
+
+/* Main div */
+.content-wrapper{
+  background-color: white;
+}
+
+/* Startpage */
+.workflow-step{
+  color: var(--green);
+  font-weight: bold;
+  font-size: 1.25rem;
+  display: inline;
+}
+
+/* Link to mixOmics */
+.mixOmics-link, .mixOmics-link:hover{
+  color: var(--green);
+  cursor: pointer;
+}
+
+/* Links to scientifc papers */
+.ref-link, .ref-link{
+  color: black;
+  cursor: pointer;
+}
+
+/* Sidebar */
+#sidebarId{
+  background-color: var(--grey);
+  overflow-y: auto;
+}
+
+#sidebarItemExpanded{
+  background-color: var(--green);
+}
+
+#sidebarId::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Top of sidebar */
+.brand-link{
+  background-color: var(--green) !important;
+  color: white !important;
+  border-bottom: 1px solid var(--green) !important;
+}
+
+.brand-image{
+  box-shadow: none !important;;
+}
+
+.brand-text{
+  font-weight: 500 !important;
+}
+
+/* Top of sidebar hover */
+a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg-secondary:hover{
+  background-color: var(--green) !important;
+}
+
+/* Sidebar items */
+[class*="sidebar-dark-"] .sidebar a {
+  color: white;
+}
+
+/* Sidebar items hover */
+[class*="sidebar-dark-"] .nav-sidebar > .nav-item:hover > .nav-link{
+  background-color: white;
+  color: var(--green) ;
+}
+
+/* Active sidebar item */
+[class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link.active{
+  color: var(--green) ;
+}
+
+.nav-link.active{
+  background-color: white !important;
+}
+
+/* Opened menu in sidebar */
+[class*="sidebar-dark-"] .nav-sidebar > .nav-item.menu-open > .nav-link.active {
+  color: var(--green);
+}
+
+/* Subitems in sidebar */
+.treeview-link{
+  color: white !important;
+}
+
+.treeview-link.active{
+  color: var(--green) !important;
+}
+
+/*Subitems in sidebar hover */
+.treeview-link:hover{
+  background-color: white;
+  color: var(--green);
+}
+
+/* Save plot buttons, delete, info, tune and ok buttons */
+.shiny-download-link, .shiny-download-link:hover, button[id*='-tune'], button[id*='-tune']:hover, 
+button[id*='upload-'], button[id*='upload-']:hover, button[id*='-info']:hover, button[class='confirm'],
+button[id*='.start']{
+  background-color: var(--green) !important;
+  color: white !important;
+}
+
+#downloadDIABLO-Network,  #downloadDIABLO-Network\.tuned{
+  font-weight: 400;
+  border: 1px solid transparent;
+  padding: .375rem .75rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5;
+  font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol" !important;
+  background-color: var(--green) !important;
+  color: white !important;
+  border-color: #ddd !important;
+  border-radius: .25rem !important;
+  margin-bottom: .25rem;
+}
+
+/* General awesome buttons */
+.awesome-checkbox input[type="checkbox"]:focus+label::before, 
+.awesome-radio input[type="radio"]:focus+label::before{
+  outline: none;
+}
+
+/* Collapse card buttons */
+.btn-sm{
+  color: var(--green)
+}
+
+/* Card header */
+.card .card-header .nav-pills .nav-item .nav-link {
+  color: black;
+}
+
+.card .card-header .nav-pills .nav-item .nav-link.active {
+  background-color: var(--green) !important;
+  color: white;
+}
+
+/* Checkboxes and radio buttons */
+.checkbox-primary input[type="checkbox"]:checked + label::before, .checkbox-primary input[type="radio"]:checked + label::before,
+.radio-primary input[type="radio"]:checked + label::after, .radio-primary input[type="radio"] + label::after{
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+.radio-primary input[type="radio"]:checked + label::before, .radio-primary input[type="radio"] + label::before{
+  border-color: var(--green);
+}
+
+/* Tune and filter box */
+div[id*='Box'] > .card-body{
+  padding: .5rem 1.25rem .5rem 1.25rem;
+}
+
+div[id*='Box'] > .card-header{
+  display: none;
+}
+
+/* Tune switch */
+.material-switch{
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+
+.material-switch > label {
+  margin-bottom: .75rem;
+}
+
+.material-switch > label::before{
+  box-shadow: inset 0 0 10px rgb(191, 197, 49);
+  background-color: var(--grey);
+}
+
+div[id*='-switchRow'] > {
+  margin: auto;
+  width: 100%;
+  margin-top: .5rem;
+}
+
+div[id*='-tune.switch']{
+  margin: 1rem auto 0 auto;
+}
+
+div[id*='-tune.switch'] > div {
+  margin-bottom: 0 !important;
+}
+
+/* Progress bar */
+.progress-bar{
+  background-color: var(--green);
+}
+
+/* Upload file input */
+div[id*="fileField"] > div{
+  margin-bottom: 0;
+}
+
+/* Upload general information box */
+#upload-general-information{
+  margin-bottom: 0;
+}
+
+/* Footer link */
+footer a{
+  color: #79151d;
+}
+
+/* Error messages */
+div[id*='errorMsg']{
+  display: flex;
+  align-items: center;
+  color: red;
+}
+
+div[id*='parameters.error']{
+  color: red;
+}
+
+/* Download buttons */
+a[id*='.download']{
+  float: right;
+}
+
+/* Info buttons */
+button[id*='-info']{
+  border-radius: 100%;
+  border-color: var(--green);
+  font-size: 8px;
+  padding: 1px 4px;
+  height: fit-content;
+  margin-left: .2rem;
+  background-color: var(--grey) !important;
+  color: black !important;
+}
+
+/* Scale info buttons */
+button[id*='scale-info']{
+  margin-left: -.8rem
+}
+
+/* Correlation legend dots */
+.line{
+  height: 2px;
+  width: 30px;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.line-blue{
+  background-color: #5995fa;
+}
+
+.line-red{
+  background-color: #de4236;
+} 

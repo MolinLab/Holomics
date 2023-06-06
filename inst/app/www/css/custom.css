@@ -1,0 +1,74 @@
+/** Defines css rules for specific widgets **/
+#DIABLO-nodes, #DIABLO-nodes\.tuned{
+  width: 30%;
+}
+
+#DIABLO-NetworkHtml\.download{
+  margin-right: .5rem;
+}
+
+#downloadDIABLO-Network:before, #downloadDIABLO-Network\.tuned:before, button[id*='upload-save']:before {
+  content: "\f0c7";
+  font-family: 'Font Awesome 5 Free' !important;
+  margin-right: 2px;
+}
+
+button[id*='upload-delete']:before{
+  content: "\f2ed";
+  font-family: 'Font Awesome 5 Free' !important;
+  margin-right: 2px;
+}
+
+button[id*='Filter.start']:before{
+  content: "\f144";
+  font-family: 'Font Awesome 6 Free' !important;
+  margin-right: 2px;
+}
+
+/* Network navigation parameters */
+div.vis-network div.vis-navigation div.vis-button.vis-up{
+  background-image: url("../img/diablo_navigation/arrow_up.png");
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-down{
+  background-image: url("../img/diablo_navigation/arrow_down.png");
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-left{
+  background-image: url("../img/diablo_navigation/arrow_left.png");
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-right{
+  background-image: url("../img/diablo_navigation/arrow_right.png");
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomIn{
+  background-image: url("../img/diablo_navigation/plus.png");
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomOut{
+  background-image: url("../img/diablo_navigation/minus.png");
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomExtends{
+    background-image: url("../img/diablo_navigation/window.png");
+}
+
+div.vis-network div.vis-navigation div.vis-button:hover{
+  box-shadow: 0 0 3px 3px rgba(191,197,49,.3);
+}
+
+/* Label for components input and upload analysis type */
+label[id*='ncomp-label'], label[id*='matrix-label'], label[for='upload-omicsAnalysis'], label[for='upload-plotName-selectized']{
+  display: none;
+}
+
+/* Plot name dropdown */
+#upload-plotName + div{
+  margin-bottom: 0;
+}
+
+/* Remove untuned DIABLO CIM button */
+div#DIABLO-img\.comp{
+  display: none;
+}
