@@ -248,7 +248,12 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       incProgress(1/3)
       error <- F
     }, error = function(cond){
-      getErrorMessage(cond)
+      if (grepl("system is computationally singular", cond$message, fixed = T)){
+        getShinyErrorAlert("An error appeared while trying to filter the dataset. <br> 
+                        Please reduce your number of components and try again!", html = T)
+      } else {
+        getErrorMessage(cond)
+      }
       return(T)
     })
     

@@ -247,7 +247,12 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
           
           return (list(nearZeroX = nearZeroX, nearZeroY = nearZeroY))
         } else {
-          getErrorMessage(cond)
+          if (grepl("system is computationally singular", cond$message, fixed = T)){
+            getShinyErrorAlert("An error appeared while trying to filter the dataset. <br> 
+                        Please reduce your number of components and try again!", html = T)
+          } else {
+            getErrorMessage(cond)
+          }
           return(NULL)
         }
       })

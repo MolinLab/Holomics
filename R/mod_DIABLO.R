@@ -285,7 +285,12 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
             dataName <- stringr::str_match(cond$message, "There are features with zero variance in block '([^']*)'")[2]
             return(dataName)
           } else {
-            getErrorMessage(cond)
+            if (grepl("system is computationally singular", cond$message, fixed = T)){
+              getShinyErrorAlert("An error appeared while trying to filter the dataset. <br> 
+                        Please reduce your number of components or change your design matrix and try again!", html = T)
+            } else {
+              getErrorMessage(cond)
+            }
             return(NULL)
           }
         })
