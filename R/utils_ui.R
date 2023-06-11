@@ -348,7 +348,8 @@ getCircosPlot <- function(ns, postfix = ""){
                bs4Dash::column(width = 12,
                                textOutput(paste0(ns("circos.error"), postfix)),
                                plotOutput(paste0(ns("Circos"), postfix)),
-                               downloadButton(paste0(ns("Circos.download"), postfix), "Save plot"))
+                               downloadButton(paste0(ns("Circos.download"), postfix), "Save plot")),
+                               downloadButton(paste0(ns("Circos.table.download"), postfix), "Save as table")
              )
     )
   )
