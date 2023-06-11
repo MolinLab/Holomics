@@ -761,7 +761,10 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo, width = 2592, height = 1944)
   output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 2592, height = 1944)
+<<<<<<< HEAD
   output$Circos.table.download <- getDownloadHandler("DIABLO_Circosplot.csv", plot.circos, type = "csv")
+=======
+>>>>>>> r1remote/main
   output$NetworkHtml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.html", diabloNetwork, "html")
   output$NetworkGml.download <- diabloGetNetworkDownloadHandler("DIABLO_Network.gml", diabloNetwork, "gml")
   output$Arrow.download <- getDownloadHandler("DIABLO_Arrowplot.png", plot.arrow, type = "ggplot")
@@ -774,7 +777,10 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Img.download.tuned <- getDownloadHandler("DIABLO_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$Diablo.download.tuned <- getDownloadHandler("DIABLO_tuned_Diabloplot.png", plot.diablo.tuned, width = 2592, height = 1944)
   output$Circos.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.png", plot.circos.tuned, width = 2592, height = 1944)
+<<<<<<< HEAD
   output$Circos.table.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.csv", plot.circos.tuned, type = "csv")
+=======
+>>>>>>> r1remote/main
   output$NetworkHtml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.html", diabloNetworkTuned, "html")
   output$NetworkGml.download.tuned <- diabloGetNetworkDownloadHandler("DIABLO_tuned_Network.gml", diabloNetworkTuned, "gml")
   output$Arrow.download.tuned <- getDownloadHandler("DIABLO_tuned_Arrowplot.png", plot.arrow.tuned, type = "ggplot") 

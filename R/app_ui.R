@@ -128,4 +128,3 @@ golem_add_external_resources <- function(){
     tags$link(rel = "stylesheet", type ="text/css", href="www/css/theme.css")
       )
 }
-

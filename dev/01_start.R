@@ -62,4 +62,3 @@ golem::use_utils_server()
 
 # go to dev/02_dev.R
 rstudioapi::navigateToFile( "dev/02_dev.R" )
-
