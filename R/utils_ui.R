@@ -255,11 +255,15 @@ getSelectedVarsPlot <- function(ns, postfix = ""){
 #' @return tabpanel
 #'
 #' @noRd
-getCimPlot <- function(ns, postfix = ""){
+getCimPlot <- function(ns, postfix = "", yMargin = 5){
   return(
     tabPanel("CIM",
-             fluidRow(
-               uiOutput(paste0(ns("img.comp"), postfix))
+             fluidRow(style = "display: flex; column-gap: 1rem",
+               uiOutput(paste0(ns("img.comp"), postfix)),
+               numericInput(paste0(ns("xmargin"), postfix), label = "X-Margin:", value = 5, 
+                            min = 1, max = 20, step = 1),
+               numericInput(paste0(ns("ymargin"), postfix), label = "Y-Margin:", value = yMargin, 
+                            min = 1, max = 20, step = 1)
              ),
              fluidRow(
                bs4Dash::column(width = 12,

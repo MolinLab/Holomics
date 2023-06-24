@@ -37,18 +37,26 @@ mod_DIABLO_ui <- function(id){
                                                                                            the connection between the datasets is")
                                                                               ),
                                                                               fluidRow(
-                                                                                numericInput(ns("matrix"), label = "", value = 0.1, 
-                                                                                             min = 0, max = 1, step = 0.1)
+                                                                                uiOutput(ns("matrix.comp")),
                                                                               )
                                                               )
                               )
                       ),
                       fluidRow(width = 12,
                                bs4Dash::tabBox(width = 12, collapsible = FALSE,
+                                               tabPanel("Pairwise correlations", 
+                                                        fluidRow(
+                                                          HTML("Below are all the pairwise correlations. <br>
+                                                          According to these you can set the value of the design matrix. <br>")   
+                                                        ),
+                                                        fluidRow(
+                                                          htmlOutput(ns("pairwiseCorr"))            
+                                                        )
+                                               ),
                                                getSamplePlot(ns),
                                                getVariablePlot(ns),
                                                getLoadingsPlot(ns),
-                                               getCimPlot(ns),
+                                               getCimPlot(ns, yMargin = 20),
                                                getArrowPlot(ns),
                                                getDiabloPlot(ns),
                                                getCircosPlot(ns), 
@@ -78,7 +86,7 @@ mod_DIABLO_ui <- function(id){
                                                getSamplePlot(ns, ".tuned"),
                                                getVariablePlot(ns, ".tuned"),
                                                getLoadingsPlot(ns, ".tuned"),
-                                               getCimPlot(ns, ".tuned"),
+                                               getCimPlot(ns, ".tuned", yMargin = 20),
                                                getArrowPlot(ns, ".tuned"),
                                                getDiabloPlot(ns, ".tuned"),
                                                getCircosPlot(ns, ".tuned"), 
@@ -208,6 +216,26 @@ observe_diablo_ui_components <- function(ns, session, input, output, data, dataS
   observeEvent(dataSelection$data, {
     useTunedVals(FALSE)
     shinyjs::hide("tunedCol")
+    
+    if (length(dataSelection$data) > 1){
+      result <- pairwiseCorrelation(dataSelection$data)
+      if (!is.null(result)){
+        output$matrix.comp <- renderUI({
+          value <- round(min(unlist(lapply(result, function(i) as.numeric(i[[1]])))), 1)
+          numericInput(ns("matrix"), label = "", value = value, 
+                       min = 0, max = 1, step = 0.1)
+        })
+        
+        output$pairwiseCorr <- renderText({
+          text = ""
+          for (i in 1:length(result)){
+            r = result[[i]]
+            text = paste0(text , paste0("Correlation between datasets '", r[2], "' and '", r[3], "': ", round(as.numeric(r[1]), 2)), " </br> ")
+          }
+          HTML(text)
+        })
+      }
+    }
   })
   
   #Observe node name selection
@@ -366,6 +394,7 @@ run_diablo_analysis <- function(ns, input, output, dataSelection, classSelection
     req(dataSelection$data)
     req(classSelection$data)
     req(diabloCheckValidSelection(dataSelection$data, classSelection$data)$valid)
+    req(input$matrix)
     X <- dataSelection$data
     Y <- classSelection$data[,2]  #only second column contains label information
     if (!is.null(X)){
@@ -489,10 +518,12 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
     if(!is.null(result()) & length(dataSelection$data) > 1){
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        mixOmics::cimDiablo(result(), comp = 1, margin=c(8,20), legend.position = "right",
-                            size.legend = 1, color.Y = colors, trim = F)
+        mixOmics::cimDiablo(result(), comp = 1, margin=c(input$xmargin, input$ymargin),
+                            legend.position = "right", size.legend = 1,
+                            color.Y = colors, trim = F)
       } else {
-        mixOmics::cimDiablo(result(), comp = 1, margin=c(8,20), legend.position = "right",
+        mixOmics::cimDiablo(result(), comp = 1, margin=c(input$xmargin, input$ymargin),
+                            legend.position = "right",
                             size.legend = 1, trim = F)
       }
     }    
@@ -586,10 +617,14 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       comp.img.tuned <- checkCompNcompCombination(result.tuned()$ncomp, comp.img.tuned())
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, margin=c(8,20), legend.position = "right",
+        mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, 
+                            margin=c(input$xmargin.tuned, input$ymargin.tuned), 
+                            legend.position = "right",
                             size.legend = 1, color.Y = colors, trim = F)
       } else {
-        mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned, margin=c(8,20), legend.position = "right",
+        mixOmics::cimDiablo(result.tuned(), comp = comp.img.tuned,
+                            margin=c(input$xmargin.tuned, input$ymargin.tuned), 
+                            legend.position = "right",
                             size.legend = 1, trim = F)
       }
     }    

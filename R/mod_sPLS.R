@@ -582,7 +582,8 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.img <- function(){
     if(!is.null(result())){
       comp.img <- checkCompNcompCombination(result()$ncomp, comp.img())
-      mixOmics::cim(result(), comp = comp.img, margin=c(8,10))
+      mixOmics::cim(result(), comp = comp.img, margin=c(input$xmargin, input$ymargin), 
+                    xlab = dataSelection$data1Name, ylab = dataSelection$data2Name)
     }
   }
   
@@ -654,7 +655,8 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   plot.img.tuned <- function(){
     if (!is.null(resultTuned())){
-      mixOmics::cim(resultTuned(), comp = comp.img.tuned(), margin=c(8,10))
+      mixOmics::cim(resultTuned(), comp = comp.img.tuned(), margin=c(input$xmargin.tuned, input$ymargin.tuned),
+                    xlab = dataSelection$data1Name, ylab = dataSelection$data2Name)
     }
   }
   

@@ -160,3 +160,24 @@ diabloGetNetworkDownloadHandler <- function(filename, network, type){
     )
   )
 }
+
+#'
+#' @description A utils function, calculates the pairwise correlation
+#' of the datasets 
+#'
+#' @return pairwise correlation
+#'
+#' @noRd
+pairwiseCorrelation <- function(data){
+  comb <- combn(names(data),2)
+  results <- lapply(1:ncol(comb), function(i) {
+    nameX = comb[1, i]
+    nameY = comb[2, i]
+    X <- data[[nameX]]
+    Y <- data[[nameY]]
+    res <- mixOmics::pls(X, Y, ncomp = 1)
+    cor <- cor(res$variates$X, res$variates$Y)
+    c(as.numeric(cor), nameX, nameY)
+  })
+  return(results)
+}
