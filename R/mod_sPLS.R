@@ -134,11 +134,11 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
       #same choice name as before but the data is not necessarily the same!
       #observeEvent of input$dataSelection will not be triggered
       if(!is.null(selection) && selection == choice){
-        dataSelection$data1 <- data$data[[choice]]$omicsData
-        dataSelection$data1Name <- data$data[[choice]]$name
+        dataSelection$dataX <- data$data[[choice]]$omicsData
+        dataSelection$dataXName <- data$data[[choice]]$name
       }
       
-      getSelectionComponent(ns("dataSelection1"), "Select first dataset:", choices = choices, width = "fit-content")
+      getSelectionComponent(ns("dataSelection1"), "Select dataset X:", choices = choices, width = "fit-content")
     })
     
     output$dataSelComp2 <- renderUI({
@@ -152,11 +152,11 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
       #same choice name as before but the data is not necessarily the same!
       #observeEvent of input$dataSelection will not be triggered
       if(!is.null(selection) && selection == choice){
-        dataSelection$data2 <- data$data[[choice]]$omicsData
-        dataSelection$data2Name <- data$data[[choice]]$name
+        dataSelection$dataY <- data$data[[choice]]$omicsData
+        dataSelection$dataYName <- data$data[[choice]]$name
       }
       
-      getSelectionComponent(ns("dataSelection2"), "Select second dataset:", choices = choices, width = "fit-content")
+      getSelectionComponent(ns("dataSelection2"), "Select dataset Y:", choices = choices, width = "fit-content")
     })
   })
   
@@ -182,13 +182,13 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
 
   # Observe change of data selection
   observeEvent(input$dataSelection1, {
-    dataSelection$data1 <- data$data[[input$dataSelection1]]$omicsData
-    dataSelection$data1Name <- data$data[[input$dataSelection1]]$name
+    dataSelection$dataX <- data$data[[input$dataSelection1]]$omicsData
+    dataSelection$dataXName <- data$data[[input$dataSelection1]]$name
   })
   
   observeEvent(input$dataSelection2, {
-    dataSelection$data2 <- data$data[[input$dataSelection2]]$omicsData
-    dataSelection$data2Name <- data$data[[input$dataSelection2]]$name
+    dataSelection$dataY <- data$data[[input$dataSelection2]]$omicsData
+    dataSelection$dataYName <- data$data[[input$dataSelection2]]$name
   })
   
   # Observe change of class selection
@@ -198,7 +198,7 @@ observe_spls_ui_components <- function(ns, input, output, data, dataSelection, c
   
   # Observe change of data
   observeDataset <- reactive({
-    list(dataSelection$data1, dataSelection$data2)
+    list(dataSelection$dataX, dataSelection$dataY)
   })
   
   observeEvent(observeDataset(), {
@@ -227,8 +227,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
   error <- F
   withProgress(message = 'Tuning parameters .... Please wait!', value = 1/4, {
     
-    X <- dataSelection$data1
-    Y <- dataSelection$data2
+    X <- dataSelection$dataX
+    Y <- dataSelection$dataY
     result <- result()
     
     #tune ncomp
@@ -411,13 +411,13 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
 #' @noRd
 run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, useTunedVals, tunedVals){
   spls.result <- reactive({
-    req(dataSelection$data1)
-    req(dataSelection$data2)
-    req(nrow(classSelection$data) == nrow(dataSelection$data1) && nrow(classSelection$data) == nrow(dataSelection$data2))
-    req(identical(classSelection$data[,1], rownames(dataSelection$data1)) && 
-          identical(classSelection$data[,1], rownames(dataSelection$data2)))
-    X <- dataSelection$data1
-    Y <- dataSelection$data2
+    req(dataSelection$dataX)
+    req(dataSelection$dataY)
+    req(nrow(classSelection$data) == nrow(dataSelection$dataX) && nrow(classSelection$data) == nrow(dataSelection$dataY))
+    req(identical(classSelection$data[,1], rownames(dataSelection$dataX)) && 
+          identical(classSelection$data[,1], rownames(dataSelection$dataY)))
+    X <- dataSelection$dataX
+    Y <- dataSelection$dataY
     
     msg <- checkDataNcompCompatibility(X, input$ncomp)
     if (msg == ""){
@@ -440,13 +440,13 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
   
   spls.result.tuned <- reactive({
     if (useTunedVals()){
-      req(dataSelection$data1)
-      req(dataSelection$data2)
-      req(nrow(classSelection$data) == nrow(dataSelection$data1) && nrow(classSelection$data) == nrow(dataSelection$data2))
-      req(identical(classSelection$data[,1], rownames(dataSelection$data1)) && 
-            identical(classSelection$data[,1], rownames(dataSelection$data2)))
-      X <- dataSelection$data1
-      Y <- dataSelection$data2
+      req(dataSelection$dataX)
+      req(dataSelection$dataY)
+      req(nrow(classSelection$data) == nrow(dataSelection$dataX) && nrow(classSelection$data) == nrow(dataSelection$dataY))
+      req(identical(classSelection$data[,1], rownames(dataSelection$dataX)) && 
+            identical(classSelection$data[,1], rownames(dataSelection$dataY)))
+      X <- dataSelection$dataX
+      Y <- dataSelection$dataY
     
         tryCatch({
         spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedVals$ncomp, scale = tunedVals$scale,
@@ -467,7 +467,7 @@ generate_spls_error_messages <- function(input, output, data, classes, dataSelec
   
   # Error message when selection is incompatible or  data or classes are missing
   inputSelChange <- reactive({
-    list(data$data, classes$data, dataSelection$data1, dataSelection$data2, classSelection$data)
+    list(data$data, classes$data, dataSelection$dataX, dataSelection$dataY, classSelection$data)
   })
   
   observeEvent(inputSelChange(), {
@@ -478,18 +478,18 @@ generate_spls_error_messages <- function(input, output, data, classes, dataSelec
         "Please upload some classes/label information to be able to use the analysis!"
       } else {
         class <- classSelection$data
-        data1 <- dataSelection$data1
-        data2 <- dataSelection$data2
+        dataX <- dataSelection$dataX
+        dataY <- dataSelection$dataY
         
-        req(data1)
-        req(data2)
+        req(dataX)
+        req(dataY)
         req(class)
-        if ((length(data1) != 0 && nrow(class) != nrow(data1)) ||
-                   (length(data2) != 0 && nrow(class) != nrow(data2))){
+        if ((length(dataX) != 0 && nrow(class) != nrow(dataX)) ||
+                   (length(dataY) != 0 && nrow(class) != nrow(dataY))){
           "The selected data and classes are incompatible due to their different amount of samples! 
               Please change your selection!"
-        } else if(!identical(class[,1], rownames(data1)) && 
-                          !identical(class[,1], rownames(data2))){
+        } else if(!identical(class[,1], rownames(dataX)) && 
+                          !identical(class[,1], rownames(dataY))){
           "The selected data and classes are incompatible as they do not contain the same sample(name)s! 
             Please change your selection!"
         } else {
@@ -545,7 +545,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     if(!is.null(result())){
       legend.title = colnames(classSelection$data)[2]
       
-      titles = getTitleAccordingToRepSpace(rep.space(), dataSelection$data1Name, dataSelection$data2Name)
+      titles = getTitleAccordingToRepSpace(rep.space(), dataSelection$dataXName, dataSelection$dataYName)
       
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
@@ -562,7 +562,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   plot.var <- function(){
     if(!is.null(result())){
-      names <- getDatasetNames(dataSelection$data1Name, dataSelection$data2Name)
+      names <- getDatasetNames(dataSelection$dataXName, dataSelection$dataYName)
       plotVar(result(), comp.var(), input$var.names,
             pch = c(1,2), legend = c(names$name1, names$name2))
     }
@@ -571,7 +571,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.load <- function(){
     req(input$load.comp)
     if(!is.null(result())){
-      names <- getDatasetNames(dataSelection$data1Name, dataSelection$data2Name)
+      names <- getDatasetNames(dataSelection$dataXName, dataSelection$dataYName)
       plotLoadings(result(), as.numeric(input$load.comp), 
                    subtitle = lapply(c(names$name1, names$name2),
                                      function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'"))
@@ -583,7 +583,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
     if(!is.null(result())){
       comp.img <- checkCompNcompCombination(result()$ncomp, comp.img())
       mixOmics::cim(result(), comp = comp.img, margin=c(input$xmargin, input$ymargin), 
-                    xlab = dataSelection$data1Name, ylab = dataSelection$data2Name)
+                    xlab = dataSelection$dataYName, ylab = dataSelection$dataXName)
     }
   }
   
@@ -621,7 +621,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.indiv.tuned <- function(){
     if (!is.null(resultTuned())){
       legend.title = colnames(classSelection$data)[2]
-      titles = getTitleAccordingToRepSpace(rep.space.tuned(), dataSelection$data1Name, dataSelection$data2Name)
+      titles = getTitleAccordingToRepSpace(rep.space.tuned(), dataSelection$dataXName, dataSelection$dataYName)
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
@@ -645,7 +645,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.load.tuned <- function(){
     if (!is.null(resultTuned())){
       req(input$load.comp.tuned)
-      names <- getDatasetNames(dataSelection$data1Name, dataSelection$data2Name)
+      names <- getDatasetNames(dataSelection$dataXName, dataSelection$dataYName)
       plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned), 
                    subtitle = lapply(c(names$name1, names$name2),
                                      function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'"))
@@ -656,7 +656,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.img.tuned <- function(){
     if (!is.null(resultTuned())){
       mixOmics::cim(resultTuned(), comp = comp.img.tuned(), margin=c(input$xmargin.tuned, input$ymargin.tuned),
-                    xlab = dataSelection$data1Name, ylab = dataSelection$data2Name)
+                    xlab = dataSelection$dataYName, ylab = dataSelection$dataXName)
     }
   }
   
@@ -762,11 +762,11 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   )
   
   output$keepX.tuned <- renderText(
-    paste("Features of dataset 1: ",  paste(tunedVals$keepX, collapse = ", "))
+    paste("Features of dataset X: ",  paste(tunedVals$keepX, collapse = ", "))
   )
   
   output$keepY.tuned <- renderText(
-    paste("Features of dataset 2: ",  paste(tunedVals$keepY, collapse = ", "))
+    paste("Features of dataset Y: ",  paste(tunedVals$keepY, collapse = ", "))
   )
   
   output$scale.tuned <- renderText(
