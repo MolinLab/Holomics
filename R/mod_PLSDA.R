@@ -36,7 +36,7 @@ mod_PLSDA_ui <- function(id){
                         bs4Dash::tabBox(width = 12, collapsible = FALSE,
                                         getSamplePlot(ns),
                                         getVariablePlot(ns),
-                                        getPLSDASamplePlot(ns),
+                                        getLoadingsPlot(ns),
                                         getSelectedVarsPlot(ns)
                         )
                       )
@@ -69,7 +69,7 @@ mod_PLSDA_ui <- function(id){
                                                getErrorRatePlot(ns),
                                                getSamplePlot(ns, ".tuned"),
                                                getVariablePlot(ns, ".tuned"),
-                                               getPLSDASamplePlot(ns, ".tuned"),
+                                               getLoadingsPlot(ns, ".tuned"),
                                                getSelectedVarsPlot(ns, ".tuned")
                                )
                       )
@@ -394,10 +394,10 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotLoadings(result(), as.numeric(input$load.comp),
-                     contrib = input$load.cont, method = input$load.method, legend.color = colors)
+                     contrib = 'max', method = 'mean', legend.color = colors)
       } else {
         plotLoadings(result(), as.numeric(input$load.comp),
-                     contrib = input$load.cont, method = input$load.method)    
+                     contrib = 'max', method = 'mean')    
       }
     }
   }
@@ -444,10 +444,10 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
-                     contrib = input$load.cont.tuned, method = input$load.method.tuned, legend.color = colors)
+                     contrib = 'max', method = 'mean', legend.color = colors)
       } else {
         plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
-                     contrib = input$load.cont.tuned, method = input$load.method.tuned)    
+                     contrib = 'max', method = 'mean')    
       }
     }
   }
