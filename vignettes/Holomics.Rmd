@@ -134,7 +134,7 @@ To make use of all the functionality provided by <b>Holomics</b>, the below desc
 
 <br>
 
-(ref:workflow) Visualisation of the Holomics workflow, which goes from uploading the input datasets to performing single-omics analyses and finally going into the multi-omics analyses.
+(ref:workflow) Visualisation of the Holomics workflow, which goes from uploading the input datasets to performing single-omics analyses and finally going into the multi-omics analyses. Alternatively, it is possible to go directly into the multi-omics analyses.
 
 ```{r workflow, fig.cap = "(ref:workflow)", out.width="100%"}
 knitr::include_graphics("images/workflow.png")

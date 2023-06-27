@@ -17,11 +17,11 @@ mixOmics provides numerous analysis algorithms for the integrative analysis of o
 ### Workflow
 To make use of all the functionality provided by Holomics, a certain workflow should be followed.
 
-<p class="workflow-step">Input datasets: </p> The needed datasets for the analyses have to be uploaded via the "Data upload" page. These datasets include the collected omics data itself (e.g. count tables) and a separate file containing the allocated classes (meta information) of the samples measured in the omics datasets. The uploaded omics datasets will optionally be pre-filtered/transformed before they can be used for the single-omics analyses. <br>
+<p class="workflow-step">Input datasets: </p> The needed datasets for the analyses have to be uploaded via the "Data upload" page. These datasets include the collected omics data itself (e.g. count tables) and a separate file containing the allocated classes (meta information) of the samples measured in the omics datasets. The uploaded omics datasets will optionally be pre-filtered/transformed before they can be used for the different analyses. <br>
 
-<p class="workflow-step">Single-omics analyses: </p> With the single-omics analyses you can get a first impression of your data. You can identify the key features and filter your dataset accordingly.   <br>
+<p class="workflow-step">Single-omics analyses: </p> With the single-omics analyses you can get a first impression of your data. You can identify the key features and reduce your dataset accordingly.   <br>
 
-<p class="workflow-step">Filtered datasets: </p> Using the single-omics algorithms you can let the dataset get filtered automatically by the results of the used analysis. The filtered data will be directly saved in the Holomics application and can be used in the multi-omics analyses. Additionally, you will get the filtered data provided as an excel file.  <br>
+<p class="workflow-step">Reduced datasets: </p> Using the single-omics algorithms you can let the dataset get reduced automatically by the results of the used analysis. The filtered data will be directly saved in the Holomics application and can be used in the multi-omics analyses. Additionally, you will get the reduced data provided as an .xlsx file.  <br>
 As an alternative you can directly go into the multi-omics analyses if you already uploaded pre-filtered datasets and do not want to filter them any further. <br>
 
 <p class="workflow-step">Multi-omics analyses: </p> With the multi-omics analyses you are finally able to identify potential correlations between your datasets. <br>
