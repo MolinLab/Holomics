@@ -47,7 +47,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     tables$data = initDataMatrix()
     tables$classes = initClassMatrix()
     output$dataTable <- DT::renderDataTable({
-      DT::datatable(tables$data, options = list(dom = "tp", pageLength = 5, scrollX = TRUE,
+      DT::datatable(tables$data, rownames = F, options = list(dom = "tp", pageLength = 5, scrollX = TRUE,
                                                 columnDefs = list(list(className = 'dt-body-right', targets = 2:4),
                                                                   list(className = 'dt-body-center', targets = 0:1),
                                                                   list(className = 'dt-center', targets = "_all"))
@@ -56,7 +56,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
     })
 
     output$classTable <- DT::renderDataTable({
-      DT::datatable(tables$classes, options = list(dom = "tp", pageLength = 5, scrollX = TRUE,
+      DT::datatable(tables$classes, rownames = F, options = list(dom = "tp", pageLength = 5, scrollX = TRUE,
                                                    columnDefs = list(list(className = 'dt-body-right', targets = 2:3),
                                                                      list(className = 'dt-body-center', targets = 0:1),
                                                                      list(className = 'dt-center', targets = "_all"))

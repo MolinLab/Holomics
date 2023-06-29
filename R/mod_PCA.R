@@ -254,7 +254,10 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
         result <- dataSelection$data$omicsData[, feature_cols]
         multiDataset$data[[paste0(dataSelection$name, "_pca_filtered")]] <- list(omicsData = result, name = dataSelection$data$name)
         
-        # extend table in upload with available datasets
+        # extend table in upload with available datasets and if there is already an entry with the same name remove it
+        tables$data <- as.data.frame(tables$data)
+        tables$data <- tables$data[tables$data$Name != paste0(dataSelection$name, "_pca_filtered"), ]
+        tables$data <- as.matrix(tables$data)
         tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_pca_filtered"), "-", nrow(result), ncol(result),
                                        FALSE, "multi", dataSelection$data$name)
         
