@@ -31,7 +31,21 @@ mod_sPLS_ui <- function(id){
                                )  
                       ),
                       fluidRow(width = 12,
-                               getAnalysisParametersComponent(ns)
+                               getAnalysisParametersComponent(ns,
+                                                              bs4Dash::column(width = 5,
+                                                                              fluidRow(
+                                                                                tags$label("PLS mode"),
+                                                                                getTooltip(ns("mode-info"), 
+                                                                                           "Mode to be used in the PLS algorithmn.")
+                                                                              ),
+                                                                              fluidRow(
+                                                                                selectizeInput(ns("mode"), label = "", 
+                                                                                               choices = c("canonical"= "canonical", 
+                                                                                                           "regression"= "regression"),
+                                                                                               )
+                                                                              )
+                                                              )
+                               )
                       ),
                       fluidRow(width = 12,
                                bs4Dash::tabBox(width = 12, collapsible = FALSE,
@@ -278,7 +292,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
           }
           
           tryCatch({
-            result <- mixOmics::spls(X, Y, ncomp = input$ncomp, scale = input$scale)
+            result <- mixOmics::spls(X, Y, mode = input$mode,
+                                     ncomp = input$ncomp, scale = input$scale)
           }, error = function(cond){
             getErrorMessage(cond)
             error <- T
@@ -427,7 +442,7 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
     
     if(msg == ""){
       tryCatch({
-        spls.result <- mixOmics::spls(X, Y,
+        spls.result <- mixOmics::spls(X, Y, mode = input$mode,
                                       ncomp = input$ncomp, scale = input$scale)
       }, error = function(cond){
         getErrorMessage(cond)
@@ -449,7 +464,8 @@ run_spls_analysis <- function(ns, input, output, dataSelection, classSelection, 
       Y <- dataSelection$dataY
     
         tryCatch({
-        spls.result.tuned <- mixOmics::spls(X, Y, ncomp = tunedVals$ncomp, scale = tunedVals$scale,
+        spls.result.tuned <- mixOmics::spls(X, Y, mode = input$mode,
+                                            ncomp = tunedVals$ncomp, scale = tunedVals$scale,
                                             keepX = tunedVals$keepX, keepY = tunedVals$keepY)
       }, error = function(cond){
         getErrorMessage(cond)
@@ -801,7 +817,10 @@ render_spls_infotexts <- function(output){
    HTML("The standard PLS is a multivariate analysis used to analyse two datasets by maximising the covariance between the datasets components.
    The <b>s</b>parse <b>P</b>rojection to <b>L</b>atent <b>S</b>tructure is a variant of the PLS, 
    which combines the correlation calculation and final features selection into one step instead of two like the standard PLS has. 
-   It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis. <br/>
+   It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis.
+   In Holomics the two modes <b>regression</b> and <b>canonical</b> can be used in the algorithm. For more information about the
+   modes please have a look at <a class='ref-link' href='http://mixomics.org/methods/spls/#:~:text=Partial%20Least%20Squares&text=As%20with%20other%20projection%20methods,latent%20variables%2C%20rather%20than%20correlation.' 
+   target='_blank'>PLS Modes</a>. </br>
    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a> and
    in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>L\u00EA Cao et.al. (2008)</a>).
    More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and

@@ -32,11 +32,11 @@ getTooltip <- function(id, title){
 #' @return bootstrap box with the parameter components
 #'
 #' @noRd
-getAnalysisParametersComponent <- function(ns, designMatrix = NULL){
+getAnalysisParametersComponent <- function(ns, uiExtension = NULL){
   return(
     bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
                  fluidRow(style = "column-gap: 1rem",
-                          bs4Dash::column(width = 4,
+                          bs4Dash::column(width = 3,
                             fluidRow(
                               tags$label("Number of components")
                             ),
@@ -50,7 +50,7 @@ getAnalysisParametersComponent <- function(ns, designMatrix = NULL){
                             getTooltip(ns("scale-info"), "Features will be standardized to have a mean of zero 
                                        and a unit variance before the analysis takes place")
                           ),
-                          designMatrix,
+                          uiExtension,
                  ),
                  fluidRow(
                    textOutput(ns("parameters.error"))
