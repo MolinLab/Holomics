@@ -169,36 +169,6 @@ div[id*='Box'] > .card-header{
   display: none;
 }
 
-/* Tune switch */
-.material-switch{
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
-}
-
-.material-switch > label {
-  margin-bottom: .75rem;
-}
-
-.material-switch > label::before{
-  box-shadow: inset 0 0 10px rgb(191, 197, 49);
-  background-color: var(--grey);
-}
-
-div[id*='-switchRow'] > {
-  margin: auto;
-  width: 100%;
-  margin-top: .5rem;
-}
-
-div[id*='-tune.switch']{
-  margin: 1rem auto 0 auto;
-}
-
-div[id*='-tune.switch'] > div {
-  margin-bottom: 0 !important;
-}
-
 /* Progress bar */
 .progress-bar{
   background-color: var(--green);
