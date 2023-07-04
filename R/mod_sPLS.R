@@ -36,13 +36,14 @@ mod_sPLS_ui <- function(id){
                                                                               fluidRow(
                                                                                 tags$label("PLS mode"),
                                                                                 getTooltip(ns("mode-info"), 
-                                                                                           "Mode to be used in the PLS algorithmn.")
+                                                                                           "Mode to be used in the PLS algorithmn.
+                                                                                           More information in the vignette.")
                                                                               ),
                                                                               fluidRow(
                                                                                 selectizeInput(ns("mode"), label = "", 
                                                                                                choices = c("canonical"= "canonical", 
                                                                                                            "regression"= "regression"),
-                                                                                               )
+                                                                                               width = "60%")
                                                                               )
                                                               )
                                )
@@ -818,9 +819,6 @@ render_spls_infotexts <- function(output){
    The <b>s</b>parse <b>P</b>rojection to <b>L</b>atent <b>S</b>tructure is a variant of the PLS, 
    which combines the correlation calculation and final features selection into one step instead of two like the standard PLS has. 
    It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis.
-   In Holomics the two modes <b>regression</b> and <b>canonical</b> can be used in the algorithm. For more information about the
-   modes please have a look at <a class='ref-link' href='http://mixomics.org/methods/spls/#:~:text=Partial%20Least%20Squares&text=As%20with%20other%20projection%20methods,latent%20variables%2C%20rather%20than%20correlation.' 
-   target='_blank'>PLS Modes</a>. </br>
    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a> and
    in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>L\u00EA Cao et.al. (2008)</a>).
    More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
