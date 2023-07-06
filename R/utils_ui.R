@@ -122,7 +122,8 @@ getTunedParametersComponent <- function(ns, keepY = FALSE){
                              textOutput(ns("ncomp.tuned")),
                              textOutput(ns("keepX.tuned")),
                              textOutput(ns("keepY.tuned")),
-                             textOutput(ns("scale.tuned"))
+                             textOutput(ns("scale.tuned")),
+                             textOutput(ns("mode.tuned"))
                     )
        )
     )

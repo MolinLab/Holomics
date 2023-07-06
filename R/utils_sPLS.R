@@ -76,6 +76,7 @@ getsPLSTuningPlots <- function(ns){
                                tabPanel("Features dataset 1",
                                         fluidRow(
                                           bs4Dash::column(width = 12,
+                                            textOutput(ns("Tuned.keepX.msg")),
                                             plotOutput(ns("Tuned.keepX")),
                                             downloadButton(ns("Tuned.keepX.download"), "Save plot")
                                           )
@@ -84,6 +85,7 @@ getsPLSTuningPlots <- function(ns){
                                tabPanel("Features dataset 2",
                                         fluidRow(
                                           bs4Dash::column(width = 12,
+                                            textOutput(ns("Tuned.keepY.msg")),
                                             plotOutput(ns("Tuned.keepY")),
                                             downloadButton(ns("Tuned.keepY.download"), "Save plot")
                                           )

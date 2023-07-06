@@ -391,21 +391,29 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     # Tuning plots
     
     q2plot <- plot(tune.spls, criterion = 'Q2.total')
-    tuneXplot <- plot(tune.X)
-    tuneYplot <- plot(tune.Y)
-    
     output$Tuned.ncomp <- renderPlot(q2plot)
-    
-    output$Tuned.keepX <- renderPlot(tuneXplot)
-    
-    output$Tuned.keepY <- renderPlot(tuneYplot)
-    
     output$Tuned.ncomp.download <- getDownloadHandler("PLS_Q2_Components_Plot.png", type = "ggplot", plot = q2plot)
     
-    output$Tuned.keepX.download <- getDownloadHandler("PLS_keepX_Plot.png", type = "ggplot", plot = tuneXplot)
-    
-    output$Tuned.keepY.download <- getDownloadHandler("PLS_keepY_Plot.png", type = "ggplot", plot = tuneYplot)
+    if (length(list_keepX) > 1){
+      tuneXplot <- plot(tune.X)
+      output$Tuned.keepX <- renderPlot(tuneXplot)
+      output$Tuned.keepX.download <- getDownloadHandler("PLS_keepX_Plot.png", type = "ggplot", plot = tuneXplot)
+      output$Tuned.keepX.msg <- renderText("")
       
+    } else {
+      output$Tuned.keepX.msg <- renderText("No plot available, as the first dataset is already very small due to that no feature selection was performed!")
+    }
+    
+    if (length(list_keepY) > 1){
+      tuneYplot <- plot(tune.Y)
+      output$Tuned.keepY <- renderPlot(tuneYplot)
+      output$Tuned.keepY.download <- getDownloadHandler("PLS_keepY_Plot.png", type = "ggplot", plot = tuneYplot)
+      output$Tuned.keepY.msg <- renderText("")
+      
+    } else{
+      output$Tuned.keepY.msg <- renderText("No plot available, as the second dataset is already very small due to that no feature selection was performed!")
+    }
+    
     tunedVals$ncomp <- ncomp
     tunedVals$keepX <- keepX
     tunedVals$keepY <- keepY
@@ -787,7 +795,11 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   )
   
   output$scale.tuned <- renderText(
-    paste("scaled: ",  tunedVals$scale)
+    paste("Scaled: ",  tunedVals$scale)
+  )
+  
+  output$mode.tuned <- renderText(
+    paste("Mode: ",  input$mode)
   )
   
   # Download handler
