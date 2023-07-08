@@ -304,7 +304,12 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     }
     
     if (!error){
-      ncomp <- tune.spls$measures$Q2.total$summary[which.max(tune.spls$measures$Q2.total$summary$mean), 2]
+      if (max(perf.pls$measures$Q2.total$summary$mean) < 0.0975){
+        ncomp <- tune.spls$measures$Q2.total$summary[which.max(tune.spls$measures$Q2.total$summary$mean), 2]
+      } else {
+        ncomp <- tune.spls$measures$Q2.total$summary[which(tune.spls$measures$Q2.total$summary$mean > 0.0975)[-1], 2]
+      }
+      
       incProgress(1/4)
       
       #tune keepX
