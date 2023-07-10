@@ -263,7 +263,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
           return (list(nearZeroX = nearZeroX, nearZeroY = nearZeroY))
         } else {
           if (grepl("system is computationally singular", cond$message, fixed = T)){
-            getShinyErrorAlert("An error appeared while trying to filter the dataset. <br> 
+            getShinyErrorAlert("An error appeared while trying to tune the dataset. <br> 
                         Please reduce your number of components and try again!", html = T)
           } else {
             getErrorMessage(cond)
@@ -838,8 +838,8 @@ render_spls_infotexts <- function(output){
    It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis.
    Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html' target='_blank'>mixOmics website</a> and
    in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>L\u00EA Cao et.al. (2008)</a>).
-   More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
-   <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
+   More information about the plots and the reducing and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+   <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.</br>
    <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>  
    We recommend using here a rather high number of components and then perform parameter tuning.") 
   })
@@ -848,6 +848,6 @@ render_spls_infotexts <- function(output){
     HTML("The mixOmics package provides the option to tune the parameters of the sPLS analysis. 
     This means that the optimal number of components and the optimal number of features to select on each component for every dataset will be calculated. <br/> 
     More detailed information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pls.html#tuning:PLS' target='_blank'>mixOmics website</a>
-    and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.")
+    and on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.")
   })
 }

@@ -44,20 +44,21 @@ mod_PCA_ui <- function(id){
 
       ),
       bs4Dash::column(width = 2,
-                      getFilterBox(ns, "Filter dataset", "Automatically filter the dataset by the optimal number of components 
-                                     and the number of features per component."),
+                      getFilterBox(ns, "Perform feature selection", 
+                                   "Automatically reduce the dataset by the optimal number of components 
+                                   and the number of features per component."),
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                        fluidRow(style = "padding-left: 7.5px;",
-                                h1("PCA filtered"),
+                                h1("PCA reduced"),
                        ),
                        fluidRow(
                          bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
-                                      htmlOutput(ns("PCAfilteredinfotext"))
+                                      htmlOutput(ns("PCAreducedinfotext"))
                          )
                        ),
                       fluidRow(width = 12,
-                               bs4Dash::box(title = "Filtered dataset parameters", width = 12, collapsed = TRUE,
+                               bs4Dash::box(title = "Reduced dataset parameters", width = 12, collapsed = TRUE,
                                             fluidRow(style = "column-gap: 1rem",
                                                      textOutput(ns("ncomp.tuned")),
                                                      textOutput(ns("keepX.tuned")),
@@ -207,7 +208,7 @@ observe_pca_ui_components <- function(ns, input, output, dataset, dataSelection,
 pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals, multiDataset, tables){
   req(dataSelection$data$omicsData)
 
-  withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
+  withProgress(message = 'Reducing the dataset ... Please wait!', value = 1/3, {
     
     error <- F
     #get optimal number of components
@@ -252,13 +253,13 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
         
         feature_cols <- (names(dataSelection$data$omicsData) %in% sel_feature)
         result <- dataSelection$data$omicsData[, feature_cols]
-        multiDataset$data[[paste0(dataSelection$name, "_pca_filtered")]] <- list(omicsData = result, name = dataSelection$data$name)
+        multiDataset$data[[paste0(dataSelection$name, "_pca_reduced")]] <- list(omicsData = result, name = dataSelection$data$name)
         
         # extend table in upload with available datasets and if there is already an entry with the same name remove it
         tables$data <- as.data.frame(tables$data)
-        tables$data <- tables$data[tables$data$Name != paste0(dataSelection$name, "_pca_filtered"), ]
+        tables$data <- tables$data[tables$data$Name != paste0(dataSelection$name, "_pca_reduced"), ]
         tables$data <- as.matrix(tables$data)
-        tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_pca_filtered"), "-", nrow(result), ncol(result),
+        tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_pca_reduced"), "-", nrow(result), ncol(result),
                                        FALSE, "multi", dataSelection$data$name)
         
         #Correlations plot
@@ -275,10 +276,10 @@ pca_filterByLoadings <- function(input, output, dataSelection, result, tunedVals
         
         tunedVals$ncomp <- NULL
         
-        getShinyWarningAlert("The number of components for filtering this dataset would be above 15, 
-                               which would result in a huge runtime to filter the dataset. 
-                               This is why the filtering was aborted and we recommend either using the whole dataset or using 
-                               PLS-DA for the filtering step.")
+        getShinyWarningAlert("The number of components for reducing this dataset would be above 15, 
+                               which would result in a huge runtime to reduce the dataset. 
+                               This is why the feature selection was aborted and we recommend either using the whole dataset or using 
+                               PLS-DA for the feature selection step.")
         incProgress(2/3)
       }
     }
@@ -554,18 +555,18 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
   output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PCA_SelectedFeatures.csv", table.selVar, type = "csv")
   
-  output$Indiv.download.tuned <- getDownloadHandler("PCA_filtered_Sampleplot.png", plot.indiv.tuned)
-  output$Scree.download.tuned <- getDownloadHandler("PCA_filtered_Screeplot.png", plot.scree.tuned)
-  output$Var.download.tuned <- getDownloadHandler("PCA_filtered_CorrelationCircleplot.png", plot.var.tuned)
-  output$Load.download.tuned <- getDownloadHandler("PCA_filtered_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
-  output$SelVar.download.tuned <- getDownloadHandler("PCA_filtered_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
+  output$Indiv.download.tuned <- getDownloadHandler("PCA_reduced_Sampleplot.png", plot.indiv.tuned)
+  output$Scree.download.tuned <- getDownloadHandler("PCA_reduced_Screeplot.png", plot.scree.tuned)
+  output$Var.download.tuned <- getDownloadHandler("PCA_reduced_CorrelationCircleplot.png", plot.var.tuned)
+  output$Load.download.tuned <- getDownloadHandler("PCA_reduced_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$SelVar.download.tuned <- getDownloadHandler("PCA_reduced_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
   
   output$Filter.download <- downloadHandler(
     filename = function() {
-      paste0(dataName(), "_pca_filtered.xlsx")
+      paste0(dataName(), "_pca_reduced.xlsx")
     },
     content = function(file){
-      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_pca_filtered")]]$omicsData, 
+      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_pca_reduced")]]$omicsData, 
                            file, rowNames = TRUE, colNames = TRUE)
     }
   )
@@ -583,18 +584,18 @@ render_pca_infotexts <- function(output){
       It helps to identify characteristics of the data and eventual biases and artefacts by visualising the PCs with the respective features and samples. <br/>
       Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pca.html' target='_blank'>mixOmics website</a> and
       in several scientific papers (e.g. <a class='ref-link' href='https://link.springer.com/article/10.1186/1471-2105-13-24' target='_blank'>Yao et.al. (2012)</a>).
-      More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
-      <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
+      More information about the plots and the feature selection and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+      <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.</br>
       <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b> 
       We recommend to use a number of components that explains at least 80% of the dataset variance.")
   })
   
-  output$PCAfilteredinfotext <- renderText({
-    HTML("The dataset filtering algorithm calculates the optimal number of components (number of components which explain at least 80% variance) 
+  output$PCAreducedinfotext <- renderText({
+    HTML("The dataset feature selection algorithm calculates the optimal number of components (number of components which explain at least 80% variance) 
          and the optimal number of features per component.<br/>
-         According to this information the dataset was filtered and the filtered dataset is used for the plots. <br/>
+         According to this information the dataset was reduced and the reduced dataset is used for the plots. <br/>
          More detailed information can be found on our 
-         <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.
+         <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.
          ")
   })
 }

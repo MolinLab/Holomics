@@ -76,7 +76,7 @@ install.packages("devtools")
 library(devtools)
 
 # Install Holomics package 
-install_github("evasehr/Holomics")
+install_github("MolinLab/Holomics")
 ~~~
 
 ### Start application
@@ -128,7 +128,7 @@ knitr::kable(data)
 ```
 
 ## Workflow overview
-To make use of all the functionality provided by <b>Holomics</b>, the below described workflow should be followed. Firstly, the datasets are uploaded where an eventual pre-filtering/transformation step takes place. Afterwards, the single-omics analysis is performed, where key features are identified and the datasets are filtered accordingly. With these filtered datasets, the multi-omics analyses is applied to identify correlations between 2-n datasets. 
+To make use of all the functionality provided by <b>Holomics</b>, the below described workflow should be followed. Firstly, the datasets are uploaded where an eventual pre-filtering/transformation step takes place. Afterwards, the single-omics analysis is performed, where key features are identified and the datasets are reduced accordingly. With these reduced datasets, the multi-omics analyses is applied to identify correlations between 2-n datasets. 
 
 <br>
 
@@ -178,15 +178,15 @@ For a first glimpse into the individual omics data and for the necessary feature
 
 On the left side, the original, but already pre-processed and eventually pre-filtered data are depicted. On the top left of the page, the omics dataset that should be analysed is selected together with the corresponding metadata file via the drop-down menus. If the two are not compatible to each other, an error will be printed. The "General information" box shortly explains the PCA concepts and provides some links to additional knowledge sources. In the "Analysis parameters" box the number of components (a value between 2 and 15) that should be used to calculate the PCA can be chosen. Per default, the "Scaling" check box is activated and can be deactivated, if the data don't need any scaling. Below, several plots that present the PCA results using the above set parameters are given.
 
-After triggering the filtering process by activating the "Filter dataset" button at the top-middle of the page, the filtered dataset is shown on the right side of the page. The number of components which are needed to get at least 80\% explained variance for the given dataset are computed. When this number is set, the algorithm determines how many features per component should be used so that the resulting model gives the best result. All the remaining features that are not being used in any component will be removed from the dataset (the original dataset will not be changed) and the filtered dataset will be used to calculate the PCA result used for the plots. The "General information" and "Filtered dataset parameters" box above the plots provide some additional information about the filtered dataset and the general filtering process.
+After triggering the feature selection process by activating the "Perform feature selection" button at the top-middle of the page, the reduced dataset is shown on the right side of the page. The number of components which are needed to get at least 80\% explained variance for the given dataset are computed. When this number is set, the algorithm determines how many features per component should be used so that the resulting model gives the best result. All the remaining features that are not being used in any component will be removed from the dataset (the original dataset will not be changed) and the reduced dataset will be used to calculate the PCA result used for the plots. The "General information" and "Reduced dataset parameters" box above the plots provide some additional information about the reduced dataset and the general feature selection process.
 
-Additionally, the filtered dataset can be downloaded in the .xlsx file format through the  "Save filtered data" button, which will appear below the "Filter dataset" button after the filtering process has finished. Also, the filtered dataset will automatically be saved in the running <b>Holomics</b> application to be used later for the multi-omics analysis.
+Additionally, the reduced dataset can be downloaded in the .xlsx file format through the  "Save reduced data" button, which will appear below the "Perform feature selection" button after the feature selection process has finished. Also, the reduced dataset will automatically be saved in the running <b>Holomics</b> application to be used later for the multi-omics analysis.
 
-NOTE: if the filtering process calculates that the PCA needs more than 15 components to reach the minimum of 80% of the explained variance, the filtering process will be aborted, as the calculation would take too long. It is then recommended to use the PLS-DA function instead. 
+NOTE: if the feature selection process calculates that the PCA needs more than 15 components to reach the minimum of 80% of the explained variance, the feature  selection process will be aborted, as the calculation would take too long. It is then recommended to use the PLS-DA function instead. 
 
 <br>
 
-(ref:PCA) Visualisation of the PCA page. On the left side the original dataset can be inspected. On the right side the results are presented after the filtering process.
+(ref:PCA) Visualisation of the PCA page. On the left side the original dataset can be inspected. On the right side the results are presented after the feature selection process.
 
 ```{r PCA, fig.cap = "(ref:PCA)", out.width="100%"}
 knitr::include_graphics("images/PCA.png")
@@ -198,13 +198,13 @@ The Partial Least Squares Discriminant Analysis (PLS-DA) can also be used for si
 
 On the top left of the page (Figure \@ref(fig:PLSDA)), the omics dataset that should be analysed and the corresponding metadata file are selected. If the two are not compatible, an error will be printed. The "General information" box shortly explains the concepts of the PLS-DA and provides some links to additional knowledge sources. In the "Analysis parameters" box, the number of components (a value between 2 and 15) can be adjusted and whether the dataset should be scaled (default) or not. The resulting plots are presented below. The plot output is similar to the PCA analysis, only that the PLS-DA does not provide a scree plot.
 
-For feature selection, the "Filter dataset" button in the middle of the page is to be clicked to start the filtering process. The results will be presented on the right side of the page. Compared to the PCA filtering process, the number of components that are set on the left side influences the filtering algorithm. The algorithm tries 1 to n (number of components set) components on the provided dataset and chooses the number where the balanced error rate (BER) of the received model was the lowest. Additionally, the number of features per component is calculated and the dataset is filtered to keep only these features. The components and the scaling attribute cannot be changed for these plots.
+For feature selection, the "Perform feature selection" button in the middle of the page is to be clicked to start the feature selection process. The results will be presented on the right side of the page. Compared to the PCA feature selection process, the number of components that are set on the left side influences the algorithm. The algorithm tries 1 to n (number of components set) components on the provided dataset and chooses the number where the balanced error rate (BER) of the received model was the lowest. Additionally, the number of features per component is calculated and the dataset is reduced to keep only these features. The components and the scaling attribute cannot be changed for these plots.
 
-Additionally, the filtered dataset can be downloaded in the .xlsx file format through the "Save filtered data" button, which will appear after the filtering process has finished. Also, the filtered dataset will automatically be saved in the running <b>Holomics</b> application to be used later for the multi-omics analysis.
+Additionally, the reduced dataset can be downloaded in the .xlsx file format through the "Save reduced data" button, which will appear after the feature selection process has finished. Also, the reduced dataset will automatically be saved in the running <b>Holomics</b> application to be used later for the multi-omics analysis.
 
 <br>
 
-(ref:PLSDA) Visualisation of the PLS-DA page. On the left side the original dataset can be examined. On the right side the results after filtering are presented. In this case, three components where calculated (number was set on the left side) and the error rates plot shows the performance of the models using the different number of components.
+(ref:PLSDA) Visualisation of the PLS-DA page. On the left side the original dataset can be examined. On the right side the results after feature selection are presented. In this case, three components where calculated (number was set on the left side) and the error rates plot shows the performance of the models using the different number of components.
 
 ```{r PLSDA, fig.cap = "(ref:PLSDA)", out.width="100%"}
 knitr::include_graphics("images/PLSDA.png")
@@ -214,8 +214,8 @@ knitr::include_graphics("images/PLSDA.png")
 ## Pairwise omics analysis
 For the pairwise omics analysis (integration of two different omics datasets), the sparse Partial Least Squares (sPLS) method is applied. The structure of the page (Figure \@ref(fig:sPLS)) is the same as previously described in the single-omics analysis pages. On the top, the two datasets X and Y and the corresponding metadata file is selected. 
 
-On the left side some general information about sPLS is provided and the possibility to adjust the parameters is given. Here, the user can also switch between two algorithm modes "regression" and "canonical". In mode "regression" dataset X will be used to try and predict dataset Y, so changing the datasets (X becomes Y and vice versa) leads to different results. With mode "canonical" the datasets are interchangable. Thus, this mode is recommended to be used when there is no prior known dependency between the datasets. For more information about the two modes please have a look at mixOmics documentation about the <a class='ref-link' href='http://mixomics.org/methods/spls/#:~:text=Partial%20Least%20Squares&text=As%20with%20other%20projection%20methods,latent%20variables%2C%20rather%20than%20correlation.' target='_blank'>PLS Modes</a>. <br>
-Furthermore, instead of the filter button described in the PCA and PLS-DA chapter, there is a "Tune parameters" button in the middle of the page. The tuning process is similar to the filtering process described in the PCA and PLS-DA chapter. It calculates the ideal number of components for the given datasets and the number of important features per dataset. "Ideal" means the number of components and features per component where the model, which is built in the background, has the lowest error rate. The tuning algorithm of the sPLS tests 1 to n (number of components set on the left side) components and chooses one of these as the "ideal". After tuning, the results using the tuned parameters will be visualised on the right side of the page. Some general information and the tuned analysis parameters are provided in the boxes above the plots.
+On the left side some general information about sPLS is provided and the possibility to adjust the parameters is given. Here, the user can also switch between two algorithm modes "regression" and "canonical". In mode "regression" dataset X will be used to try and predict dataset Y, so changing the datasets (X becomes Y and vice versa) leads to different results. With mode "canonical" the datasets are interchangable. Thus, this mode is recommended to be used when there is no prior known dependency between the datasets. For more information about the two modes please have a look at mixOmics documentation about the <a class='ref-link' href='http://mixomics.org/methods/spls' target='_blank'>PLS Modes</a>. <br>
+Furthermore, instead of the feature selection button described in the PCA and PLS-DA chapter, there is a "Tune parameters" button in the middle of the page. The tuning process is similar to the feature selection process described in the PCA and PLS-DA chapter. It calculates the ideal number of components for the given datasets and the number of important features per dataset. "Ideal" means the number of components and features per component where the model, which is built in the background, has the lowest error rate. The tuning algorithm of the sPLS tests 1 to n (number of components set on the left side) components and chooses one of these as the "ideal". After tuning, the results using the tuned parameters will be visualised on the right side of the page. Some general information and the tuned analysis parameters are provided in the boxes above the plots.
 
 (ref:sPLS) Visualisation of the sPLS page depicting two omics datasets. On the left side, the datasets out of the single-omics analysis are used. On the right side the results of tuned datasets are presented.
 
@@ -242,7 +242,7 @@ knitr::include_graphics("images/DIABLO.png")
 <br>
 
 ## Help pages
-The help pages that can be found in the application provide short descriptions of the used plots as well as the filtering and tuning processes. Additionally, there are several links to the mixOmics website or to other papers, where even more detailed information is provided, if desired.
+The help pages that can be found in the application provide short descriptions of the used plots as well as the feature selection and tuning processes. Additionally, there are several links to the mixOmics website or to other papers, where even more detailed information is provided, if desired.
 
 ## License
 The <b>Holomics</b> package is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3).

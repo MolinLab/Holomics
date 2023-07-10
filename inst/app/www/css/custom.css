@@ -72,3 +72,10 @@ label[id*='ncomp-label'], label[id*='matrix-label'], label[for='upload-omicsAnal
 div#DIABLO-img\.comp{
   display: none;
 }
+
+/* Place icon of help page */
+#tab-help-tuning{
+  display: flex;
+    align-items: center;
+    gap: 3px;
+}

@@ -84,7 +84,7 @@ getFilterBox <- function(ns, name, infotext){
     bs4Dash::box(id = ns("filterBox"), width = 12,
                  getTuneButtonRow(ns, name, infotext),
                  fluidRow(style = "flex-direction: row",
-                          downloadButton(ns("Filter.download"), "Save filtered data", 
+                          downloadButton(ns("Filter.download"), "Save reduced data", 
                                          style = "margin-top: 10px; width: 100%")
                  )
     )

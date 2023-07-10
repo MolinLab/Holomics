@@ -6,7 +6,7 @@ mixOmics provides numerous analysis algorithms for the integrative analysis of o
 
 <ul>
   <li>Perform single-omics analyses and get an overview over your data</li>
-  <li>Filter datasets by their key features</li>
+  <li>Reduce datasets by their key features</li>
   <li>Perform multi-omics analyses and identify correlations between the datasets</li>
   <li>Save (most) result plots as images in print quality</li>
 </ul>
@@ -21,7 +21,7 @@ To make use of all the functionality provided by Holomics, a certain workflow sh
 
 <p class="workflow-step">Single-omics analyses: </p> With the single-omics analyses you can get a first impression of your data. You can identify the key features and reduce your dataset accordingly.   <br>
 
-<p class="workflow-step">Reduced datasets: </p> Using the single-omics algorithms you can let the dataset get reduced automatically by the results of the used analysis. The filtered data will be directly saved in the Holomics application and can be used in the multi-omics analyses. Additionally, you will get the reduced data provided as an .xlsx file.  <br>
-As an alternative you can directly go into the multi-omics analyses if you already uploaded pre-filtered datasets and do not want to filter them any further. <br>
+<p class="workflow-step">Reduced datasets: </p> Using the single-omics algorithms you can let the dataset get reduced automatically by the results of the used analysis. The reduced data will be directly saved in the Holomics application and can be used in the multi-omics analyses. Additionally, you will get the reduced data provided as an .xlsx file.  <br>
+As an alternative you can directly go into the multi-omics analyses if you already uploaded pre-filtered datasets and do not want to reduce them any further. <br>
 
 <p class="workflow-step">Multi-omics analyses: </p> With the multi-omics analyses you are finally able to identify potential correlations between your datasets. <br>

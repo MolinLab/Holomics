@@ -43,20 +43,21 @@ mod_PLSDA_ui <- function(id){
                       
       ),
       bs4Dash::column(width = 2,
-                      getFilterBox(ns, "Filter dataset", "Automatically filter the dataset by the optimal number of components 
-                                     and the number of features per component."),
+                      getFilterBox(ns, "Perform feature selection", 
+                                   "Automatically reduce the dataset by the optimal number of components 
+                                   and the number of features per component."),
       ),
       bs4Dash::column(id = ns("tunedCol"), width = 5,
                       fluidRow(style = "padding-left: 7.5px;",
-                               h1("PLS-DA filtered"),
+                               h1("PLS-DA reduced"),
                       ),
                       fluidRow(
                         bs4Dash::box(title = "General information", width = 12, collapsed = TRUE,
-                                     htmlOutput(ns("PLSDAfilteredinfotext"))
+                                     htmlOutput(ns("PLSDAreducedinfotext"))
                         )
                       ),
                       fluidRow(width = 12,
-                               bs4Dash::box(title = "Filtered dataset parameters", width = 12, collapsed = TRUE,
+                               bs4Dash::box(title = "Reduced dataset parameters", width = 12, collapsed = TRUE,
                                             fluidRow(style = "column-gap: 1rem",
                                                      textOutput(ns("ncomp.tuned")),
                                                      textOutput(ns("keepX.tuned")),
@@ -199,7 +200,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
   req(dataSelection$data$omicsData)
   req(classSelection$data)
   
-  withProgress(message = 'Filtering the dataset ... Please wait!', value = 1/3, {
+  withProgress(message = 'Reducing the dataset ... Please wait!', value = 1/3, {
     
     error <- F
     #get optimal number of components
@@ -235,13 +236,13 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       
       feature_cols <- (names(dataSelection$data$omicsData) %in% sel_feature)
       result <- dataSelection$data$omicsData[, feature_cols]
-      multiDataset$data[[paste0(dataSelection$name, "_plsda_filtered")]] <- list(omicsData = result, name = dataSelection$data$name)
+      multiDataset$data[[paste0(dataSelection$name, "_plsda_reduced")]] <- list(omicsData = result, name = dataSelection$data$name)
       
       #if there is already an entry with the same name remove it
       tables$data <- as.data.frame(tables$data)
-      tables$data <- tables$data[tables$data$Name != paste0(dataSelection$name, "_plsda_filtered"), ]
+      tables$data <- tables$data[tables$data$Name != paste0(dataSelection$name, "_plsda_reduced"), ]
       tables$data <- as.matrix(tables$data)
-      tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_plsda_filtered"), "-", nrow(result), ncol(result),
+      tables$data <- extendDataTable(tables$data, paste0(dataSelection$name, "_plsda_reduced"), "-", nrow(result), ncol(result),
                                      FALSE, "multi", dataSelection$data$name)
       
       #set error rate plot    
@@ -253,7 +254,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       error <- F
     }, error = function(cond){
       if (grepl("system is computationally singular", cond$message, fixed = T)){
-        getShinyErrorAlert("An error appeared while trying to filter the dataset. <br> 
+        getShinyErrorAlert("An error appeared while trying to reduce the dataset. <br> 
                         Please reduce your number of components and try again!", html = T)
       } else {
         getErrorMessage(cond)
@@ -527,17 +528,17 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedFeatures.csv", table.selVar, type = "csv")
   
-  output$Indiv.download.tuned <- getDownloadHandler("PLS-DA_filtered_Sampleplot.png", plot.indiv.tuned)
-  output$Var.download.tuned <- getDownloadHandler("PLS-DA_filtered_CorrelationCircleplot.png", plot.var.tuned)
-  output$Load.download.tuned <- getDownloadHandler("PLS-DA_filtered_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
-  output$SelVar.download.tuned <- getDownloadHandler("PLS-DA_filtered_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
+  output$Indiv.download.tuned <- getDownloadHandler("PLS-DA_reduced_Sampleplot.png", plot.indiv.tuned)
+  output$Var.download.tuned <- getDownloadHandler("PLS-DA_reduced_CorrelationCircleplot.png", plot.var.tuned)
+  output$Load.download.tuned <- getDownloadHandler("PLS-DA_reduced_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$SelVar.download.tuned <- getDownloadHandler("PLS-DA_reduced_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
   
   output$Filter.download <- downloadHandler(
     filename = function() {
-      paste0(dataName(), "_plsda_filtered.xlsx")
+      paste0(dataName(), "_plsda_reduced.xlsx")
     },
     content = function(file){
-      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_plsda_filtered")]]$omicsData, 
+      openxlsx::write.xlsx(multiDataset$data[[paste0(dataName(), "_plsda_reduced")]]$omicsData, 
                            file, rowNames = TRUE, colNames = TRUE)
     }
   )
@@ -553,16 +554,16 @@ render_plsda_infotexts <- function(output){
       In the context of multi-omics analyses, it is used to get a first impression of the input data and find the key features of the datasets.<br/>
       Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/plsda.html' target='_blank'>mixOmics website</a> and
       in several scientific papers (e.g. <a class='ref-link' href='https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-3310-7' target='_blank'>Ruiz-Perez et.al. (2020)</a>).
-      More information about the plots and the filtering and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
-      <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.</br>
+      More information about the plots and the reducing and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
+      <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.</br>
       <b>Please adjust the number of components in the 'Analysis parameters' tab according to your selected dataset.</b>")
   })
   
-  output$PLSDAfilteredinfotext <- renderText({
-    HTML("The dataset filtering algorithm calculates the optimal number of components and the optimal number of features per component.<br/>
-         According to this information the dataset was filtered and the filtered dataset is used for the plots. <br/>
+  output$PLSDAreducedinfotext <- renderText({
+    HTML("The dataset feature selection algorithm calculates the optimal number of components and the optimal number of features per component.<br/>
+         According to this information the dataset was reduced and the reduced dataset is used for the plots. <br/>
          More detailed information can be found on our 
-         <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Filtering and tuning-Helppage'</a>.
+         <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.
          ")
   })
 }

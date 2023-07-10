@@ -51,7 +51,7 @@ Holomics::runApp()
 ~~~ 
 
 ## Workflow
-To make use of all the functionality provided, the below described workflow should be followed. Firstly, the datasets are uploaded where an eventual pre-filtering/transformation step takes place.Afterwards, the user should go with the datasets into the single-omics analysis, where key features are identified and the datasets are filtered accordingly. After the single-omics analyses, the user can apply the multi-omics analyses to identify correlations between 2-n datasets. NOTE: If the user already uploaded pre-filtered (ideally by Holomics at an earlier time) datasets, it is possible to go directly into the multi-omics analysis. 
+To make use of all the functionality provided, the below described workflow should be followed. Firstly, the datasets are uploaded where an eventual pre-filtering/transformation step takes place.Afterwards, the user should go with the datasets into the single-omics analysis, where key features are identified and the datasets are reduced accordingly. After the single-omics analyses, the user can apply the multi-omics analyses to identify correlations between 2-n datasets. NOTE: If the user already uploaded pre-filtered (ideally by Holomics at an earlier time) datasets, it is possible to go directly into the multi-omics analysis. 
 
 ```{r workflow, out.width="100%", echo=F}
 knitr::include_graphics("vignettes/images/workflow.png")
