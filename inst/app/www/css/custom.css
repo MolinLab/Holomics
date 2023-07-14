@@ -59,7 +59,9 @@ div.vis-network div.vis-navigation div.vis-button:hover{
 }
 
 /* Label for components input and upload analysis type */
-label[id*='ncomp-label'], label[id*='matrix-label'], label[for='upload-omicsAnalysis'], label[for='upload-plotName-selectized']{
+label[id*='ncomp-label'], label[id*='matrix-label'], 
+label[for='upload-omicsAnalysis'], label[for='upload-plotName-selectized'],
+label[id*='mode-label']{
   display: none;
 }
 
