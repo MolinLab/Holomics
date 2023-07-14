@@ -251,7 +251,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     while (!finished && !error){
       values <- tryCatch({
         set.seed(30)
-        tune.spls <- mixOmics::perf(result, validation = "Mfold", folds = 7, progressBar = TRUE, nrepeat = 50)
+        tune.spls <<- mixOmics::perf(result, validation = "Mfold", folds = getsPLSFolds(X), progressBar = TRUE, nrepeat = 50)
         finished = T
       }, error = function(cond){
         if (grepl("Error in Ypred", cond, fixed = T) || 
@@ -273,7 +273,6 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
       })
       
       error <- is.null(values)
-    
       if (!finished && !error){
         #get all possible value combinations
         nearZeroX <- values$nearZeroX
@@ -304,10 +303,15 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     }
     
     if (!error){
-      if (max(perf.pls$measures$Q2.total$summary$mean) < 0.0975){
+      if (max(tune.spls$measures$Q2.total$summary$mean) < 0.0975){
         ncomp <- tune.spls$measures$Q2.total$summary[which.max(tune.spls$measures$Q2.total$summary$mean), 2]
       } else {
-        ncomp <- tune.spls$measures$Q2.total$summary[which(tune.spls$measures$Q2.total$summary$mean > 0.0975)[-1], 2]
+        indices <- which(tune.spls$measures$Q2.total$summary$mean > 0.0975)
+        if (length(indices) == 1){
+          ncomp <- tune.spls$measures$Q2.total$summary[indices, 2]
+        } else {
+          ncomp <- tune.spls$measures$Q2.total$summary[indices[-1], 2]
+        }
       }
       
       incProgress(1/4)
@@ -317,35 +321,19 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
       BPPARAM <- BiocParallel::SnowParam(workers = parallel::detectCores()-1)
       
       finished <- F
-      folds <- 5
-      validation <- "Mfold"
-      while (!finished && !error){
-        res <- tryCatch({
-          tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp, scale= input$scale,
-                                        validation = validation,
-                                        test.keepX = list_keepX, 
-                                        measure = "cor", BPPARAM = BPPARAM,
-                                        folds = folds, nrepeat = 50, progressBar = TRUE)
-          finished <- T
-          
-        }, error = function(cond){
-          if (folds + 1 > nrow(X) || validation == "loo"){
-            getErrorMessage(cond)
-            return (NULL)
-          }
-        })
+      tryCatch({
+        tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp, scale= input$scale,
+                                      validation = "Mfold",
+                                      test.keepX = list_keepX, 
+                                      measure = "cor", BPPARAM = BPPARAM,
+                                      folds = getsPLSFolds(X), nrepeat = 50, progressBar = TRUE)
+        finished <- T
         
-        error <- is.null(res)
+      }, error = function(cond){
+        getErrorMessage(cond)
+        error <- T
+      })
         
-        if (!finished && !error){
-          if (folds > nrow(X)){
-            validation <- "loo"
-          } else {
-            folds <- folds + 1
-          }
-        }
-      }
-      
       if (!error){
         keepX <- tune.X$choice.keepX
         incProgress(1/4)
@@ -353,34 +341,18 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
         #tune keepY
         list_keepY <- getTestKeepX(ncol(Y))
         finished <- F
-        folds <- 5
-        validation <- "Mfold"
-        while (!finished && !error){
-          res <- tryCatch({
-            tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp, scale = input$scale,
-                                          validation = "Mfold",
-                                          test.keepY = list_keepY, 
-                                          measure = "cor", BPPARAM = BPPARAM,
-                                          folds = folds, nrepeat = 50, progressBar = TRUE)
-            finished <- T
-            
-          }, error = function(cond){
-            if (folds + 1 > nrow(X) || validation == "loo"){
-              getErrorMessage(cond)
-              return(NULL)
-            }
-          })
+        tryCatch({
+          tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp, scale = input$scale,
+                                        validation = "Mfold",
+                                        test.keepY = list_keepY, 
+                                        measure = "cor", BPPARAM = BPPARAM,
+                                        folds = getsPLSFolds(X), nrepeat = 50, progressBar = TRUE)
+          finished <- T
           
-          error <- is.null(res)
-          
-          if (!finished && !error){
-            if (folds > nrow(X)){
-              validation <- "loo"
-            } else {
-              folds <- folds + 1
-            }
-          }
-        }
+        }, error = function(cond){
+          getErrorMessage(cond)
+          error <- T
+        })
         
         if (!error){
           keepY <- tune.Y$choice.keepY

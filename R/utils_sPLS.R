@@ -146,3 +146,17 @@ getTitleAccordingToRepSpace <- function(repSpace, name1, name2){
   
   return (list(title = title, subtitle = subtitle))
 }
+
+#' @description A utils function, to determine the number of possible folds
+#' for the given data
+#'
+#' @return number of folds
+#'  
+#' @noRd
+getsPLSFolds <- function(X){
+  folds <- 5
+  if (folds > nrow(X)){
+    folds <- nrow(X)/2
+  }
+  return (folds)
+}
