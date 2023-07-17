@@ -164,6 +164,8 @@ diabloGetNetworkDownloadHandler <- function(filename, network, type){
 #'
 #' @description A utils function, calculates the pairwise correlation
 #' of the datasets 
+#' 
+#' @importFrom utils combn
 #'
 #' @return pairwise correlation
 #'
