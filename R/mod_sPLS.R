@@ -251,7 +251,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     while (!finished && !error){
       values <- tryCatch({
         set.seed(30)
-        tune.spls <<- mixOmics::perf(result, validation = "Mfold", folds = getsPLSFolds(X), progressBar = TRUE, nrepeat = 50)
+        perf.spls <- mixOmics::perf(result, validation = "Mfold", folds = getsPLSFolds(X), progressBar = TRUE, nrepeat = 50)
         finished = T
       }, error = function(cond){
         if (grepl("Error in Ypred", cond, fixed = T) || 
@@ -303,14 +303,14 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     }
     
     if (!error){
-      if (max(tune.spls$measures$Q2.total$summary$mean) < 0.0975){
-        ncomp <- tune.spls$measures$Q2.total$summary[which.max(tune.spls$measures$Q2.total$summary$mean), 2]
+      if (max(perf.spls$measures$Q2.total$summary$mean) < 0.0975){
+        ncomp <- perf.spls$measures$Q2.total$summary[which.max(perf.spls$measures$Q2.total$summary$mean), 2]
       } else {
-        indices <- which(tune.spls$measures$Q2.total$summary$mean > 0.0975)
+        indices <- which(perf.spls$measures$Q2.total$summary$mean > 0.0975)
         if (length(indices) == 1){
-          ncomp <- tune.spls$measures$Q2.total$summary[indices, 2]
+          ncomp <- perf.spls$measures$Q2.total$summary[indices, 2]
         } else {
-          ncomp <- tune.spls$measures$Q2.total$summary[indices[-1], 2]
+          ncomp <- perf.spls$measures$Q2.total$summary[indices[-1], 2]
         }
       }
       
@@ -322,7 +322,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
       
       finished <- F
       tryCatch({
-        tune.X <- mixOmics::tune.spls(X, Y, ncomp = ncomp, scale= input$scale,
+        tune.X <- mixOmics::tune.spls(X, Y, mode = input$mode,
+                                      ncomp = ncomp, scale = input$scale,
                                       validation = "Mfold",
                                       test.keepX = list_keepX, 
                                       measure = "cor", BPPARAM = BPPARAM,
@@ -342,7 +343,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
         list_keepY <- getTestKeepX(ncol(Y))
         finished <- F
         tryCatch({
-          tune.Y <- mixOmics::tune.spls(X, Y, ncomp = ncomp, scale = input$scale,
+          tune.Y <- mixOmics::tune.spls(X, Y, mode = input$mode,
+                                        ncomp = ncomp, scale = input$scale,
                                         validation = "Mfold",
                                         test.keepY = list_keepY, 
                                         measure = "cor", BPPARAM = BPPARAM,
@@ -367,7 +369,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
   } else {
     # Tuning plots
     
-    q2plot <- plot(tune.spls, criterion = 'Q2.total')
+    q2plot <- plot(perf.spls, criterion = 'Q2.total')
     output$Tuned.ncomp <- renderPlot(q2plot)
     output$Tuned.ncomp.download <- getDownloadHandler("PLS_Q2_Components_Plot.png", type = "ggplot", plot = q2plot)
     
@@ -396,7 +398,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     tunedVals$keepY <- keepY
     tunedVals$scale <- input$scale
     
-    if(all(tune.spls$measures$Q2.total$summary$mean < 0)){
+    if(all(perf.spls$measures$Q2.total$summary$mean < 0)){
       getShinyWarningAlert(HTML("Unfortunately, the Q2 score for all the components is below 0, 
                                  which could be the result of a too low number of samples or that X does not explain Y 
                                 (for more information see: 
