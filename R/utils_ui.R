@@ -32,9 +32,9 @@ getTooltip <- function(id, title){
 #' @return bootstrap box with the parameter components
 #'
 #' @noRd
-getAnalysisParametersComponent <- function(ns, uiExtension = NULL){
+getAnalysisParametersComponent <- function(ns, uiExtension = NULL, collapsed = TRUE){
   return(
-    bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = TRUE,
+    bs4Dash::box(title = "Analysis parameters", width = 12, collapsed = collapsed,
                  fluidRow(style = "column-gap: 1rem",
                           bs4Dash::column(width = 3,
                             fluidRow(

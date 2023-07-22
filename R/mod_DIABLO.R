@@ -29,7 +29,7 @@ mod_DIABLO_ui <- function(id){
                                             )
                       ),
                       fluidRow(width = 12,
-                               getAnalysisParametersComponent(ns, 
+                               getAnalysisParametersComponent(ns,
                                                               bs4Dash::column(width = 4,
                                                                               fluidRow(
                                                                                 tags$label("Design matrix value"),
@@ -39,7 +39,7 @@ mod_DIABLO_ui <- function(id){
                                                                               fluidRow(
                                                                                 uiOutput(ns("matrix.comp")),
                                                                               )
-                                                              )
+                                                              ), collapsed = F
                               )
                       ),
                       fluidRow(width = 12,
