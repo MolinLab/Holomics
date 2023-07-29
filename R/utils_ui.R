@@ -19,11 +19,10 @@ getSelectionComponent <- function(id, label, choices, selected = NULL, multiple 
 #' @noRd
 getTooltip <- function(id, title){
   return(
-    bs4Dash::tooltip(
-      actionButton(id, label = "", icon = icon("question"), style = "info", size = "xs"),
-      title = title,
-      placement = "right"
-    )
+      tags$div(
+        actionButton(id, label = "", icon = icon("question"), style = "info", size = "xs"),
+        tippy::tippy_this(id, title)
+      )
   )
 }
 
