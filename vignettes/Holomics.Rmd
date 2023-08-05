@@ -59,7 +59,7 @@ knitr::opts_chunk$set(
 ## Introduction
 <b>Holomics</b> is an R Shiny application that allows its users to perform single- and multi-omics analyses by providing a user-friendly interface to upload the different omics datasets, select and run the implemented algorithms and finally visualize the generated results. 
 
-<b>Holomics</b> is mainly built on the R package mixOmics [@rohart2017mixomics], which offers numerous algorithms for the integrative analysis of omics datasets. From this repertoire, the two single-omics algorithms "Principle Component Analysis" (PCA) and "Partial Least Squares Discriminant Analysis" (PLS-DA), the pairwise-omics analysis "sparse Partial Least Squares" (sPLS) and the multi-omics framework DIABLO ("Data Integration Analysis for Biomarker discovery using Latent variable approaches for Omics studies") have been implemented in <b>Holomics</b> so far.
+<b>Holomics</b> is mainly built on the R package mixOmics [@rohart2017mixomics], which offers numerous algorithms for the integrative analysis of omics datasets. From this repertoire, the single-omics algorithms "Principle Component Analysis" (PCA) and "Partial Least Squares Discriminant Analysis" (PLS-DA), the pairwise-omics analysis "sparse Partial Least Squares" (sPLS) and the multi-omics framework DIABLO ("Data Integration Analysis for Biomarker discovery using Latent variable approaches for Omics studies") have been implemented in <b>Holomics</b>.
 
 
 ## Getting started
@@ -100,7 +100,7 @@ Holomics::runApp()
 Omics datasets can contain molecular features measured on a continuous scale (e.g. microarray, mass spectrometry-based metabolomics) or sequenced-based count data (e.g. RNA-seq, 16S rRNA amplicon sequencing) that become continuous after pre-processing and normalisation. Generally, the omics dataset has to be a numeric matrix (basically a count table) in an .xlsx or .csv file format, where the rows have to be the samples and the columns the measured features (see Table \@ref(tab:omicsData)).
 The first column has to contain the sample names and the first row the feature names. There are generally no restrictions regarding characters and symbols that are allowed in the names. It is recommended to keep the number of special characters and symbols to a minimum. Important is that all the omics datasets that belong together in the analyses have the same samples names and the same order. 
 If the data contains more features/columns than excel allows, the matrix also can be uploaded in the transposed format.
-Additionally, if the omics dataset contains more than 10.000 features, <b>Holomics</b> will pre-filter the dataset to 10.000 or less features as mixOmics is able to process a maximum of 10.000 features per dataset [@le2023mixomics]. 
+Additionally, if the omics dataset <b>contains more than 10.000 features</b>, <b>Holomics</b> will pre-filter the dataset to 10.000 or less features as mixOmics is able to process a maximum of 10.000 features per dataset [@le2023mixomics]. 
 Any wanted/necessary normalisation needs to be done for each omics dataset separately before using <b>Holomics</b>. 
 
 Table:  (\#tab:omicsData) Example of an omics dataset with sample names in the first column and feature names in the first row.
@@ -113,7 +113,7 @@ knitr::kable(data)
 
 
 #### Metadata file
-The metadate file has to be in an .xlsx or .csv file format with at least two columns (see Table \@ref(tab:labels)):
+The metadate file has to be in an .xlsx or .csv file format with at least two columns (see Table \@ref(tab:labels) for an example):
 
 * The first column contains the sample names, which have to be exactly the same and in the same order as in the associated omics datasets.
 
@@ -174,7 +174,7 @@ knitr::include_graphics("images/Upload_labels.png")
 ## Single-omics analyses
 
 ### Principle Component Analysis
-For a first glimpse into the individual omics data and for the necessary feature selection, a Principle Component Analysis (PCA) can be done. Figure \@ref(fig:PCA) shows the PCA page with a test dataset. This page is separated into two parts:
+For a first glimpse into the individual omics data and for the necessary feature selection, a Principle Component Analysis (<a href="http://mixomics.org/methods/spca/" rel="noreferrer noopener" target="_blank">PCA</a>) can be done. Figure \@ref(fig:PCA) shows the PCA page with a test dataset. This page is separated into two parts:
 
 On the left side, the original, but already pre-processed and eventually pre-filtered data are depicted. On the top left of the page, the omics dataset that should be analysed is selected together with the corresponding metadata file via the drop-down menus. If the two are not compatible to each other, an error will be printed. The "General information" box shortly explains the PCA concepts and provides some links to additional knowledge sources. In the "Analysis parameters" box the number of components (a value between 2 and 15) that should be used to calculate the PCA can be chosen. Per default, the "Scaling" check box is activated and can be deactivated, if the data don't need any scaling. Below, several plots that present the PCA results using the above set parameters are given.
 
@@ -194,7 +194,7 @@ knitr::include_graphics("images/PCA.png")
 <br>
 
 ### Partial Least Squares Discriminant Analysis
-The Partial Least Squares Discriminant Analysis (PLS-DA) can also be used for single-omics datasets, but in comparison to PCA, PLS-DA is a supervised method where the information of the corresponding class (or label) is included in its computation.
+The Partial Least Squares Discriminant Analysis (<a href="http://mixomics.org/methods/spls-da/" rel="noreferrer noopener" target="_blank">PLS-DA</a>) can also be used for single-omics datasets, but in comparison to PCA, PLS-DA is a supervised method where the information of the corresponding class (or label) is included in its computation.
 
 On the top left of the page (Figure \@ref(fig:PLSDA)), the omics dataset that should be analysed and the corresponding metadata file are selected. If the two are not compatible, an error will be printed. The "General information" box shortly explains the concepts of the PLS-DA and provides some links to additional knowledge sources. In the "Analysis parameters" box, the number of components (a value between 2 and 15) can be adjusted and whether the dataset should be scaled (default) or not. The resulting plots are presented below. The plot output is similar to the PCA analysis, only that the PLS-DA does not provide a scree plot.
 
@@ -212,7 +212,7 @@ knitr::include_graphics("images/PLSDA.png")
 <br>
 
 ## Pairwise omics analysis
-For the pairwise omics analysis (integration of two different omics datasets), the sparse Partial Least Squares (sPLS) method is applied. The structure of the page (Figure \@ref(fig:sPLS)) is the same as previously described in the single-omics analysis pages. On the top, the two datasets X and Y and the corresponding metadata file is selected. 
+For the pairwise omics analysis (integration of two different omics datasets), the sparse Partial Least Squares (<a href="http://mixomics.org/methods/spls/" rel="noreferrer noopener" target="_blank">sPLS</a>) method is applied. The structure of the page (Figure \@ref(fig:sPLS)) is the same as previously described in the single-omics analysis pages. On the top, the two datasets X and Y and the corresponding metadata file is selected. 
 
 On the left side some general information about sPLS is provided and the possibility to adjust the parameters is given. Here, the user can also switch between two algorithm modes "regression" and "canonical". In mode "regression" dataset X will be used to try and predict dataset Y, so changing the datasets (X becomes Y and vice versa) leads to different results. With mode "canonical" the datasets are interchangable. Thus, this mode is recommended to be used when there is no prior known dependency between the datasets. For more information about the two modes please have a look at mixOmics documentation about the <a class='ref-link' href='http://mixomics.org/methods/spls' target='_blank'>PLS Modes</a>. <br>
 Furthermore, instead of the feature selection button described in the PCA and PLS-DA chapter, there is a "Tune parameters" button in the middle of the page. The tuning process is similar to the feature selection process described in the PCA and PLS-DA chapter. It calculates the ideal number of components for the given datasets and the number of important features per dataset. "Ideal" means the number of components and features per component where the model, which is built in the background, has the lowest error rate. The tuning algorithm of the sPLS tests 1 to n (number of components set on the left side) components and chooses one of these as the "ideal". After tuning, the results using the tuned parameters will be visualised on the right side of the page. Some general information and the tuned analysis parameters are provided in the boxes above the plots.
@@ -226,7 +226,7 @@ knitr::include_graphics("images/sPLS.png")
 <br>
 
 ## Multi-omics analysis
-The multi-omics analysis is done by applying DIABLO framework of mixOmics, which can take two or more datasets as its input and tries to find any correlations between the datasets. The structure of the page (Figure \@ref(fig:DIABLO)) is the same as described in the "Pairwise omics analysis" chapter. 
+The multi-omics analysis is done by applying <a href="http://mixomics.org/mixdiablo/" rel="noreferrer noopener" target="_blank">DIABLO</a> framework of mixOmics, which can take two or more datasets as its input and tries to find any correlations between the datasets. The structure of the page (Figure \@ref(fig:DIABLO)) is the same as described in the "Pairwise omics analysis" chapter. 
 
 On the top, the datasets are added to the "select the datasets" field and the corresponding metadata file is selected. Also here, the left side of the page some general information is provided and the possibility to adjust the analysis parameters is given in the "Analysis parameters" box. Here, the value for the design matrix can be adjusted. The design matrix indicates whether there are prior known or calculated correlations between the datasets, which should be taken into consideration. For now, <b>Holomics</b> only allows to set one correlation value over the entire matrix, which will be used for all pairwise correlations. This field is pre-filled with the lowest calculated correlation value, but can be adjusted by the user.
 
@@ -248,13 +248,15 @@ The help pages that can be found in the application provide short descriptions o
 The <b>Holomics</b> package is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3).
 
 ## Cite
-Munk, K., Tucek, L., Brader, G. & Molin, E.M. (2023). Holomics: an R Shiny application for the holistic integration and analysis of multiple omics data. R package version 1.0.0. https://CRAN.R-project.org/package=Holomics
+Munk, K., Tucek, L., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis (to be published)<br>
+R package version 1.0.0. https://CRAN.R-project.org/package=Holomics
 
 ## Acknowledgements
 <b>Holomics</b> has been developed at the <a href="https://www.ait.ac.at/" rel="noreferrer noopener" target="_blank">AIT Austrian Institute of Technology GmbH</a> within the research project <a href="https://metabolomics-ifa.boku.ac.at/omics40project/" rel="noreferrer noopener" target="_blank">OMICS 4.0</a>, which is funded by the Federal State of Lower Austria as part of the FTI-Strategy Lower Austria. We also would like to thank all beta testers for their valuable input and advice.
 
 ## Session info
-```{r, echo = FALSE}
+```{r echo = FALSE}
+library(Holomics)
 sessionInfo()
 ```
 
