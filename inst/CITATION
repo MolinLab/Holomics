@@ -2,11 +2,11 @@ citHeader("To cite Holomics in publications use:")
 
 citEntry(
   entry    = "Manual",
-  title    = "Holomics: an R Shiny application for the holistic integration and analysis of multiple omics data",
-  author   = "Katharina Munk and Günter Brader and Eva Maria Molin",
+  title    = "Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis",
+  author   = "Katharina Munk and Lica Tucek and Günter Brader and Eva Maria Molin",
   year     = "2023",
   note     = "R package version 1.0.0",
   url      = "https://CRAN.R-project.org/package=Holomics",
-    textVersion = "Munk, K., Brader, G. & Molin, E.M. (2023). Holomics: an R Shiny application for the holistic integration and analysis of multiple omics data R package version 1.0.0. https://CRAN.R-project.org/package=Holomics"
+  textVersion = "Munk, K., Tucek, L., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis (to be published);  R package version 1.0.0. https://CRAN.R-project.org/package=Holomics"
 
 )
