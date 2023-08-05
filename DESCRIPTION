@@ -3,7 +3,7 @@ Package: Holomics
 Title: An user-friendly R Shiny application for multi-omics data integration and analysis
 Version: 0.1.0
 Authors@R: 
-    c(person(given = "Katharina", family = "Munk", role = c("aut", "cre"), email = "kathimunk@gmail.com"),
+    c(person(given = "Katharina", family = "Munk", role = c("aut", "cre"), email = "katharinamunk@yahoo.de"),
     person(given = "Eva M.", family = "Molin", role = c("ctb")),
     person("AIT Austrian Institute of Technology GmbH", role = c("cph")))
 Description: Shiny application, which allows you to perform single- and multi-omics analyses using your own omics datasets.
@@ -11,8 +11,8 @@ Description: Shiny application, which allows you to perform single- and multi-om
   Afterwards, going into the multi-omics datasets with the reduced datasets and let them get automatically tuned to identfiy 
   correlations between the datasets is the end goal of the recommended 'Holomics workflow'.
 License: GPL (>= 3)
-URL: https://github.com/evasehr/Holomics
-BugReports: https://github.com/evasehr/Holomics/issues
+URL: https://github.com/MolinLab/Holomics
+BugReports: https://github.com/MolinLab/Holomics/issues
 Depends: 
     R (>= 4.0)
 Imports:
