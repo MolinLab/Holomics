@@ -82,7 +82,7 @@ app_ui <- function(request) {
     bs4Dash::bs4DashFooter(
       fluidRow(
         column(width = 12, align = "center", 
-               a(href = "https://www.ait.ac.at/en/", HTML("<b> AIT - Austrian Institute of Technology"),
+               a(href = "https://www.ait.ac.at/en/", HTML("<b> AIT Austrian Institute of Technology"),
                  target = "_blank", rel="noreferrer noopener"), 
 
                 br(),
