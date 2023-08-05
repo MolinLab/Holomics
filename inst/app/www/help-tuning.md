@@ -20,15 +20,13 @@ The feature selection functionality using the PLS-DA analysis is separated into 
 </ol>
 
 For more information please have a look at the different documentations of mixOmics, such as <a class='mixOmics-link' href="https://mixomicsteam.github.io/Bookdown/plsda.html#tuning:sPLSDA" rel="noreferrer noopener" target="_blank">PLS-DA - tuning parameters</a>.
+
 # Tuning 
-
 ### sPLS and DIABLO parameter tuning
-The parameter tuning functionality of the sPLS analysis is separated into two parts:
+A by mixOmics provided function takes the by the user provided number of components (from the "Analysis parameters" tab) and performs cross-validation to get the Q2 score per component. The tuning step determines the correlation between the actual and anticipated components by varying the amount of features chosen for each dataset. Finally, the last number of components having a total Q2 greater than 0.0975 is selected as the ideal number of components and the number of features with the highest correlation is the optimal number of features.<br>
+The components that are tested in this cross-validation calculation range from 1 to the number given by the user. This means sometimes a higher number provided by the user can lead to different results than a lower number.
 
-<ol type="1">
-  <li><b>Get optimal number of components:</b> A by mixOmics provided function takes the by the user provided number of components (from the "Analysis parameters" tab) and performs cross-validation to get the optimal number of components and the therefore optimal number of features per component. The components that are tested in this cross-validation calculation range from 1 to the number given by the user. This means sometimes a higher number provided by the user can lead to different results than a lower number. </li>
-  <li><b>Get optimal number of features per component:</b> Again with cross-validation and testing different numbers of features to keep per component, the optimal number of features per component get calculated.</li>
-</ol>
+The DIABLO tuning process, similar to sPLS analysis tuning, takes the user-selected components and fits a DIABLO model up to the number of components using N-Fold cross-validation and without feature selection. The number of components is determined by utilizing the centroids.dist metric and the overall BER. Again, N-fold cross-validation and the centroids.dist metric are used to determine the number of features per dataset.
 
 The analysis results using the tuned parameters will then be presented on the right side of the page.
 For more information please have a look at the different documentations of mixOmics, such as <a class='mixOmics-link' href="https://mixomicsteam.github.io/Bookdown/pls.html#tuning:PLS" rel="noreferrer noopener" target="_blank">PLS - tuning parameters</a> and 
