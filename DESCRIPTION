@@ -1,6 +1,6 @@
 Type: Package
 Package: Holomics
-Title: An user-friendly R Shiny application for multi-omics data integration and analysis
+Title: An User-Friendly R Shiny Application for Multi-Omics Data Integration and Analysis
 Version: 0.1.0
 Authors@R: 
     c(person(given = "Katharina", family = "Munk", role = c("aut", "cre"), email = "katharinamunk@yahoo.de"),
