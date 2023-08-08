@@ -3,9 +3,9 @@ citHeader("To cite Holomics in publications use:")
 bibentry(
   bibtype    = "Manual",
   title    = "Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis",
-  author   = "Katharina Munk and Lica Tucek and Günter Brader and Eva Maria Molin",
+  author   = "Katharina Munk and Lisa Tucek and Günter Brader and Eva Maria Molin",
   year     = "2023",
   note     = "R package version 1.0.0",
-  textVersion = "Munk, K., Tucek, L., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis (to be published);  R package version 1.0.0."
+  textVersion = "Munk, K., Tucek, L., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis (in preparation);  R package version 1.0.0."
 
 )

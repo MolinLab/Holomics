@@ -9,12 +9,12 @@ Authors@R: c(
     person("AIT Austrian Institute of Technology GmbH", role = "cph")
   )
 Description: Shiny application, which allows you to perform single- and
-    multi-omics analyses using your own omics datasets.  Therefore you
-    upload the omics datasets and a metadata file and can then perform
-    single-omics analysis to reduce the datasets.  Afterwards, going into
-    the multi-omics datasets with the reduced datasets and let them get
-    automatically tuned to identify correlations between the datasets is
-    the end goal of the recommended 'Holomics workflow'.
+    multi-omics analyses using your own omics datasets. After the upload 
+    of the omics datasets and a metadata file, single-omics is performed
+    for feature selection and dataset reduction. These datasets are used 
+    for pairwise- and multi-omics analyses, where automatic tuning is 
+    done to identify correlations between the datasets - the end goal 
+    of the recommended Holomics workflow.
 License: GPL (>= 3)
 URL: https://github.com/MolinLab/Holomics
 BugReports: https://github.com/MolinLab/Holomics/issues

@@ -1,9 +1,10 @@
 # Team
-Holomics was developed by Katharina Munk and Eva M. Molin. Additionally, Günter Brader contributed by giving feedback during the development process.
+Holomics was developed by Katharina Munk and Eva M. Molin. Additionally, Lisa Tucek supported with mixOmics implementation and Günter Brader contributed by giving feedback during the development process.
 
 # How to cite
-Munk, K., Tucek, L., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis (to be published)<br>
+Munk, K., Tucek, L., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis (in preparation)<br>
 R package version 1.0.0. https://CRAN.R-project.org/package=Holomics
+
 # License
 The Holomics package is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3).
 

@@ -5,21 +5,19 @@
 
 <img align="right" src="inst/app/www/img/logo.png" width=300>
 
-Holomics is an R Shiny application, which enables its users to perform
-single- and multi-omics analyses. Therefore, Holomics provides a
-user-friendly interface to upload the different datasets, choose and
-perform the various analyses and then presents the results to the user.
-To perform the various analyses Holomics uses the R package mixOmics.
-This means Holomics takes the input files, forwards them to the mixOmics
-algorithms and takes the resulting plots/tables and presents them to
-user.
+<b>Holomics</b> is an R Shiny application enabling its users to perform
+single- and multi-omics analyses by providing a user-friendly interface
+to upload the different omics datasets, select and run the implemented
+algorithms and finally visualize the generated results.
 
-mixOmics provides numerous analyses algorithms, but Holomics only
-integrates the two single-omics algorithms “Principle Component Analysis
-(PCA)” and “Partial Least Squares Discriminant Analysis (PLS-DA)”, one
-pairwise omics analysis called “sparse Partial Least Squares (sPLS)” and
-one multi-omics analysis called “Data Integration Analysis for Biomarker
-discovery using Latent variable approaches for Omics studies (DIABLO)”.
+<b>Holomics</b> is mainly built on the R package mixOmics, which offers
+numerous algorithms for the integrative analysis of omics datasets. From
+this repertoire, the single-omics algorithms “Principle Component
+Analysis” (PCA) and “Partial Least Squares Discriminant Analysis”
+(PLS-DA), the pairwise-omics analysis “sparse Partial Least Squares”
+(sPLS) and the multi-omics framework DIABLO (“Data Integration Analysis
+for Biomarker discovery using Latent variable approaches for Omics
+studies”) have been implemented in <b>Holomics</b>.
 
 ## Installation
 
@@ -49,15 +47,15 @@ or
 
 ## Workflow
 
-To make use of all the functionality provided, the below described
-workflow should be followed. Firstly, the datasets are uploaded where an
-eventual pre-filtering/transformation step takes place.Afterwards, the
-user should go with the datasets into the single-omics analysis, where
-key features are identified and the datasets are reduced accordingly.
-After the single-omics analyses, the user can apply the multi-omics
-analyses to identify correlations between 2-n datasets. NOTE: If the
-user already uploaded pre-filtered (ideally by Holomics at an earlier
-time) datasets, it is possible to go directly into the multi-omics
+To use all the features offered, the workflow described below should be
+followed. First, the datasets are uploaded where any
+pre-filtering/transformation step takes place. Then the user should take
+the datasets to the single-omics analysis, where key features are
+identified and the datasets are reduced accordingly. After the
+single-omics analyses, the user can apply the multi-omics analyses to
+identify correlations between 2-n datasets. NOTE: If pre-filtered
+(ideally from Holomics at an earlier stage) datasets have already been
+uploaded , it is possible to start directly with the multi-omics
 analysis.
 
 <img src="vignettes/images/workflow.png" width="100%" />
