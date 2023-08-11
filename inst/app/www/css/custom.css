@@ -81,3 +81,8 @@ div#DIABLO-img\.comp{
     align-items: center;
     gap: 3px;
 }
+
+/* Remove darkmode switch and help icon in navbar header */
+label[for='help_switch']{
+  display: none;
+}
