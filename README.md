@@ -32,7 +32,17 @@ studies”) have been implemented in <b>Holomics</b>.
     library(devtools)
 
     # Install Holomics package 
-    install_github("evasehr/Holomics")
+    install_github("https://github.com/MolinLab/Holomics")
+
+### Additional packages
+
+    if (!require("BiocManager", quietly = TRUE))
+        install.packages("BiocManager")
+    BiocManager::install("mixOmics")
+    BiocManager::install("BiocParallel")
+
+I could be that you need to install some Bioconductor packages
+separately. Just use the code snippet above.
 
 ## Start application
 
@@ -55,7 +65,7 @@ identified and the datasets are reduced accordingly. After the
 single-omics analyses, the user can apply the multi-omics analyses to
 identify correlations between 2-n datasets. NOTE: If pre-filtered
 (ideally from Holomics at an earlier stage) datasets have already been
-uploaded , it is possible to start directly with the multi-omics
+uploaded, it is possible to start directly with the multi-omics
 analysis.
 
 <img src="vignettes/images/workflow.png" width="100%" />
