@@ -9,7 +9,7 @@ The feature selection functionality using the PCA analysis is separated into thr
   <li><b>Reduce dataset:</b> The optimal n features of the optimal m components get extracted from the original dataset and are saved in a new dataframe.</li>
 </ol>
 
-For more information please have a look at the different documentations of mixOmics, such as <a class='mixOmics-link' href="https://mixomicsteam.github.io/Bookdown/pca.html#tuning-parameters" rel="noreferrer noopener" target="_blank">PCA - tuning parameters</a>.
+For more information please have a look at the different documentations of mixOmics, such as <a class='mixOmics-link' href="http://mixomics.org/case-studies/spca-multidrug-case-study/" rel="noreferrer noopener" target="_blank">sPCA Multidrug Case Study</a>.
 
 ### PLS-DA-based feature selection for multi-omics
 The feature selection functionality using PLS-DA is separated into two parts:
@@ -19,7 +19,7 @@ The feature selection functionality using PLS-DA is separated into two parts:
   <li><b>Reduce dataset:</b> The optimal n features of the optimal m components get extracted from the original dataset and are saved in a new one.</li>
 </ol>
 
-For more information please have a look at the different documentations of mixOmics, such as <a class='mixOmics-link' href="https://mixomicsteam.github.io/Bookdown/plsda.html#tuning:sPLSDA" rel="noreferrer noopener" target="_blank">PLS-DA - tuning parameters</a>.
+For more information please have a look at the different documentations of mixOmics, such as <a class='mixOmics-link' href="http://mixomics.org/case-studies/splsda-srbct-case-study/" rel="noreferrer noopener" target="_blank">sPLSDA SRBCT Case Study</a>.
 
 # Tuning 
 ### sPLS and DIABLO parameter tuning
@@ -28,5 +28,5 @@ A mixOmics-based function takes the provided number of components (set by the us
 The DIABLO tuning process, similar to sPLS tuning, takes the user-selected components and fits a DIABLO model up to the number of components using n-fold cross-validation and without feature selection. The number of components is determined by utilizing the centroids.dist metric and the overall BER. Again, n-fold cross-validation and the centroids.dist metric are used to determine the number of features per dataset.
 
 The analysis results using the tuned parameters are then given on the right side of the page.
-For more information please have a look at the different documentations of mixOmics, such as <a class='mixOmics-link' href="https://mixomicsteam.github.io/Bookdown/pls.html#tuning:PLS" rel="noreferrer noopener" target="_blank">PLS - tuning parameters</a> and 
-<a class='mixOmics-link' href="https://mixomicsteam.github.io/Bookdown/diablo.html#tuning-parameters-1" rel="noreferrer noopener" target="_blank">DIABLO - tuning parameters</a>.
+For more information please have a look at the different documentations of mixOmics, such as <a class='mixOmics-link' href="http://mixomics.org/case-studies/spls-liver-toxicity-case-study/" rel="noreferrer noopener" target="_blank">sPLS Liver Toxicity Case Study</a> and 
+<a class='mixOmics-link' href="http://mixomics.org/mixdiablo/diablo-tcga-case-study/" rel="noreferrer noopener" target="_blank">DIABLO TCGA Case Study</a>.

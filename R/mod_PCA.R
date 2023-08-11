@@ -582,7 +582,7 @@ render_pca_infotexts <- function(output){
       It works unsupervised and determines uncorrelated and orthogonal principal components (PC) in the data.
       Therefore, the PCA only works with the data matrix containing the samples and features information without knowing the classification of the samples.
       It helps to identify characteristics of the data and eventual biases and artefacts by visualising the PCs with the respective features and samples. <br/>
-      Additional information can be found on the <a class='mixOmics-link' href='https://mixomicsteam.github.io/Bookdown/pca.html' target='_blank'>mixOmics website</a> and
+      Additional information can be found on the <a class='mixOmics-link' href='http://mixomics.org/methods/spca/' target='_blank'>mixOmics website</a> and
       in several scientific papers (e.g. <a class='ref-link' href='https://link.springer.com/article/10.1186/1471-2105-13-24' target='_blank'>Yao et.al. (2012)</a>).
       More information about the plots and the feature selection and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
       <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.</br>
