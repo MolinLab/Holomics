@@ -19,10 +19,6 @@ this is why the check fails.
   
 Again this is a Bioconductor package and the dependency is on purpose.
 
-* Possibly misspelled words in DESCRIPTION:
-    Holomics (17:24)
-    Omics (3:55)
-    omics (12:11, 12:41, 13:12, 13:55, 15:29)
-    workflow (17:33)
-These were ignored, as the words are spelled correctly
-
+## Additional notes
+The example in run_app.R needs to have \dontrun, although its the first submission to CRAN, because
+its showing how to start the shiny application and does not end, so the automated tests would never finish.

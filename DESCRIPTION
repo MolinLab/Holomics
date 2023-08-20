@@ -10,7 +10,7 @@ Authors@R: c(
     person("Lisa", "Tucek", role = "ctb"),
     person("AIT Austrian Institute of Technology GmbH", role = "cph")
   )
-Description: 'shiny' application, which allows you to perform single- and
+Description: A 'shiny' application, which allows you to perform single- and
     multi-omics analyses using your own omics datasets. After the upload 
     of the omics datasets and a metadata file, single-omics is performed
     for feature selection and dataset reduction. These datasets are used 
@@ -19,7 +19,7 @@ Description: 'shiny' application, which allows you to perform single- and
     of the recommended 'Holomics' workflow.
     Methods used in the package were implemented in the package 'mixomics'
     by Florian Rohart,Benoît Gautier,Amrit Singh,Kim-Anh Lê Cao (2017) <doi:10.1371/journal.pcbi.1005752>
-    and are descriped there in further detail.
+    and are described there in further detail.
 License: GPL (>= 3)
 URL: https://github.com/MolinLab/Holomics
 BugReports: https://github.com/MolinLab/Holomics/issues
