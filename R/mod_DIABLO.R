@@ -304,7 +304,6 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
       finished <- F
       while (!finished && !error){
         dataName <- tryCatch({
-          set.seed(30)
           perf.diablo <- mixOmics::perf(result, validation = 'Mfold', folds = min(table(Y)), nrepeat = 50, 
                                         progressBar = TRUE, cpus = 1)
           finished = T

@@ -250,7 +250,6 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
     finished <- F
     while (!finished && !error){
       values <- tryCatch({
-        set.seed(30)
         perf.spls <- mixOmics::perf(result, validation = "Mfold", folds = getsPLSFolds(X), progressBar = TRUE, nrepeat = 50)
         finished = T
       }, error = function(cond){
