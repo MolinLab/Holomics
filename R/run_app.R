@@ -7,6 +7,12 @@
 #' @export
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options 
+#' @return No return value, called to start the Shiny application
+#' @examples
+#' \dontrun{
+#' # Start app in the current working directory
+#' run_app()
+#' }
 run_app <- function(
   onStart = NULL,
   options = list(), 
