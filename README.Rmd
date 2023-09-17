@@ -13,6 +13,15 @@ knitr::opts_chunk$set(
 ```
 
 # Holomics
+```{r, echo = F, results='asis', message = F}
+cat(
+	badger::badge_cran_release("Holomics", "orange"),
+	badger::badge_cran_download("Holomics", "grand-total", "blue"),
+	badger::badge_license("GPL-3.0", "lightgray"),
+	badger::badge_repostatus("Active"),
+	badger::badge_last_commit("MolinLab/Holomics")
+)
+```
 
 <img align="right" src="inst/app/www/img/logo.png" width=300> 
 

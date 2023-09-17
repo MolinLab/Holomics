@@ -50,7 +50,8 @@ Imports:
 Suggests:
     bookdown,
     knitr,
-    rmarkdown
+    rmarkdown,
+    badger
 VignetteBuilder:
     knitr
 Encoding: UTF-8
