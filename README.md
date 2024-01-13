@@ -58,11 +58,11 @@ separately. Just use the code snippet above.
 Either with
 
     library(Holomics)
-    runApp()
+    run_app()
 
 or
 
-    Holomics::runApp()
+    Holomics::run_app()
 
 ## Workflow
 

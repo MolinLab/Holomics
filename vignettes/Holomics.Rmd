@@ -84,13 +84,13 @@ Within the Rstudio environment, start the application either with
 
 ~~~
 library(Holomics)
-runApp()
+run_app()
 ~~~
 
 or 
 
 ~~~
-Holomics::runApp()
+Holomics::run_app()
 ~~~
 
 ### Data preparation
