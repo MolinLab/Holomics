@@ -170,6 +170,7 @@ To upload the metadata file with the labels or class information of each sample,
 knitr::include_graphics("images/Upload_labels.png")
 ```
 
+
 ## Single-omics analyses
 
 ### Principle Component Analysis
@@ -239,12 +240,15 @@ knitr::include_graphics("images/DIABLO.png")
 ## Help pages
 The help pages that can be found in the application provide short descriptions of the used plots as well as the feature selection and tuning processes. Additionally, there are several links to the mixOmics website or to other papers, where even more detailed information is provided, if desired.
 
+## Test datasets
+Examples of transcriptomics, metabolomics and microbiomics data as well as a file with the labels and class information can be found as additioal files in our paper TODO cite. These omics data can be uploaded directly into the application after removing the first line with the table title in each case. In addition, exactly the same datasets were processed with Holomics in the papers' described case study.
+
 ## License
 The <b>Holomics</b> package is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3).
 
 ## Cite
-Munk, K., Tucek, L., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis (in preparation)<br>
-R package version 1.0.0. https://CRAN.R-project.org/package=Holomics
+Munk, K., Ziemba, L., Ilina, D., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis<br>
+R package version 1.0.1 https://CRAN.R-project.org/package=Holomics
 
 ## Acknowledgements
 <b>Holomics</b> has been developed at the <a href="https://www.ait.ac.at/" rel="noreferrer noopener" target="_blank">AIT Austrian Institute of Technology GmbH</a> within the research project <a href="https://metabolomics-ifa.boku.ac.at/omics40project/" rel="noreferrer noopener" target="_blank">OMICS 4.0</a>, which is funded by the Federal State of Lower Austria as part of the FTI-Strategy Lower Austria. We also would like to thank all beta testers for their valuable input and advice.
