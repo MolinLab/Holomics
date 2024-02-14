@@ -14,7 +14,7 @@ mod_Upload_ui <- function(id){
     h1("Data upload"),
     fluidRow(
              bs4Dash::box(title = "General information", width = 12, 
-                          collapsed = TRUE, id = ns("general-information"),
+                          collapsed = FALSE, id = ns("general-information"),
                           htmlOutput(ns("infotext"))
              )
     ),
