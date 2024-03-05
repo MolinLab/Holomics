@@ -4,10 +4,10 @@ Title: An User-Friendly R 'shiny' Application for Multi-Omics Data
     Integration and Analysis
 Version: 1.0.0.9000
 Authors@R: c(
-    person("Katharina", "Munk", , "katharinamunk@yahoo.de", role = c("aut", "cre")),
+    person("Katharina", "Munk", "katharinamunk@yahoo.de", role = c("aut", "cre")),
     person("Eva M.", "Molin", role = c("aut", "ctb")),
     person("Günter", "Brader", role = "ctb"),
-    person("Lisa", "Tucek", role = "ctb"),
+    person("Lisa", "Ziemba", role = "ctb"),
     person("AIT Austrian Institute of Technology GmbH", role = "cph")
   )
 Description: A 'shiny' application, which allows you to perform single- and
@@ -50,7 +50,8 @@ Imports:
 Suggests:
     bookdown,
     knitr,
-    rmarkdown
+    rmarkdown,
+    badger
 VignetteBuilder:
     knitr
 Encoding: UTF-8

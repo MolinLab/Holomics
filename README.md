@@ -3,6 +3,15 @@
 
 # Holomics
 
+[![](https://www.r-pkg.org/badges/version/Holomics?color=orange)](https://cran.r-project.org/package=Holomics)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/Holomics?color=blue)](https://cran.r-project.org/package=Holomics)
+[![License:
+GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-lightgray.svg)](https://cran.r-project.org/web/licenses/GPL-3.0)
+[![Project Status: Active - The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![](https://img.shields.io/github/last-commit/MolinLab/Holomics.svg)](https://github.com/MolinLab/Holomics/commits/main)
+
 <img align="right" src="inst/app/www/img/logo.png" width=300>
 
 <b>Holomics</b> is an R Shiny application enabling its users to perform
@@ -49,11 +58,11 @@ separately. Just use the code snippet above.
 Either with
 
     library(Holomics)
-    runApp()
+    run_app()
 
 or
 
-    Holomics::runApp()
+    Holomics::run_app()
 
 ## Workflow
 
