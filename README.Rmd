@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 cat(
 	badger::badge_cran_release("Holomics", "orange"),
 	badger::badge_cran_download("Holomics", "grand-total", "blue"),
-	badger::badge_license("GPL-3.0", "lightgray"),
+	badger::badge_license("GPL-3", "lightgray"),
 	badger::badge_repostatus("Active"),
 	badger::badge_last_commit("MolinLab/Holomics")
 )
