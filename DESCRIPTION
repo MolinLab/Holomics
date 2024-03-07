@@ -46,7 +46,8 @@ Imports:
     tippy,
     visNetwork,
     mixOmics,
-    BiocParallel
+    BiocParallel,
+    markdown
 Suggests:
     bookdown,
     knitr,
