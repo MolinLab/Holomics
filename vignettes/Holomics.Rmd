@@ -64,6 +64,8 @@ knitr::opts_chunk$set(
 
 ## Getting started
 ### Installation
+For the current Holomics version it is very important that you use R 4.2. and check that mixOmics was installed with version 6.22.0.
+
 #### CRAN
 ~~~
 install.packages("Holomics")
@@ -78,6 +80,18 @@ library(devtools)
 # Install Holomics package 
 install_github("MolinLab/Holomics")
 ~~~
+
+#### Additional packages 
+You need to install the Bioconductor package separately. 
+
+~~~
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("mixOmics")
+BiocManager::install("BiocParallel")
+~~~
+
+I could be that you need to install some Bioconductor packages separately. Just use the code snippet above.
 
 ### Start application
 Within the Rstudio environment, start the application either with 

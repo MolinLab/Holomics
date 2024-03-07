@@ -31,6 +31,7 @@ cat(
 
 
 ## Installation
+For the current Holomics version it is very important that you use R 4.2. and check that mixOmics was installed with version 6.22.0.
 ### CRAN
 ~~~
 install.packages("Holomics")
@@ -47,14 +48,14 @@ install_github("https://github.com/MolinLab/Holomics")
 ~~~
 
 ### Additional packages 
+You need to install the Bioconductor package separately. 
+
 ~~~
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("mixOmics")
+BiocManager::install("mixOmics", version = "6.22.0")
 BiocManager::install("BiocParallel")
 ~~~
-
-I could be that you need to install some Bioconductor packages separately. Just use the code snippet above.
 
 
 ## Start application
