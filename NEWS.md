@@ -7,6 +7,8 @@
 * Updates citation to the newly published paper
 * Fixed wrong naming of function in documentation
 * Updated home page
+* UI fixes
+* Added instructions on which versions to use for R and mixOmics
 
 # Holomics 1.0.0
 
