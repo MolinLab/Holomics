@@ -71,14 +71,27 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
   color: white;
 }
 
+[class*="sidebar-light-"] .sidebar a {
+  color: white;
+}
+
 /* Sidebar items hover */
 [class*="sidebar-dark-"] .nav-sidebar > .nav-item:hover > .nav-link{
   background-color: white;
   color: var(--green) ;
 }
 
+[class*="sidebar-light-"] .nav-sidebar > .nav-item:hover > .nav-link{
+  background-color: white;
+  color: var(--green) !important;
+}
+
 /* Active sidebar item */
 [class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link.active{
+  color: var(--green) ;
+}
+
+[class*="sidebar-light-"] .nav-sidebar > .nav-item > .nav-link.active{
   color: var(--green) ;
 }
 
@@ -89,6 +102,14 @@ a.bg-secondary:focus, a.bg-secondary:hover, button.bg-secondary:focus, button.bg
 /* Opened menu in sidebar */
 [class*="sidebar-dark-"] .nav-sidebar > .nav-item.menu-open > .nav-link.active {
   color: var(--green);
+}
+
+[class*="sidebar-light-"] .nav-sidebar > .nav-item.menu-open > .nav-link.active {
+  color: var(--green);
+}
+
+[class*=sidebar-light-] .nav-sidebar>.nav-item.menu-open>.nav-link, [class*=sidebar-light-] .nav-sidebar>.nav-item:hover>.nav-link {
+  color: white;
 }
 
 /* Subitems in sidebar */
