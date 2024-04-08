@@ -31,8 +31,9 @@ studies”) have been implemented in <b>Holomics</b>.
 ## Installation
 
 For the current Holomics version it is very important that you use R
-4.2. and check that mixOmics was installed with version 6.22.0. \###
-CRAN \~\~~ install.packages(“Holomics”) \~\~~
+4.2. and check that mixOmics was installed with version 6.22.0. 
+### CRAN 
+    install.packages("Holomics")
 
 ### Github
 
