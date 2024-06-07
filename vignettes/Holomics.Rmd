@@ -255,13 +255,13 @@ knitr::include_graphics("images/DIABLO.png")
 The help pages that can be found in the application provide short descriptions of the used plots as well as the feature selection and tuning processes. Additionally, there are several links to the mixOmics website or to other papers, where even more detailed information is provided, if desired.
 
 ## Test datasets
-Examples of transcriptomics, metabolomics and microbiomics data as well as a file with the labels and class information can be found as additioal files in our paper TODO cite. These omics data can be uploaded directly into the application after removing the first line with the table title in each case. In addition, exactly the same datasets were processed with Holomics in the papers' described case study.
+Examples of transcriptomics, metabolomics and microbiomics data as well as a file with the labels and class information can be found as additional files in our paper <a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-024-05719-4" rel="noreferrer noopener" target="_blank">Munk et.al. (2024)</a>. These omics data can be uploaded directly into the application after removing the first line with the table title in each case. In addition, exactly the same datasets were processed with Holomics in the papers' described case study.
 
 ## License
 The <b>Holomics</b> package is distributed under GPL-3 (GNU GENERAL PUBLIC LICENSE version 3).
 
 ## Cite
-Munk, K., Ziemba, L., Ilina, D., Brader, G. & Molin, E.M. (2023). Holomics - an user-friendly R Shiny application for multi-omics data integration and analysis<br>
+Munk, K., Ilina, D., Ziemba, L., Brader, G. & Molin, E.M. (2024). <a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-024-05719-4" rel="noreferrer noopener" target="_blank">Holomics - a user-friendly R shiny application for multi-omics data integration and analysis</a><br>
 R package version 1.1.0 https://CRAN.R-project.org/package=Holomics
 
 ## Acknowledgements

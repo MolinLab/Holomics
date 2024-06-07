@@ -47,7 +47,13 @@ Imports:
     visNetwork,
     mixOmics,
     BiocParallel,
-    markdown
+    markdown,
+    ggrepel
+    matrixStats
+    RSpectra
+    reshape2
+    tidyr
+    uuid
 Suggests:
     bookdown,
     knitr,
