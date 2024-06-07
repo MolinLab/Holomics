@@ -48,11 +48,11 @@ Imports:
     mixOmics,
     BiocParallel,
     markdown,
-    ggrepel
-    matrixStats
-    RSpectra
-    reshape2
-    tidyr
+    ggrepel,
+    matrixStats,
+    RSpectra,
+    reshape2,
+    tidyr,
     uuid
 Suggests:
     bookdown,
