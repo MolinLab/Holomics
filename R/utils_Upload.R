@@ -12,6 +12,10 @@ getDataUploadUI <- function(ns){
             uiOutput(ns("datafileField"))
           ),
           fluidRow(style = "margin-left: 0;",
+                   selectizeInput(ns("dataSep"), label="Seperator",
+                                  choices = c("Tab", "Comma", "Semicolon"))
+          ),
+          fluidRow(style = "margin-left: 0;",
             textInput(ns("dataName"), "Data name")
           ),
           fluidRow(style = "margin-left: 0;",
@@ -249,7 +253,7 @@ resetDataUI <- function(session, output){
   ns <- session$ns
   
   output$datafileField <- renderUI({
-    fileInput(ns("dataFile"), "Choose a xlsx or csv file", accept = c(".xlsx, .csv"))
+    fileInput(ns("dataFile"), "Choose a xlsx, csv or txt file", accept = c(".xlsx, .csv, .txt"))
   })
   updateTextInput(session, "dataName", value = "")
   
