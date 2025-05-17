@@ -573,12 +573,20 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   plot.load <- function(){
     req(input$load.comp)
+    req(input$load.ndisplay)
     if(!is.null(result())){
       names <- getDatasetNames(dataSelection$dataXName, dataSelection$dataYName)
-      plotLoadings(result(), as.numeric(input$load.comp), 
-                   subtitle = lapply(c(names$name1, names$name2),
-                                     function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'"))
-      )
+      
+      if (input$load.ndisplay == "All"){
+        plotLoadings(result(), as.numeric(input$load.comp), 
+                     subtitle = lapply(c(names$name1, names$name2),
+                                       function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'")))
+      } else {
+        plotLoadings(result(), as.numeric(input$load.comp), 
+                     subtitle = lapply(c(names$name1, names$name2),
+                                       function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'")),
+                     ndisplay = as.numeric(input$load.ndisplay))
+      }
     }
   }
   
@@ -648,11 +656,18 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.load.tuned <- function(){
     if (!is.null(resultTuned())){
       req(input$load.comp.tuned)
+      req(input$load.ndisplay.tuned)
       names <- getDatasetNames(dataSelection$dataXName, dataSelection$dataYName)
-      plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned), 
-                   subtitle = lapply(c(names$name1, names$name2),
-                                     function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'"))
-      )
+      if (input$load.ndisplay == "All"){
+        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned), 
+                     subtitle = lapply(c(names$name1, names$name2),
+                                       function(x) paste('Loadings on comp', input$load.comp.tuned, "\nBlock", x,"'")))
+      } else {
+        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned), 
+                     subtitle = lapply(c(names$name1, names$name2),
+                                       function(x) paste('Loadings on comp', input$load.comp.tuned, "\nBlock", x,"'")),
+                     ndisplay = as.numeric(input$load.ndisplay))
+      }
     }
   }
   

@@ -213,8 +213,9 @@ getVariablePlot <- function(ns, postfix = ""){
 getLoadingsPlot <- function(ns, postfix = ""){
   return(
     tabPanel("Loading plot",
-             fluidRow(
+             fluidRow(style = "display: flex; column-gap: 1rem",
                uiOutput(paste0(ns("load.comp"), postfix)),
+               uiOutput(paste0(ns("load.ndisplay"), postfix)),
              ),
              fluidRow(
                bs4Dash::column(width = 12,
@@ -469,9 +470,17 @@ renderLoadComp <- function(ns, input, output, tuned = FALSE, tunedInput = NULL){
     selectInput(ns("load.comp"), "Component:", seq(1, input$ncomp, 1))
   })
   
+  output$load.ndisplay <- renderUI({
+    selectInput(ns("load.ndisplay"), "Top-N entries:", c("All", 5, 10, 15, 20, 25))
+  })
+  
   if (tuned) {
     output$load.comp.tuned <- renderUI({
       selectInput(ns("load.comp.tuned"), "Component:", seq(1, tunedInput$ncomp, 1))
+    })
+    
+    output$load.ndisplay.tuned <- renderUI({
+      selectInput(ns("load.ndisplay.tuned"), "Top-N entries:", c("All", 5, 10, 15, 20, 25))
     })
   }
 }

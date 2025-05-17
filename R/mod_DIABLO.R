@@ -509,7 +509,12 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.load <- function(){
     if(!is.null(result())){
       req(input$load.comp)
-      plotLoadings(result(), as.numeric(input$load.comp))
+      req(input$load.ndisplay)
+      if (input$load.ndisplay == "All"){
+        plotLoadings(result(), as.numeric(input$load.comp))
+      } else {
+        plotLoadings(result(), as.numeric(input$load.comp), ndisplay = as.numeric(input$load.ndisplay))
+      }
     }
   }
   
@@ -606,8 +611,14 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.load.tuned <- function(){
     if(!is.null(result.tuned())){
-      req(input$load.comp.tuned)
-      plotLoadings(result.tuned(), as.numeric(input$load.comp.tuned))
+      req(input$load.comp.tuned) 
+      req(input$load.ndisplay.tuned)
+      if (input$load.ndisplay.tuned == "All"){
+        plotLoadings(result.tuned(), as.numeric(input$load.comp.tuned))
+      } else {
+        plotLoadings(result.tuned(), as.numeric(input$load.comp.tuned),
+                     ndisplay = as.numeric(input$load.ndisplay.tuned))
+      }
     }
   }
   

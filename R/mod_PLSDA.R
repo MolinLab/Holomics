@@ -395,14 +395,27 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   plot.load <- function(){
     req(classSelection$data)
     req(input$load.comp)
+    req(input$load.ndisplay)
     if (!is.null(result())){
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotLoadings(result(), as.numeric(input$load.comp),
-                     contrib = 'max', method = 'mean', legend.color = colors)
+        if (input$load.ndisplay == "All"){
+          plotLoadings(result(), as.numeric(input$load.comp),
+                       contrib = 'max', method = 'mean', legend.color = colors)
+        } else {
+          plotLoadings(result(), as.numeric(input$load.comp),
+                       contrib = 'max', method = 'mean', legend.color = colors, 
+                       ndisplay = as.numeric(input$load.ndisplay))
+        }
       } else {
-        plotLoadings(result(), as.numeric(input$load.comp),
-                     contrib = 'max', method = 'mean')    
+        if (input$load.ndisplay == "All"){
+          plotLoadings(result(), as.numeric(input$load.comp),
+                       contrib = 'max', method = 'mean') 
+        } else {
+          plotLoadings(result(), as.numeric(input$load.comp),
+                       contrib = 'max', method = 'mean', 
+                       ndisplay = as.numeric(input$load.ndisplay))
+        }
       }
     }
   }
@@ -445,14 +458,27 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   plot.load.tuned <- function(){
     req(classSelection$data)
     req(input$load.comp.tuned)
+    req(input$load.ndisplay.tuned)
     if (!is.null(resultTuned())){
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
-                     contrib = 'max', method = 'mean', legend.color = colors)
+        if (input$load.ndisplay.tuned == "All"){
+          plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                       contrib = 'max', method = 'mean', legend.color = colors)
+        } else {
+          plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                       contrib = 'max', method = 'mean', legend.color = colors, 
+                       ndisplay = as.numeric(input$load.ndisplay.tuned))
+        }
       } else {
-        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
-                     contrib = 'max', method = 'mean')    
+        if (input$load.ndisplay.tuned == "All"){
+          plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                       contrib = 'max', method = 'mean')
+        } else {
+          plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                       contrib = 'max', method = 'mean',
+                       ndisplay = as.numeric(input$load.ndisplay.tuned))
+        }
       }
     }
   }

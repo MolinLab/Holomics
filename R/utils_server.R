@@ -217,17 +217,19 @@ plotVar <- function(result, comp, varNames, legend = FALSE, pch) {
 #' @return loadings plot
 #'
 #' @noRd
-plotLoadings <- function(result, comp, contrib = NULL, method = "mean", subtitle, legend.color = NULL) {
+plotLoadings <- function(result, comp, contrib = NULL, method = "mean", subtitle, legend.color = NULL, ndisplay = NULL) {
   comp <- checkCompNcompCombination(result$ncomp, comp)
   
   if (missing(subtitle)){
     mixOmics::plotLoadings(result, comp = comp,
                            contrib = contrib, method = method, size.title = ggplot2::rel(1), 
-                           legend.color = legend.color)
+                           legend.color = legend.color,
+                           ndisplay = ndisplay)
   } else {
     mixOmics::plotLoadings(result, comp = comp,
                            contrib = contrib, method = method, size.title = ggplot2::rel(1), 
-                           legend.color = legend.color, subtitle = subtitle)
+                           legend.color = legend.color, subtitle = subtitle,
+                           ndisplay = ndisplay)
   }
 }
 
