@@ -552,11 +552,13 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   output$Indiv.download <- getDownloadHandler("PLS-DA_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS-DA_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
-  output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedFeatures.csv", table.selVar, type = "csv")
+  output$Load.table.download <- getDownloadHandler("PLS-DA_Loadingsplot.csv", contentfct = plot.load, type = "csv")
+    output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedFeatures.csv", table.selVar, type = "csv")
   
   output$Indiv.download.tuned <- getDownloadHandler("PLS-DA_reduced_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("PLS-DA_reduced_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PLS-DA_reduced_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$Load.table.download.tuned <- getDownloadHandler("PLS-DA_reduced_Loadingsplot.csv", contentfct = plot.load.tuned, type = "csv")
   output$SelVar.download.tuned <- getDownloadHandler("PLS-DA_reduced_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
   
   output$Filter.download <- downloadHandler(

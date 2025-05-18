@@ -221,7 +221,9 @@ getLoadingsPlot <- function(ns, postfix = ""){
                bs4Dash::column(width = 12,
                                textOutput(paste0(ns("load.error"), postfix)),
                                plotOutput(paste0(ns("Load"), postfix)),
-                               downloadButton(paste0(ns("Load.download"), postfix), "Save plot"))
+                               downloadButton(paste0(ns("Load.download"), postfix), "Save plot"),
+                               downloadButton(paste0(ns("Load.table.download"), postfix), "Save as table")
+               )
              )
     )
   )

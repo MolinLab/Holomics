@@ -281,7 +281,8 @@ plotArrow <- function(result, classes, title, indNames, col.per.group) {
 #' @return downloadHandler
 #'
 #' @noRd
-getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800, height = 1200, plot = NULL, tablefct = NULL){
+getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800, height = 1200, 
+                               plot = NULL, tablefct = NULL, result = NULL, comp = NULL){
   return (
     downloadHandler(
       filename = filename,
@@ -308,6 +309,9 @@ getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800,
           } else {
             ggplot2::ggsave(file, plot = plot, device = device)
           }
+        } else if (type == "wb"){
+          wb <- contentfct(result, comp)
+          openxlsx::saveWorkbook(wb, file)
         }
       }
     )
@@ -433,4 +437,26 @@ cimToTable <- function(cimPlot){
   rownames(hmp) <- cimPlot$row.names
   colnames(hmp) <- cimPlot$col.names
   return(as.data.frame(hmp))
+}
+
+#'
+#' @description A utils function, which generates the loadings table
+#'
+#' @return workbook with the loading values in separate sheets
+#'
+#' @noRd
+loadingsToTable <- function(result, comp){
+  wb <- openxlsx::createWorkbook()
+  
+  for (name in names(result()$loadings)) {
+    if (all(names(result()$loadings) == c("X", "Y")) || name != "Y") {
+      df <- result()$loadings[[name]]
+      
+      data_to_write <- data.frame(Name = rownames(df), comp1 = df[, paste0("comp", comp)])
+      
+      openxlsx::addWorksheet(wb, sheetName = name)
+      openxlsx::writeData(wb, sheet = name, x = data_to_write)
+    }
+  }
+  return (wb)
 }
