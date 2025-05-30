@@ -206,9 +206,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
     #get optimal number of components
     error <- tryCatch({
       Y <- classSelection$data[,2]
-      result <- mixOmics::plsda(dataSelection$data$omicsData, Y = Y,
-                                ncomp = input$ncomp , scale = input$scale)
-      
+
       #get optimal number of components and number of features per component
       grid.keepX <- getTestKeepX(ncol(dataSelection$data$omicsData))
       tune.splsda.result <- mixOmics::tune.splsda(dataSelection$data$omicsData,Y = Y, ncomp = input$ncomp,
@@ -230,8 +228,9 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       
       sel_feature <- c()
       for (comp in 1:ncomp){
-        loadings <- mixOmics::plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
-        sel_feature <- c(sel_feature, rownames(loadings))
+        entries <- splsda.result$loadings$X[, paste0("comp", comp)]
+        nonZeroEntries <- entries[entries != 0]
+        sel_feature <- c(sel_feature, names(nonZeroEntries))
       }
       
       feature_cols <- (names(dataSelection$data$omicsData) %in% sel_feature)
