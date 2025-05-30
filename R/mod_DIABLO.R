@@ -491,7 +491,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(result(), classes=classSelection$data[,2], legend.title = legend.title, comp = comp.indiv(), 
-                  indNames = input$indiv.names, legendPosition = "bottom", col.per.group = colors)
+                  indNames = input$indiv.names, legendPosition = "bottom", col = colors)
       } else {
         plotIndiv(result(), classes = classSelection$data[,2], legend.title = legend.title, comp = comp.indiv(), 
                   indNames = input$indiv.names, legendPosition = "bottom")
@@ -550,7 +550,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(result, classSelection$data[,2], legend.title, input$namesArrow, col.per.group = colors)
+        plotArrow(result, classSelection$data[,2], legend.title, input$namesArrow, col = colors)
       } else {
         plotArrow(result, classSelection$data[,2], legend.title, input$namesArrow)
       }
@@ -593,7 +593,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
         colors = getGroupColors(classSelection$data)
         plotIndiv(result.tuned(), classes = classSelection$data[,2], legend.title = title, 
                   comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
-                  legendPosition = "bottom", col.per.group = colors)
+                  legendPosition = "bottom", col = colors)
       } else {
         plotIndiv(result.tuned(), classes = classSelection$data[,2], legend.title = title, 
                   comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned,
@@ -658,7 +658,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(resultTuned, classSelection$data[,2], legend.title, input$namesArrow.tuned, col.per.group = colors)
+        plotArrow(resultTuned, classSelection$data[,2], legend.title, input$namesArrow.tuned, col = colors)
       } else {
         plotArrow(resultTuned, classSelection$data[,2], legend.title, input$namesArrow.tuned)
       }

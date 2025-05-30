@@ -378,7 +378,7 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(result(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
-                  legend.title = legend.title, comp = comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+                  legend.title = legend.title, comp = comp.indiv(), indNames = input$indiv.names, col = colors)
       } else {
         plotIndiv(result(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
                   legend.title = legend.title, comp = comp.indiv(), indNames = input$indiv.names)
@@ -434,7 +434,7 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
-                  legend.title = legend.title, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, col.per.group = colors)
+                  legend.title = legend.title, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, col = colors)
       } else {
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
                   legend.title = legend.title, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned)

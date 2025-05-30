@@ -158,10 +158,10 @@ checkCompNcompCombination <- function(ncomp, comp){
 #'
 #' @noRd
 plotIndiv <- function(result, classes, title = NULL, subtitle = NULL, legend.title, comp, 
-                      repSpace = NULL, indNames, col.per.group, legendPosition = "right") {
+                      repSpace = NULL, indNames, col, legendPosition = "right") {
   comp <- checkCompNcompCombination(result$ncomp, comp)
   
-  if (missing(col.per.group)){
+  if (missing(col)){
     if (is.null(subtitle)){
       mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                           group = classes, ind.names = indNames,
@@ -180,13 +180,13 @@ plotIndiv <- function(result, classes, title = NULL, subtitle = NULL, legend.tit
                           group = classes, ind.names = indNames,
                           title = title, legend = TRUE, 
                           legend.title = legend.title, legend.position = legendPosition, 
-                          col.per.group = col.per.group)
+                          col = col)
     } else {
       mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                           group = classes, ind.names = indNames,
                           subtitle = subtitle, legend = TRUE, 
                           legend.title = legend.title, legend.position = legendPosition, 
-                          col.per.group = col.per.group)
+                          col = col)
     }
   }
 
@@ -262,15 +262,15 @@ selectVar <- function(result, comp, XY = FALSE) {
 #' @return arrow plot
 #'
 #' @noRd
-plotArrow <- function(result, classes, title, indNames, col.per.group) {
-  if (missing(col.per.group)){
+plotArrow <- function(result, classes, title, indNames, col) {
+  if (missing(col)){
     mixOmics::plotArrow(result, group = classes, ind.names = indNames,
                         legend = TRUE, legend.title = title, legend.position = "bottom",
                         X.label = "Dimension 1", Y.label = "Dimension 2")
   } else {
     mixOmics::plotArrow(result, group = classes, ind.names = indNames,
                         legend = TRUE, legend.title = title, legend.position = "bottom",
-                        X.label = "Dimension 1", Y.label = "Dimension 2", col.per.group = col.per.group)
+                        X.label = "Dimension 1", Y.label = "Dimension 2", col = col)
   }
 }
 
