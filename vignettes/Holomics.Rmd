@@ -109,13 +109,25 @@ Holomics::run_app()
 ~~~
 
 ### Data preparation
-<b>Holomics</b> requires two input file types: first, the dataset(s) with the measured values of the performed omics analysis (e.g. transcriptomics, metabolomics) and second, a metadata file containing the label or class information associated to the samples.
+<b>Holomics</b> requires two input file types: 
+<ol>
+  <li> the dataset(s) with the measured values of the performed omics analysis (e.g. transcriptomics, metabolomics)
+  <li> a metadata file containing the label or class information associated to the samples
+</ol>
+
 
 #### Omics dataset
-Omics datasets can contain molecular features measured on a continuous scale (e.g., microarray, mass spectrometry-based metabolomics) or sequence-based count data (e.g., RNA-seq, 16S rRNA amplicon sequencing), which become continuous after pre-processing and normalization. In general, the omics dataset must be a numeric matrix (essentially a count table) in either .xlsx, .csv or .txt format, where rows represent samples and columns represent measured features (see Table \@ref(tab:omicsData)).
-The first column has to contain the sample names and the first row the feature names. There are no strict restrictions on the characters and symbols used in names, but it is recommended to minimize the use of special characters. It is important that all omics datasets used together in an analysis share the same sample names and follow the same sample order. If the dataset contains more features (columns) than Excel allows, the matrix can also be uploaded in transposed format.
-If the data contains more features/columns than excel allows, the matrix also can be uploaded in the transposed format.
+Omics datasets can contain molecular features measured on a continuous scale (e.g., microarray, mass spectrometry-based metabolomics) or sequence-based count data (e.g., RNA-seq, 16S rRNA amplicon sequencing), which become continuous after pre-processing and normalization. 
+
+In general, the omics dataset must be a numeric matrix (essentially a count table) in either .xlsx, .csv or .txt format, where rows represent samples and columns represent measured features (see Table \@ref(tab:omicsData)).
+The first column has to contain the sample names and the first row the feature names. There are no strict restrictions on the characters and symbols used in names, but it is recommended to minimize the use of special characters. 
+
+<b>It is important that all omics datasets used together in an analysis share the same sample names and follow the same sample order.</b> 
+
+If the dataset contains more features (columns) than Excel allows, the matrix can also be uploaded in transposed format.
+
 Additionally, if an omics dataset contains more than 10,000 features, it will be pre-filtered to 10,000 or fewer features, as mixOmics can process a maximum of 10,000 features per dataset [@le2023mixomics]. 
+
 Any desired or required normalization must be performed separately on each omics dataset before using <b>Holomics</b>. 
 
 Table:  (\#tab:omicsData) Example of an omics dataset with sample names in the first column and feature names in the first row.
@@ -153,21 +165,26 @@ To make use of all the functionality provided by <b>Holomics</b>, the workflow d
 knitr::include_graphics("images/workflow.png")
 ```
 <br>
-NOTE: If pre-filtered datasets (ideally processed earlier using <b>Holomics</b>) are uploaded, the dataset reduction step can be skipped, and the workflow can proceed directly to the multi-omics analysis. This shortcut can also be used if the original, unfiltered datasets are to be used in the multi-omics analysis. In either case, the "Was previously filtered" checkbox must be selected to enable this route, effectively bypassing the reduction step.
+<b>NOTE:</b> If pre-filtered datasets (ideally processed earlier using <b>Holomics</b>) are uploaded, the dataset reduction step can be skipped, and the workflow can proceed directly to the multi-omics analysis. This shortcut can also be used if the original, unfiltered datasets are to be used in the multi-omics analysis. In either case, the "Was previously filtered" checkbox must be selected to enable this route, effectively bypassing the reduction step.
 
 ## Data upload
 On the data upload page the omics datasets (Figure \@ref(fig:uploadData)) and the related metadata (including sample names and labels, see Figure \@ref(fig:uploadClasses)) are uploaded. On both sub-pages, a collapsible "General information" box is given, which contains some information on how the different input files should look like. Additionally, next to some form fields question marks indicate a tooltip for a quick explanation.
 
 ### Upload an omics dataset
-To upload an omics dataset (e.g., a transcriptomics read count table or a metabolomics table), the "Omics data" data type should be selected. Then, the corresponding .xlsx,.csv or .txt file must be chosen via the file upload, and the separator that separator the data entries needs to be chosen. If the uploaded file is a .xlsx the separator field can be ignored.
+To upload an omics dataset (e.g., a transcriptomics read count table or a metabolomics table), the "Omics data" data type must be selected. 
 
-Afterwards a file name must be entered, which will later be used on the analysis pages to easily identify the dataset.
+Then the following fields need or can be filled:
+<ul style="margin-bottom: 10px">
+  <li><i>File upload:</i> Dataset as .xlsx,.csv or .txt file</li>
+  <li><i>Separator:</i> Separator character that separates the data entries (in case of a xlsx file any separator can be selected)</li>
+  <li><i>Data name:</i> Name for the dataset, which will be used inside the Holomics app to differentiate between the datasets</li>
+  <li><i>Was previously filtered:</i> The dataset has already been filtered at an earlier stage (preferably using Holomics), the filtering steps will then be skipped</li>
+  <li><i>Is microbiome data:</i> The dataset originates from microbial community analysis (e.g., an OTU/ASV table). If checked the mixMC pipeline for microbiome data [@le2016mixmc] will be triggered to preprocess the data.</li>
+  <li><i>Has transposed format:</i> Samples in columns and features in rows</li>
+  <li><i>Use for ... omics analysis:</i> Dataset can be used either for single- or multi-omics or both analysis. If "multi" is selected, then also "Was previously filterd" needs to be selected.</li>
+  <li><i>Name for plots:</i> Choose or manually enter the plot name to be used for the dataset in visualizations. This plot name does not need to match the earlier file name and can even be the same for multiple datasets.</li>
 
-Next, you must indicate whether the dataset has already been filtered at an earlier stage (preferably using Holomics) by selecting the "Was previously filtered" checkbox. If the dataset originates from microbial community analysis (e.g., an OTU/ASV table), be sure to check the "Contains microbiome data" checkbox. This triggers a necessary preprocessing step—namely, the mixMC pipeline for microbiome data [@le2016mixmc].
-
-If the dataset is in transposed format (i.e., samples in columns and features in rows), activate the "Has transposed format" checkbox.
-
-Afterward, the type of analysis for the dataset(s) must be selected. Datasets can only be used for multi-omics analysis if the "Was previously filtered" checkbox is selected (see also the note above). Finally, you can choose or manually enter the plot name to be used for the dataset in visualizations. Note that this plot name does not need to match the earlier file name and can even be the same for multiple datasets.
+</ul>
 
 By clicking the Save button, the dataset is stored within the Holomics application, and a summary of the uploaded information is displayed in the table on the right side of the page.
 
@@ -181,9 +198,15 @@ knitr::include_graphics("images/Upload_data.png")
 
 
 ### Upload the metadata file
-To upload the metadata file containing the labels or class information for each sample, the "Labels/Classes" data type must be selected before uploading the corresponding .xlsx or .csv file. Additionally, a name for the metadata file must be provided.
+To upload the metadata file containing the labels or class information for each sample, the "Labels/Classes" data type must be selected.
 
-If the metadata file includes an optional third column with color codes (either HEX codes or ASCII color names) for each sample, the "Includes color code" checkbox should be selected. This custom color scheme will then be applied in most of the plots to visually distinguish the different classes.
+Then the following fields need or can be filled:
+<ul style="margin-bottom: 10px">
+  <li><i>File upload:</i> Labels file as .xlsx or .csv file</li>
+  <li><i>Data name:</i> Name for the metadata, which will be used inside the Holomics app to differentiate between them</li>
+  <li><i>Includes color code:</i> Check when file includes an optional third column with color codes (either HEX codes or ASCII color names) for each sample. This custom color scheme will then be applied in most of the plots to visually distinguish the different classes</li>
+</ul>
+
 
 After saving, a summary of the uploaded metadata is displayed in the table on the right side of the page.
 
