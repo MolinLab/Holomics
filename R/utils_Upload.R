@@ -12,8 +12,18 @@ getDataUploadUI <- function(ns){
             uiOutput(ns("datafileField"))
           ),
           fluidRow(style = "margin-left: 0;",
-                   selectizeInput(ns("dataSep"), label="Seperator",
-                                  choices = c("Tab", "Comma", "Semicolon"))
+                   bs4Dash::column(width = 12,
+                                   fluidRow(
+                                     tags$label("Separator"),
+                                     getTooltip(ns("dataSep-info"), 
+                                                "Separator character used in the data file to separate the entries")
+                                     
+                                   ),
+                                   fluidRow(
+                                     selectizeInput(ns("dataSep"), label="",
+                                                    choices = c("Tab"="Tab", "Comma"= "Comma", "Semicolon"="Semicolon"))
+                                   )
+                   )
           ),
           fluidRow(style = "margin-left: 0;",
             textInput(ns("dataName"), "Data name")
