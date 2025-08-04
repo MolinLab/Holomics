@@ -309,6 +309,21 @@ knitr::include_graphics("images/DIABLO.png")
 ## Help pages
 The help pages that can be found in the application provide short descriptions of the used plots as well as the feature selection and tuning processes. Additionally, there are several links to the mixOmics website or to other papers, where even more detailed information is provided, if desired.
 
+## Known issues
+During the development phase and thanks to our (test) user, we were able to identify some issues that can occur, but unfortunately cannot be fixed from Holomics side. Still there are some hacks and tricks that can be performed to bypass the issues.
+
+#### "Not enough margin" error
+When you encounter an error message that contains "<i>... margin errors. Ensure feature names are not too long ...</i>" please make sure that in RStudio the plotting area ("Plots" tab in (right) side menu) is wide enough.
+
+
+#### Increase upload size
+If you want to increase the upload size for the file upload you have to run the following command:
+```
+options(shiny.maxRequestSize = X*1024^2)
+```
+and replace X by the number of MB you want to upload.
+Afterwards you can start the Holomics application as usual.
+
 ## Test datasets
 Examples of transcriptomics, metabolomics and microbiomics data as well as a file with the labels and class information can be found as additional files in our paper <a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-024-05719-4" rel="noreferrer noopener" target="_blank">Munk et.al. (2024)</a>. These omics data can be uploaded directly into the application after removing the first line with the table title in each case. In addition, exactly the same datasets were processed with Holomics in the papers' described case study.
 
