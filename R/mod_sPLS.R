@@ -812,7 +812,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   output$Var.download.tuned <- getDownloadHandler("PLS_tuned_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
   output$Load.table.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.xlsx", contentfct = loadingsToTable, 
-                                                         result = result.tuned, comp = input$load.comp.tuned, type = "wb")
+                                                         result = resultTuned, comp = input$load.comp.tuned, type = "wb")
   output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedFeatures1.csv", table.selVarX.tuned, type = "csv")
   output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedFeatures2.csv", table.selVarY.tuned, type = "csv")
