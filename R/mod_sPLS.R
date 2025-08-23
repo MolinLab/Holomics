@@ -253,6 +253,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
         perf.spls <- mixOmics::perf(result, validation = "Mfold", folds = getsPLSFolds(X), progressBar = TRUE, nrepeat = 50)
         finished = T
       }, error = function(cond){
+        print("")
+        print(cond$message)
         if (grepl("Error in Ypred", cond, fixed = T) || 
             grepl("X.test %*% a.cv: non-conformable arguments", cond, fixed = T)){
           #get all possible value combinations
@@ -261,10 +263,17 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
           
           return (list(nearZeroX = nearZeroX, nearZeroY = nearZeroY))
         } else {
-          if (grepl("system is computationally singular", cond$message, fixed = T)){
-            getShinyErrorAlert("An error appeared while trying to tune the dataset. <br> 
-                        Please reduce your number of components and try again!", html = T)
-          } else {
+          if (grepl("system is computationally singular", cond$message, fixed = T) || 
+              grepl("Error in solve.default", cond$message, fixed = T)){
+            getShinyErrorAlert("An error appeared while trying to reduce the dataset. <br> 
+                                Please reduce your number of components and try again! <br>
+                                You can check the console to see the error message and for how many components it worked.",
+                               html = T)
+          } else if(grepl("For `canonical mode', 'ncomp' needs to be lower than ncol", cond$message, fixed = T))
+            getShinyErrorAlert(paste0("Either change the PLS mode to 'regression' 
+                               or reduce the number of components!"),
+                               html = T)
+          else {
             getErrorMessage(cond)
           }
           return(NULL)
@@ -294,6 +303,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
             result <- mixOmics::spls(X, Y, mode = input$mode,
                                      ncomp = input$ncomp, scale = input$scale)
           }, error = function(cond){
+            print("")
+            print(cond$message)
             getErrorMessage(cond)
             error <- T
           }) 
@@ -330,6 +341,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
         finished <- T
         
       }, error = function(cond){
+        print("")
+        print(cond$message)
         getErrorMessage(cond)
         error <- T
       })
