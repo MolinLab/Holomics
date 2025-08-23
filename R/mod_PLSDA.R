@@ -252,9 +252,14 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       incProgress(1/3)
       error <- F
     }, error = function(cond){
-      if (grepl("system is computationally singular", cond$message, fixed = T)){
+      print("")
+      print(cond$message)
+      if (grepl("system is computationally singular", cond$message, fixed = T) || 
+          grepl("Error in solve.default", cond$message, fixed = T)){
         getShinyErrorAlert("An error appeared while trying to reduce the dataset. <br> 
-                        Please reduce your number of components and try again!", html = T)
+                            Please reduce your number of components and try again! <br>
+                            You can check the console to see the error message and for how many components it worked.", 
+                           html = T)
       } else {
         getErrorMessage(cond)
       }
