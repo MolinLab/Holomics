@@ -21,7 +21,7 @@ getDataUploadUI <- function(ns){
                                    ),
                                    fluidRow(
                                      selectizeInput(ns("dataSep"), label="",
-                                                    choices = c("Tab"="Tab", "Comma"= "Comma", "Semicolon"="Semicolon"))
+                                                    choices = c("Comma"= "Comma", "Semicolon"="Semicolon", "Tab"="Tab"))
                                    )
                    )
           ),
