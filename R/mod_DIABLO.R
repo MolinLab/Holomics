@@ -305,9 +305,11 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
       while (!finished && !error){
         dataName <- tryCatch({
           perf.diablo <- mixOmics::perf(result, validation = 'Mfold', folds = min(table(Y)), nrepeat = 50, 
-                                        progressBar = TRUE, cpus = 1)
+                                        progressBar = TRUE, BPPARAM = BiocParallel::SerialParam())
           finished = T
         }, error = function(cond){
+          print("")
+          print(cond$message)
           if (grepl("There are features with zero variance", cond$message, fixed = T)){
             dataName <- stringr::str_match(cond$message, "There are features with zero variance in block '([^']*)'")[2]
             return(dataName)
@@ -344,6 +346,8 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
               result <- mixOmics::block.splsda(X, Y, ncomp = input$ncomp , scale = input$scale,
                                              design = design)
             }, error = function(cond){
+              print("")
+              print(cond$message)
               getErrorMessage(cond)
               error <- T
             }) 
