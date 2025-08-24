@@ -310,7 +310,7 @@ knitr::include_graphics("images/DIABLO.png")
 The help pages that can be found in the application provide short descriptions of the used plots as well as the feature selection and tuning processes. Additionally, there are several links to the mixOmics website or to other papers, where even more detailed information is provided, if desired.
 
 ## Known issues
-During the development phase and thanks to our (test) user, we were able to identify some issues that can occur, but unfortunately cannot be fixed from Holomics side. Still there are some hacks and tricks that can be performed to bypass the issues.
+During the development phase and thanks to our (test) user, we were able to identify some issues that can occur, but unfortunately cannot be fixed from Holomics side. Still, there are some hacks and tricks that can be performed to bypass the issues.
 
 #### "Not enough margin" error
 When you encounter an error message that contains "<i>... margin errors. Ensure feature names are not too long ...</i>" please make sure that in RStudio the plotting area ("Plots" tab in (right) side menu) is wide enough.
