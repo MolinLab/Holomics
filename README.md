@@ -82,4 +82,4 @@ multi-omics analysis.
 ## Further information
 
 For further information on how to use Holomics please have a look at our
-<a href='https://cran.r-project.org/web/packages/Holomics/vignettes/Holomics.html'>vignette</a>.
+<a href='https://CRAN.R-project.org/package=Holomics/vignettes/Holomics.html'>vignette</a>.
