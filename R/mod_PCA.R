@@ -409,7 +409,7 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(result(), classes = classSelection$data[,2], title = paste("PCA on", dataSelection$data$name ,"data"), legend.title = legend.title, 
-                  comp = comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+                  comp = comp.indiv(), indNames = input$indiv.names, col = colors)
       } else {
         plotIndiv(result(), classes = classSelection$data[,2], title = paste("PCA on", dataSelection$data$name ,"data"), legend.title = legend.title, 
                   comp = comp.indiv(), indNames = input$indiv.names)
@@ -426,7 +426,12 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
   plot.load <- function(){
     if(!is.null(result())){
       req(input$load.comp)
-      plotLoadings(result(), as.numeric(input$load.comp))
+      req(input$load.ndisplay)
+      if (input$load.ndisplay == "All"){
+        plotLoadings(result(), as.numeric(input$load.comp))
+      } else {
+        plotLoadings(result(), as.numeric(input$load.comp), ndisplay = as.numeric(input$load.ndisplay))
+      }
     }
   }
   
@@ -450,7 +455,7 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
         colors = getGroupColors(classSelection$data)
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PCA on", dataSelection$data$name ,"data"), 
                   legend.title = legend.title, comp = comp.indiv.tuned(), 
-                  indNames = input$indiv.names.tuned, col.per.group = colors)
+                  indNames = input$indiv.names.tuned, col = colors)
       } else {
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PCA on", dataSelection$data$name ,"data"), 
                   legend.title = legend.title, comp = comp.indiv.tuned(), 
@@ -468,7 +473,13 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
   plot.load.tuned <- function(){
     if(!is.null(resultTuned())){
       req(input$load.comp.tuned)
-      plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned))
+      req(input$load.ndisplay.tuned)
+      if (input$load.ndisplay.tuned == "All"){
+        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned))
+      } else {
+        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                     ndisplay = as.numeric(input$load.ndisplay.tuned))
+      }
     }
   }
   
@@ -553,12 +564,14 @@ generate_pca_plots <- function(ns, input, output, dataSelection, classSelection,
   output$Scree.download <- getDownloadHandler("PCA_Screeplot.png", plot.scree)
   output$Var.download <- getDownloadHandler("PCA_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PCA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
+  output$Load.table.download <- getDownloadHandler("PCA_Loadingsplot.csv", contentfct = plot.load, type = "csv")
   output$SelVar.download <- getDownloadHandler("PCA_SelectedFeatures.csv", table.selVar, type = "csv")
   
   output$Indiv.download.tuned <- getDownloadHandler("PCA_reduced_Sampleplot.png", plot.indiv.tuned)
   output$Scree.download.tuned <- getDownloadHandler("PCA_reduced_Screeplot.png", plot.scree.tuned)
   output$Var.download.tuned <- getDownloadHandler("PCA_reduced_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PCA_reduced_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$Load.table.download.tuned <- getDownloadHandler("PCA_reduced_Loadingsplot.csv", contentfct = plot.load.tuned, type = "csv")
   output$SelVar.download.tuned <- getDownloadHandler("PCA_reduced_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
   
   output$Filter.download <- downloadHandler(

@@ -253,6 +253,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
         perf.spls <- mixOmics::perf(result, validation = "Mfold", folds = getsPLSFolds(X), progressBar = TRUE, nrepeat = 50)
         finished = T
       }, error = function(cond){
+        print("")
+        print(cond$message)
         if (grepl("Error in Ypred", cond, fixed = T) || 
             grepl("X.test %*% a.cv: non-conformable arguments", cond, fixed = T)){
           #get all possible value combinations
@@ -261,10 +263,17 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
           
           return (list(nearZeroX = nearZeroX, nearZeroY = nearZeroY))
         } else {
-          if (grepl("system is computationally singular", cond$message, fixed = T)){
-            getShinyErrorAlert("An error appeared while trying to tune the dataset. <br> 
-                        Please reduce your number of components and try again!", html = T)
-          } else {
+          if (grepl("system is computationally singular", cond$message, fixed = T) || 
+              grepl("Error in solve.default", cond$message, fixed = T)){
+            getShinyErrorAlert("An error appeared while trying to reduce the dataset. <br> 
+                                Please reduce your number of components and try again! <br>
+                                You can check the console to see the error message and for how many components it worked.",
+                               html = T)
+          } else if(grepl("For `canonical mode', 'ncomp' needs to be lower than ncol", cond$message, fixed = T))
+            getShinyErrorAlert(paste0("Either change the PLS mode to 'regression' 
+                               or reduce the number of components!"),
+                               html = T)
+          else {
             getErrorMessage(cond)
           }
           return(NULL)
@@ -294,6 +303,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
             result <- mixOmics::spls(X, Y, mode = input$mode,
                                      ncomp = input$ncomp, scale = input$scale)
           }, error = function(cond){
+            print("")
+            print(cond$message)
             getErrorMessage(cond)
             error <- T
           }) 
@@ -330,6 +341,8 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
         finished <- T
         
       }, error = function(cond){
+        print("")
+        print(cond$message)
         getErrorMessage(cond)
         error <- T
       })
@@ -554,7 +567,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
         colors = getGroupColors(classSelection$data)
         plotIndiv(result(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
                   subtitle = titles$subtitle, comp = comp.indiv(), indNames = input$indiv.names, 
-                  repSpace = rep.space(), legendPosition = "bottom", col.per.group = colors)
+                  repSpace = rep.space(), legendPosition = "bottom", col = colors)
       } else {
         plotIndiv(result(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
                   subtitle = titles$subtitle, comp = comp.indiv(), indNames = input$indiv.names, 
@@ -573,12 +586,20 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   
   plot.load <- function(){
     req(input$load.comp)
+    req(input$load.ndisplay)
     if(!is.null(result())){
       names <- getDatasetNames(dataSelection$dataXName, dataSelection$dataYName)
-      plotLoadings(result(), as.numeric(input$load.comp), 
-                   subtitle = lapply(c(names$name1, names$name2),
-                                     function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'"))
-      )
+      
+      if (input$load.ndisplay == "All"){
+        plotLoadings(result(), as.numeric(input$load.comp), 
+                     subtitle = lapply(c(names$name1, names$name2),
+                                       function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'")))
+      } else {
+        plotLoadings(result(), as.numeric(input$load.comp), 
+                     subtitle = lapply(c(names$name1, names$name2),
+                                       function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'")),
+                     ndisplay = as.numeric(input$load.ndisplay))
+      }
     }
   }
   
@@ -597,7 +618,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
         legend.title = colnames(classSelection$data)[2]
         if (ncol(classSelection$data) == 3){
           colors = getGroupColors(classSelection$data)
-          plotArrow(result(), classSelection$data[,2], legend.title, input$namesArrow, col.per.group = colors)
+          plotArrow(result(), classSelection$data[,2], legend.title, input$namesArrow, col = colors)
         } else {
           plotArrow(result(), classSelection$data[,2], legend.title, input$namesArrow)
         }
@@ -629,7 +650,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
         colors = getGroupColors(classSelection$data)
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
                   subtitle = titles$subtitle, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
-                  repSpace = rep.space.tuned(), legendPosition = "bottom", col.per.group = colors)
+                  repSpace = rep.space.tuned(), legendPosition = "bottom", col = colors)
       } else {
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = titles$title, legend.title = legend.title, 
                   subtitle = titles$subtitle, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
@@ -648,11 +669,18 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   plot.load.tuned <- function(){
     if (!is.null(resultTuned())){
       req(input$load.comp.tuned)
+      req(input$load.ndisplay.tuned)
       names <- getDatasetNames(dataSelection$dataXName, dataSelection$dataYName)
-      plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned), 
-                   subtitle = lapply(c(names$name1, names$name2),
-                                     function(x) paste('Loadings on comp', input$load.comp, "\nBlock", x,"'"))
-      )
+      if (input$load.ndisplay == "All"){
+        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned), 
+                     subtitle = lapply(c(names$name1, names$name2),
+                                       function(x) paste('Loadings on comp', input$load.comp.tuned, "\nBlock", x,"'")))
+      } else {
+        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned), 
+                     subtitle = lapply(c(names$name1, names$name2),
+                                       function(x) paste('Loadings on comp', input$load.comp.tuned, "\nBlock", x,"'")),
+                     ndisplay = as.numeric(input$load.ndisplay))
+      }
     }
   }
   
@@ -669,7 +697,7 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
       legend.title = colnames(classSelection$data)[2]
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(resultTuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned, col.per.group = colors)
+        plotArrow(resultTuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned, col = colors)
       } else {
         plotArrow(resultTuned(), classSelection$data[,2], legend.title, input$namesArrow.tuned)
       }
@@ -784,6 +812,8 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   output$Indiv.download <- getDownloadHandler("PLS_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS_Loadingsplot.png", plot.load, width = 2592, height = 1944)
+  output$Load.table.download <- getDownloadHandler("PLS_Loadingsplot.xlsx", contentfct = loadingsToTable, 
+                                                         result = result, comp = input$load.comp, type = "wb")
   output$Img.download <- getDownloadHandler("PLS_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$SelVarX.download <- getDownloadHandler("PLS_SelectedFeatures1.csv", table.selVarX, type = "csv")
   output$SelVarY.download <- getDownloadHandler("PLS_SelectedFeatures2.csv", table.selVarY, type = "csv")
@@ -794,6 +824,8 @@ generate_spls_plots <- function(ns, input, output, dataSelection, classSelection
   output$Indiv.download.tuned <- getDownloadHandler("PLS_tuned_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("PLS_tuned_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$Load.table.download.tuned <- getDownloadHandler("PLS_tuned_Loadingsplot.xlsx", contentfct = loadingsToTable, 
+                                                         result = resultTuned, comp = input$load.comp.tuned, type = "wb")
   output$Img.download.tuned <- getDownloadHandler("PLS_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$SelVarX.download.tuned <- getDownloadHandler("PLS_tuned_SelectedFeatures1.csv", table.selVarX.tuned, type = "csv")
   output$SelVarY.download.tuned <- getDownloadHandler("PLS_tuned_SelectedFeatures2.csv", table.selVarY.tuned, type = "csv")

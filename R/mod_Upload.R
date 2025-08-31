@@ -81,7 +81,7 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         })
         
         output$datafileField <- renderUI({
-          fileInput(ns("dataFile"), "Choose a xlsx or csv file", accept = c(".xlsx, .csv"))
+          fileInput(ns("dataFile"), "Choose a xlsx, csv or txt file", accept = c(".xlsx, .csv, .txt"))
         })
         
         output$table <- renderUI({
@@ -141,66 +141,77 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
                             or select only the \"single\" checkbox.")
       } else {
         
-        ext <- tools::file_ext(input$dataFile$name)
-        
-        switch(ext,
-          xlsx = data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE)),
-          csv = data <- read.csv(input$dataFile$datapath),
-          validate("Invalid file format!")
+        dataSep <- input$dataSep
+        sep <- ","
+        switch(dataSep,
+               Tab = sep <- "\t",
+               Colon = sep <- ",",
+               Semicolon = sep <- ";"
         )
         
-        #Three cols because one is the row names and at least two with variable data
-        if (ncol(data) < 3 || nrow(data) < 1){
-          getShinyErrorAlert("The input needs to have at least one row and three columns!")
-        } else if(sum(duplicated(data[,1])) != 0){ #there should not be duplicates in the first column
-          getShinyErrorAlert("The sample names cannot contain duplicates!")
+        ext <- tools::file_ext(input$dataFile$name)
+        if (!ext %in% c("xlsx", "csv", "txt")){
+          getShinyErrorAlert("Invalid file format!")
         } else {
-          rownames(data) <- data[,1]   #all rows, first column
-          data <- data[,-1]
-          
-          #values can only be numeric
-          if(all(sapply(data, is.numeric))){
+          switch(ext,
+                 xlsx = data <- as.data.frame(readxl::read_excel(input$dataFile$datapath, col_names = TRUE)),
+                 csv = data <- read.csv(input$dataFile$datapath, sep = sep),
+                 txt = data <- read.csv(input$dataFile$datapath, sep = sep)
+          )
 
-            if(input$transposed){ #check for transposed file format
-              data <- as.data.frame(t(data))
-            }
-            
-            if(input$isMicrobiome && !input$prevFiltered){ #check for microbiome data and if it was not previously filtered
-              data <- performMixMC(data)
-            }
-            
-            if (ncol(data) > 10000){  #mixOmics recommends to use only 10.000 features
-              data  <- filterToTenThousand(data)
-            }
-            
-            #save data and write to table
-            analysisText = ""
-            
-            if("single" %in% input$omicsAnalysis){
-              if (!is.null(singleData)){
-                singleData$data[[input$dataName]] <- list(omicsData = data, name = input$plotName)
-              }
-              analysisText = "single"
-              
-            }
-            
-            if("multi" %in% input$omicsAnalysis && input$prevFiltered){
-              if (!is.null(multiData)){
-                multiData$data[[input$dataName]] <- list(omicsData = data, name = input$plotName)
-              }
-              
-              analysisText = ifelse(analysisText == "", "multi", "both")
-            }
-            
-            tables$data <- extendDataTable(tables$data, input$dataName, input$dataFile$name, nrow(data), ncol(data),
-                            input$isMicrobiome && !input$prevFiltered, analysisText, input$plotName)
-            
-            #reset UI
-            resetDataUI(session, output)
-            ivData$disable()
-            ivData <- initDataValidator(session)
+          #Three cols because one is the row names and at least two with variable data
+          if (ncol(data) < 3 || nrow(data) < 1){
+            getShinyErrorAlert("The input needs to have at least one row and three columns!")
+          } else if(sum(duplicated(data[,1])) != 0){ #there should not be duplicates in the first column
+            getShinyErrorAlert("The sample names cannot contain duplicates!")
           } else {
-            getShinyErrorAlert("The data can only contain numeric values apart from the row/column names!")
+            rownames(data) <- data[,1]   #all rows, first column
+            data <- data[,-1]
+            
+            #values can only be numeric
+            if(all(sapply(data, is.numeric))){
+  
+              if(input$transposed){ #check for transposed file format
+                data <- as.data.frame(t(data))
+              }
+              
+              if(input$isMicrobiome && !input$prevFiltered){ #check for microbiome data and if it was not previously filtered
+                data <- performMixMC(data)
+              }
+              
+              if (ncol(data) > 10000){  #mixOmics recommends to use only 10.000 features
+                data  <- filterToTenThousand(data)
+              }
+              
+              #save data and write to table
+              analysisText = ""
+              
+              if("single" %in% input$omicsAnalysis){
+                if (!is.null(singleData)){
+                  singleData$data[[input$dataName]] <- list(omicsData = data, name = input$plotName)
+                }
+                analysisText = "single"
+                
+              }
+              
+              if("multi" %in% input$omicsAnalysis && input$prevFiltered){
+                if (!is.null(multiData)){
+                  multiData$data[[input$dataName]] <- list(omicsData = data, name = input$plotName)
+                }
+                
+                analysisText = ifelse(analysisText == "", "multi", "both")
+              }
+              
+              tables$data <- extendDataTable(tables$data, input$dataName, input$dataFile$name, nrow(data), ncol(data),
+                              input$isMicrobiome && !input$prevFiltered, analysisText, input$plotName)
+              
+              #reset UI
+              resetDataUI(session, output)
+              ivData$disable()
+              ivData <- initDataValidator(session)
+            } else {
+              getShinyErrorAlert("The data can only contain numeric values apart from the row/column names!")
+            }
           }
         }
       }
@@ -244,35 +255,39 @@ mod_Upload_server <- function(id, singleData, singleClasses, multiData, multiCla
         
         ext <- tools::file_ext(input$classFile$name)
         
-        switch(ext,
-               xlsx = df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE)),
-               csv = df_classes <- read.csv(input$classFile$datapath),
-               validate("Invalid file format!")
-        )
-        
-        #error checks
-        inputCheck <- checkClassesInput(df_classes, input$colorCode)
-        
-        if (inputCheck$valid){
-          #save classes and update table
-          if(!is.null(singleClasses)){
-            singleClasses$data[[input$className]] <- df_classes
-          }
-          
-          if(!is.null(multiClasses)){
-            multiClasses$data[[input$className]] <- df_classes
-          }
-          
-          tables$classes <- extendClassTable(tables$classes, input$className, input$classFile$name, nrow(df_classes), input$colorCode)
-          
-          #reset UI
-          resetClassUI(session, output)
-          ivClass$disable()
-          ivClass <- initClassValidator(session)
+        if (!ext %in% c("xlsx", "csv")){
+          getShinyErrorAlert("Invalid file format!")
         } else {
-          inputCheck$alert
-        }
-      }  
+          switch(ext,
+                 xlsx = df_classes <- as.data.frame(readxl::read_excel(input$classFile$datapath, col_names = TRUE)),
+                 csv = df_classes <- read.csv(input$classFile$datapath),
+                 validate("Invalid file format!")
+          )
+          
+          #error checks
+          inputCheck <- checkClassesInput(df_classes, input$colorCode)
+          
+          if (inputCheck$valid){
+            #save classes and update table
+            if(!is.null(singleClasses)){
+              singleClasses$data[[input$className]] <- df_classes
+            }
+            
+            if(!is.null(multiClasses)){
+              multiClasses$data[[input$className]] <- df_classes
+            }
+            
+            tables$classes <- extendClassTable(tables$classes, input$className, input$classFile$name, nrow(df_classes), input$colorCode)
+            
+            #reset UI
+            resetClassUI(session, output)
+            ivClass$disable()
+            ivClass <- initClassValidator(session)
+          } else {
+            inputCheck$alert
+          }
+        }  
+      }
       
       #enable button again
       shinyjs::enable("saveClass")

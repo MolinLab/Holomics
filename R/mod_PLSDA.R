@@ -206,9 +206,7 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
     #get optimal number of components
     error <- tryCatch({
       Y <- classSelection$data[,2]
-      result <- mixOmics::plsda(dataSelection$data$omicsData, Y = Y,
-                                ncomp = input$ncomp , scale = input$scale)
-      
+
       #get optimal number of components and number of features per component
       grid.keepX <- getTestKeepX(ncol(dataSelection$data$omicsData))
       tune.splsda.result <- mixOmics::tune.splsda(dataSelection$data$omicsData,Y = Y, ncomp = input$ncomp,
@@ -230,8 +228,9 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       
       sel_feature <- c()
       for (comp in 1:ncomp){
-        loadings <- mixOmics::plotLoadings(splsda.result, comp = comp, method = 'mean', contrib = 'max')
-        sel_feature <- c(sel_feature, rownames(loadings))
+        entries <- splsda.result$loadings$X[, paste0("comp", comp)]
+        nonZeroEntries <- entries[entries != 0]
+        sel_feature <- c(sel_feature, names(nonZeroEntries))
       }
       
       feature_cols <- (names(dataSelection$data$omicsData) %in% sel_feature)
@@ -253,9 +252,14 @@ plsda_filterByLoadings <- function(input, output, dataSelection, classSelection,
       incProgress(1/3)
       error <- F
     }, error = function(cond){
-      if (grepl("system is computationally singular", cond$message, fixed = T)){
+      print("")
+      print(cond$message)
+      if (grepl("system is computationally singular", cond$message, fixed = T) || 
+          grepl("Error in solve.default", cond$message, fixed = T)){
         getShinyErrorAlert("An error appeared while trying to reduce the dataset. <br> 
-                        Please reduce your number of components and try again!", html = T)
+                            Please reduce your number of components and try again! <br>
+                            You can check the console to see the error message and for how many components it worked.", 
+                           html = T)
       } else {
         getErrorMessage(cond)
       }
@@ -378,7 +382,7 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(result(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
-                  legend.title = legend.title, comp = comp.indiv(), indNames = input$indiv.names, col.per.group = colors)
+                  legend.title = legend.title, comp = comp.indiv(), indNames = input$indiv.names, col = colors)
       } else {
         plotIndiv(result(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
                   legend.title = legend.title, comp = comp.indiv(), indNames = input$indiv.names)
@@ -395,14 +399,27 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   plot.load <- function(){
     req(classSelection$data)
     req(input$load.comp)
+    req(input$load.ndisplay)
     if (!is.null(result())){
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotLoadings(result(), as.numeric(input$load.comp),
-                     contrib = 'max', method = 'mean', legend.color = colors)
+        if (input$load.ndisplay == "All"){
+          plotLoadings(result(), as.numeric(input$load.comp),
+                       contrib = 'max', method = 'mean', legend.color = colors)
+        } else {
+          plotLoadings(result(), as.numeric(input$load.comp),
+                       contrib = 'max', method = 'mean', legend.color = colors, 
+                       ndisplay = as.numeric(input$load.ndisplay))
+        }
       } else {
-        plotLoadings(result(), as.numeric(input$load.comp),
-                     contrib = 'max', method = 'mean')    
+        if (input$load.ndisplay == "All"){
+          plotLoadings(result(), as.numeric(input$load.comp),
+                       contrib = 'max', method = 'mean') 
+        } else {
+          plotLoadings(result(), as.numeric(input$load.comp),
+                       contrib = 'max', method = 'mean', 
+                       ndisplay = as.numeric(input$load.ndisplay))
+        }
       }
     }
   }
@@ -421,7 +438,7 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
-                  legend.title = legend.title, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, col.per.group = colors)
+                  legend.title = legend.title, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, col = colors)
       } else {
         plotIndiv(resultTuned(), classes = classSelection$data[,2], title = paste("PLS-DA on", dataSelection$data$name ,"data"), 
                   legend.title = legend.title, comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned)
@@ -445,14 +462,27 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   plot.load.tuned <- function(){
     req(classSelection$data)
     req(input$load.comp.tuned)
+    req(input$load.ndisplay.tuned)
     if (!is.null(resultTuned())){
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
-                     contrib = 'max', method = 'mean', legend.color = colors)
+        if (input$load.ndisplay.tuned == "All"){
+          plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                       contrib = 'max', method = 'mean', legend.color = colors)
+        } else {
+          plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                       contrib = 'max', method = 'mean', legend.color = colors, 
+                       ndisplay = as.numeric(input$load.ndisplay.tuned))
+        }
       } else {
-        plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
-                     contrib = 'max', method = 'mean')    
+        if (input$load.ndisplay.tuned == "All"){
+          plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                       contrib = 'max', method = 'mean')
+        } else {
+          plotLoadings(resultTuned(), as.numeric(input$load.comp.tuned),
+                       contrib = 'max', method = 'mean',
+                       ndisplay = as.numeric(input$load.ndisplay.tuned))
+        }
       }
     }
   }
@@ -526,11 +556,13 @@ generate_plsda_plots <- function(ns, input, output, dataSelection, classSelectio
   output$Indiv.download <- getDownloadHandler("PLS-DA_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("PLS-DA_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("PLS-DA_Loadingsplot.png", plot.load, width = 2592, height = 1944)
-  output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedFeatures.csv", table.selVar, type = "csv")
+  output$Load.table.download <- getDownloadHandler("PLS-DA_Loadingsplot.csv", contentfct = plot.load, type = "csv")
+    output$SelVar.download <- getDownloadHandler("PLS-DA_SelectedFeatures.csv", table.selVar, type = "csv")
   
   output$Indiv.download.tuned <- getDownloadHandler("PLS-DA_reduced_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("PLS-DA_reduced_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("PLS-DA_reduced_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$Load.table.download.tuned <- getDownloadHandler("PLS-DA_reduced_Loadingsplot.csv", contentfct = plot.load.tuned, type = "csv")
   output$SelVar.download.tuned <- getDownloadHandler("PLS-DA_reduced_SelectedFeatures.csv", table.selVar.tuned, type = "csv")
   
   output$Filter.download <- downloadHandler(

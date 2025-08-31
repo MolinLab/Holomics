@@ -12,6 +12,20 @@ getDataUploadUI <- function(ns){
             uiOutput(ns("datafileField"))
           ),
           fluidRow(style = "margin-left: 0;",
+                   bs4Dash::column(width = 12,
+                                   fluidRow(
+                                     tags$label("Separator"),
+                                     getTooltip(ns("dataSep-info"), 
+                                                "Separator character used in the data file to separate the entries")
+                                     
+                                   ),
+                                   fluidRow(
+                                     selectizeInput(ns("dataSep"), label="",
+                                                    choices = c("Comma"= "Comma", "Semicolon"="Semicolon", "Tab"="Tab"))
+                                   )
+                   )
+          ),
+          fluidRow(style = "margin-left: 0;",
             textInput(ns("dataName"), "Data name")
           ),
           fluidRow(style = "margin-left: 0;",
@@ -249,7 +263,7 @@ resetDataUI <- function(session, output){
   ns <- session$ns
   
   output$datafileField <- renderUI({
-    fileInput(ns("dataFile"), "Choose a xlsx or csv file", accept = c(".xlsx, .csv"))
+    fileInput(ns("dataFile"), "Choose a xlsx, csv or txt file", accept = c(".xlsx, .csv, .txt"))
   })
   updateTextInput(session, "dataName", value = "")
   

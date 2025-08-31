@@ -158,10 +158,10 @@ checkCompNcompCombination <- function(ncomp, comp){
 #'
 #' @noRd
 plotIndiv <- function(result, classes, title = NULL, subtitle = NULL, legend.title, comp, 
-                      repSpace = NULL, indNames, col.per.group, legendPosition = "right") {
+                      repSpace = NULL, indNames, col, legendPosition = "right") {
   comp <- checkCompNcompCombination(result$ncomp, comp)
   
-  if (missing(col.per.group)){
+  if (missing(col)){
     if (is.null(subtitle)){
       mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                           group = classes, ind.names = indNames,
@@ -180,13 +180,13 @@ plotIndiv <- function(result, classes, title = NULL, subtitle = NULL, legend.tit
                           group = classes, ind.names = indNames,
                           title = title, legend = TRUE, 
                           legend.title = legend.title, legend.position = legendPosition, 
-                          col.per.group = col.per.group)
+                          col = col)
     } else {
       mixOmics::plotIndiv(result, comp = comp, rep.space = repSpace,
                           group = classes, ind.names = indNames,
                           subtitle = subtitle, legend = TRUE, 
                           legend.title = legend.title, legend.position = legendPosition, 
-                          col.per.group = col.per.group)
+                          col = col)
     }
   }
 
@@ -217,17 +217,19 @@ plotVar <- function(result, comp, varNames, legend = FALSE, pch) {
 #' @return loadings plot
 #'
 #' @noRd
-plotLoadings <- function(result, comp, contrib = NULL, method = "mean", subtitle, legend.color = NULL) {
+plotLoadings <- function(result, comp, contrib = NULL, method = "mean", subtitle, legend.color = NULL, ndisplay = NULL) {
   comp <- checkCompNcompCombination(result$ncomp, comp)
   
   if (missing(subtitle)){
     mixOmics::plotLoadings(result, comp = comp,
                            contrib = contrib, method = method, size.title = ggplot2::rel(1), 
-                           legend.color = legend.color)
+                           legend.color = legend.color,
+                           ndisplay = ndisplay)
   } else {
     mixOmics::plotLoadings(result, comp = comp,
                            contrib = contrib, method = method, size.title = ggplot2::rel(1), 
-                           legend.color = legend.color, subtitle = subtitle)
+                           legend.color = legend.color, subtitle = subtitle,
+                           ndisplay = ndisplay)
   }
 }
 
@@ -260,15 +262,15 @@ selectVar <- function(result, comp, XY = FALSE) {
 #' @return arrow plot
 #'
 #' @noRd
-plotArrow <- function(result, classes, title, indNames, col.per.group) {
-  if (missing(col.per.group)){
+plotArrow <- function(result, classes, title, indNames, col) {
+  if (missing(col)){
     mixOmics::plotArrow(result, group = classes, ind.names = indNames,
                         legend = TRUE, legend.title = title, legend.position = "bottom",
                         X.label = "Dimension 1", Y.label = "Dimension 2")
   } else {
     mixOmics::plotArrow(result, group = classes, ind.names = indNames,
                         legend = TRUE, legend.title = title, legend.position = "bottom",
-                        X.label = "Dimension 1", Y.label = "Dimension 2", col.per.group = col.per.group)
+                        X.label = "Dimension 1", Y.label = "Dimension 2", col = col)
   }
 }
 
@@ -279,7 +281,8 @@ plotArrow <- function(result, classes, title, indNames, col.per.group) {
 #' @return downloadHandler
 #'
 #' @noRd
-getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800, height = 1200, plot = NULL, tablefct = NULL){
+getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800, height = 1200, 
+                               plot = NULL, tablefct = NULL, result = NULL, comp = NULL){
   return (
     downloadHandler(
       filename = filename,
@@ -306,6 +309,9 @@ getDownloadHandler <- function(filename, contentfct, type = "png", width = 1800,
           } else {
             ggplot2::ggsave(file, plot = plot, device = device)
           }
+        } else if (type == "wb"){
+          wb <- contentfct(result, comp)
+          openxlsx::saveWorkbook(wb, file)
         }
       }
     )
@@ -431,4 +437,26 @@ cimToTable <- function(cimPlot){
   rownames(hmp) <- cimPlot$row.names
   colnames(hmp) <- cimPlot$col.names
   return(as.data.frame(hmp))
+}
+
+#'
+#' @description A utils function, which generates the loadings table
+#'
+#' @return workbook with the loading values in separate sheets
+#'
+#' @noRd
+loadingsToTable <- function(result, comp){
+  wb <- openxlsx::createWorkbook()
+  
+  for (name in names(result()$loadings)) {
+    if (all(names(result()$loadings) == c("X", "Y")) || name != "Y") {
+      df <- result()$loadings[[name]]
+      
+      data_to_write <- data.frame(Name = rownames(df), comp1 = df[, paste0("comp", comp)])
+      
+      openxlsx::addWorksheet(wb, sheetName = name)
+      openxlsx::writeData(wb, sheet = name, x = data_to_write)
+    }
+  }
+  return (wb)
 }

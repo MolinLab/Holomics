@@ -259,3 +259,13 @@ button[id*='scale-info']{
 .line-red{
   background-color: #de4236;
 } 
+
+/* Dropdowns */
+.selectize-input.focus, .form-control:focus {
+  border-color: var(--green);
+  box-shadow: var(--green);
+}
+
+.selectize-dropdown .selected {
+  background-color: var(--green);
+}

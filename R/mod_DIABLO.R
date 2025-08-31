@@ -305,9 +305,11 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
       while (!finished && !error){
         dataName <- tryCatch({
           perf.diablo <- mixOmics::perf(result, validation = 'Mfold', folds = min(table(Y)), nrepeat = 50, 
-                                        progressBar = TRUE, cpus = 1)
+                                        progressBar = TRUE, BPPARAM = BiocParallel::SerialParam())
           finished = T
         }, error = function(cond){
+          print("")
+          print(cond$message)
           if (grepl("There are features with zero variance", cond$message, fixed = T)){
             dataName <- stringr::str_match(cond$message, "There are features with zero variance in block '([^']*)'")[2]
             return(dataName)
@@ -344,6 +346,8 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
               result <- mixOmics::block.splsda(X, Y, ncomp = input$ncomp , scale = input$scale,
                                              design = design)
             }, error = function(cond){
+              print("")
+              print(cond$message)
               getErrorMessage(cond)
               error <- T
             }) 
@@ -491,7 +495,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
         plotIndiv(result(), classes=classSelection$data[,2], legend.title = legend.title, comp = comp.indiv(), 
-                  indNames = input$indiv.names, legendPosition = "bottom", col.per.group = colors)
+                  indNames = input$indiv.names, legendPosition = "bottom", col = colors)
       } else {
         plotIndiv(result(), classes = classSelection$data[,2], legend.title = legend.title, comp = comp.indiv(), 
                   indNames = input$indiv.names, legendPosition = "bottom")
@@ -509,7 +513,12 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   plot.load <- function(){
     if(!is.null(result())){
       req(input$load.comp)
-      plotLoadings(result(), as.numeric(input$load.comp))
+      req(input$load.ndisplay)
+      if (input$load.ndisplay == "All"){
+        plotLoadings(result(), as.numeric(input$load.comp))
+      } else {
+        plotLoadings(result(), as.numeric(input$load.comp), ndisplay = as.numeric(input$load.ndisplay))
+      }
     }
   }
   
@@ -545,7 +554,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(result, classSelection$data[,2], legend.title, input$namesArrow, col.per.group = colors)
+        plotArrow(result, classSelection$data[,2], legend.title, input$namesArrow, col = colors)
       } else {
         plotArrow(result, classSelection$data[,2], legend.title, input$namesArrow)
       }
@@ -588,7 +597,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
         colors = getGroupColors(classSelection$data)
         plotIndiv(result.tuned(), classes = classSelection$data[,2], legend.title = title, 
                   comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned, 
-                  legendPosition = "bottom", col.per.group = colors)
+                  legendPosition = "bottom", col = colors)
       } else {
         plotIndiv(result.tuned(), classes = classSelection$data[,2], legend.title = title, 
                   comp = comp.indiv.tuned(), indNames = input$indiv.names.tuned,
@@ -606,8 +615,14 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   
   plot.load.tuned <- function(){
     if(!is.null(result.tuned())){
-      req(input$load.comp.tuned)
-      plotLoadings(result.tuned(), as.numeric(input$load.comp.tuned))
+      req(input$load.comp.tuned) 
+      req(input$load.ndisplay.tuned)
+      if (input$load.ndisplay.tuned == "All"){
+        plotLoadings(result.tuned(), as.numeric(input$load.comp.tuned))
+      } else {
+        plotLoadings(result.tuned(), as.numeric(input$load.comp.tuned),
+                     ndisplay = as.numeric(input$load.ndisplay.tuned))
+      }
     }
   }
   
@@ -647,7 +662,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
       
       if (ncol(classSelection$data) == 3){
         colors = getGroupColors(classSelection$data)
-        plotArrow(resultTuned, classSelection$data[,2], legend.title, input$namesArrow.tuned, col.per.group = colors)
+        plotArrow(resultTuned, classSelection$data[,2], legend.title, input$namesArrow.tuned, col = colors)
       } else {
         plotArrow(resultTuned, classSelection$data[,2], legend.title, input$namesArrow.tuned)
       }
@@ -792,6 +807,8 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Indiv.download <- getDownloadHandler("DIABLO_Sampleplot.png", plot.indiv)
   output$Var.download <- getDownloadHandler("DIABLO_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("DIABLO_Loadingsplot.png", plot.load, width = 2592, height = 1944)
+  output$Load.table.download <- getDownloadHandler("DIABLO_Loadingsplot.xlsx", contentfct = loadingsToTable, 
+                                                   result = result, comp = input$load.comp, type = "wb")
   output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo, width = 2592, height = 1944)
   output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 2592, height = 1944)
@@ -805,6 +822,8 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Indiv.download.tuned <- getDownloadHandler("DIABLO_tuned_Sampleplot.png", plot.indiv.tuned)
   output$Var.download.tuned <- getDownloadHandler("DIABLO_tuned_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("DIABLO_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
+  output$Load.table.download.tuned <- getDownloadHandler("DIABLO_tuned_Loadingsplot.xlsx", contentfct = loadingsToTable, 
+                                                   result = result.tuned, comp = input$load.comp.tuned, type = "wb")
   output$Img.download.tuned <- getDownloadHandler("DIABLO_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$Diablo.download.tuned <- getDownloadHandler("DIABLO_tuned_Diabloplot.png", plot.diablo.tuned, width = 2592, height = 1944)
   output$Circos.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.png", plot.circos.tuned, width = 2592, height = 1944)

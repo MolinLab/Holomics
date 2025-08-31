@@ -61,12 +61,12 @@ div.vis-network div.vis-navigation div.vis-button:hover{
 /* Label for components input and upload analysis type */
 label[id*='ncomp-label'], label[id*='matrix-label'], 
 label[for='upload-omicsAnalysis'], label[for='upload-plotName-selectized'],
-label[id*='mode-label']{
+label[id*='mode-label'], label[for='upload-dataSep-selectized']{
   display: none;
 }
 
-/* Plot name dropdown */
-#upload-plotName + div{
+/* Plot name and separator dropdown */
+#upload-plotName + div, #upload-dataSep + div{
   margin-bottom: 0;
 }
 
