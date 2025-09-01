@@ -841,7 +841,7 @@ render_spls_infotexts <- function(output){
    The <b>s</b>parse <b>P</b>rojection to <b>L</b>atent <b>S</b>tructure is a variant of the PLS, 
    which combines the correlation calculation and final features selection into one step instead of two like the standard PLS has. 
    It is an unsupervised analysis method like the PCA, so it only needs the two omics datasets to perform the analysis.
-   Additional information can be found on the <a class='mixOmics-link' href='http://mixomics.org/methods/spls/' target='_blank'>mixOmics website</a> and
+   Additional information can be found on the <a class='mixOmics-link' href='https://mixomics.org/methods/spls/' target='_blank'>mixOmics website</a> and
    in several scientific papers (e.g. <a class='ref-link' href='https://www.degruyter.com/document/doi/10.2202/1544-6115.1390/html' target='_blank'>L\u00EA Cao et.al. (2008)</a>).
    More information about the plots and the reducing and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
    <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.</br>

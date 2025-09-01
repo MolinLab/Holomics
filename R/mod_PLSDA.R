@@ -584,7 +584,7 @@ render_plsda_infotexts <- function(output){
       It is similar to the PCA, but with a supervised approach for reducing the input data dimension. This means that the PLS-DA knows the label of each sample when reducing the dimension. 
       The PLS-DA works with the matrix containing the sample and features information and the dataset with the classes of each sample. 
       In the context of multi-omics analyses, it is used to get a first impression of the input data and find the key features of the datasets.<br/>
-      Additional information can be found on the <a class='mixOmics-link' href='http://mixomics.org/methods/spls-da/' target='_blank'>mixOmics website</a> and
+      Additional information can be found on the <a class='mixOmics-link' href='https://mixomics.org/methods/spls-da/' target='_blank'>mixOmics website</a> and
       in several scientific papers (e.g. <a class='ref-link' href='https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-3310-7' target='_blank'>Ruiz-Perez et.al. (2020)</a>).
       More information about the plots and the reducing and tuning methods can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a> and
       <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-tuning').click();\">'Feature selection and tuning-Helppage'</a>.</br>

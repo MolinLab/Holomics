@@ -943,7 +943,7 @@ render_diablo_infotexts <- function(output){
     generalised version of the PLS for multiple datasets. It maximises the correlated information between the datasets and simultaneously 
     identifies the key features of the omics datasets. Generally, DIABLO can be used supervised and unsupervised, whereas, here the supervised version is used. 
     Therefore, the DIABLO algorithm works with one list containing the omics datasets and the dataset with the classes of each sample. <br/>
-    Additional information can be found on the <a class='mixOmics-link' href='http://mixomics.org/mixdiablo/' target='_blank'>mixOmics website</a> and
+    Additional information can be found on the <a class='mixOmics-link' href='https://mixomics.org/mixdiablo/' target='_blank'>mixOmics website</a> and
     in several scientific papers (e.g. <a class='ref-link' href='https://academic.oup.com/bioinformatics/article/35/17/3055/5292387' target='_blank'>Singh et.al. (2019)</a>).
     More information about the plots, the feature selection and tuning methods and the meaning of the design matrix
     can be found on our <a class='mixOmics-link' onclick=\"document.getElementById('tab-help-plots').click();\">'Plots-Helppage'</a>, and

@@ -224,7 +224,7 @@ knitr::include_graphics("images/Upload_labels.png")
 ## Single-omics analyses
 
 ### Principal Component Analysis
-For a first glimpse into the individual omics data and for the necessary feature selection, a Principal Component Analysis (<a href="http://mixomics.org/methods/spca/">PCA</a>) can be done. This page (see Figure \@ref(fig:PCA)) is separated into two parts:
+For a first glimpse into the individual omics data and for the necessary feature selection, a Principal Component Analysis (<a href="https://mixomics.org/methods/spca/">PCA</a>) can be done. This page (see Figure \@ref(fig:PCA)) is separated into two parts:
 
 On the left side, the original—but already pre-processed and potentially pre-filtered—data are displayed. At the top left of the page, the omics dataset to be analyzed is selected, along with the corresponding metadata file, via the drop-down menus. If the selected files are not compatible, an error message will be displayed.
 
@@ -251,7 +251,7 @@ knitr::include_graphics("images/PCA.png")
 ```
 
 ### Partial Least Squares Discriminant Analysis
-The Partial Least Squares Discriminant Analysis (<a href="http://mixomics.org/methods/spls-da/">PLS-DA</a>) can also be used for single-omics datasets, but in comparison to PCA, PLS-DA is a supervised method where the information of the corresponding class (or label) is included in its computation.
+The Partial Least Squares Discriminant Analysis (<a href="https://mixomics.org/methods/spls-da/">PLS-DA</a>) can also be used for single-omics datasets, but in comparison to PCA, PLS-DA is a supervised method where the information of the corresponding class (or label) is included in its computation.
 
 At the top left of the page (Figure \@ref(fig:PLSDA)), the omics dataset to be analyzed and the corresponding metadata file are selected. If the two are incompatible, an error message will be displayed. The "General Information" box briefly explains the concepts behind PLS-DA and provides links to additional resources. In the "Analysis Parameters" box, users can adjust the number of components (between 2 and 15) and choose whether to scale the dataset (scaling is enabled by default). The resulting plots are displayed below. These plots are similar to those in the PCA analysis, except that PLS-DA does not produce a scree plot.
 
@@ -268,9 +268,9 @@ knitr::include_graphics("images/PLSDA.png")
 ```
 
 ## Pairwise omics analysis
-For the pairwise omics analysis (integration of two different omics datasets), the sparse Partial Least Squares (<a class='ref-link' href="http://mixomics.org/methods/spls/">sPLS</a>) method is applied. The structure of the page (Figure \@ref(fig:sPLS)) is the same as previously described in the single-omics analysis pages. On the top, the two datasets X and Y and the corresponding metadata file is selected. 
+For the pairwise omics analysis (integration of two different omics datasets), the sparse Partial Least Squares (<a class='ref-link' href="https://mixomics.org/methods/spls/">sPLS</a>) method is applied. The structure of the page (Figure \@ref(fig:sPLS)) is the same as previously described in the single-omics analysis pages. On the top, the two datasets X and Y and the corresponding metadata file is selected. 
 
-On the left side of the page, general information about sPLS is provided, along with options to adjust the analysis parameters. Users can also choose between two algorithm modes: "regression" and "canonical." In regression mode, dataset X is used to predict dataset Y, so switching the roles of the datasets (X becomes Y and vice versa) will produce different results. In contrast, canonical mode treats the datasets as interchangeable. This mode is recommended when there is no known directional dependency between the datasets. More details about these modes can be found in the <a class='ref-link' href='http://mixomics.org/methods/spls/'>mixOmics documentation</a>. <br>
+On the left side of the page, general information about sPLS is provided, along with options to adjust the analysis parameters. Users can also choose between two algorithm modes: "regression" and "canonical." In regression mode, dataset X is used to predict dataset Y, so switching the roles of the datasets (X becomes Y and vice versa) will produce different results. In contrast, canonical mode treats the datasets as interchangeable. This mode is recommended when there is no known directional dependency between the datasets. More details about these modes can be found in the <a class='ref-link' href='https://mixomics.org/methods/spls/'>mixOmics documentation</a>. <br>
 Instead of the "Perform feature selection" button used in the PCA and PLS-DA sections, sPLS uses a "Tune parameters" button located in the middle of the page. The tuning process is similar to feature selection but includes additional steps. Based on the user-defined number of components, cross-validation is performed to calculate the Q² score for each component. The tuning step assesses the correlation between actual and predicted components by varying the number of selected features for each dataset.
 
 The algorithm then identifies:<br>
@@ -290,13 +290,13 @@ knitr::include_graphics("images/sPLS.png")
 ```
 
 ## Multi-omics analysis
-The multi-omics analysis is done by applying <a href="http://mixomics.org/mixdiablo/">DIABLO</a> framework of mixOmics, which can take two or more datasets as its input and tries to find any correlations between the datasets. The structure of the page (Figure \@ref(fig:DIABLO)) is the same as described in the "Pairwise omics analysis" chapter. 
+The multi-omics analysis is done by applying <a href="https://mixomics.org/mixdiablo/">DIABLO</a> framework of mixOmics, which can take two or more datasets as its input and tries to find any correlations between the datasets. The structure of the page (Figure \@ref(fig:DIABLO)) is the same as described in the "Pairwise omics analysis" chapter. 
 
 At the top of the page, the datasets are added to the "Select the datasets" field, and the corresponding metadata file is selected. On the left side of the page, general information is provided, along with the option to adjust analysis parameters in the "Analysis Parameters" box.
 
 Here, users can modify the value for the design matrix, which indicates whether known or calculated correlations between the datasets should be taken into account. Currently, <b>Holomics</b> only supports setting a single correlation value for the entire matrix, which is then applied uniformly to all pairwise dataset correlations. This field is pre-filled with the lowest calculated correlation value but can be manually adjusted by the user.
 
-Again, the "Tune parameters" button in the middle of the page initiates the tuning process. This process functions identically to the one described earlier for sPLS: it calculates the ideal number of components and the optimal number of features per dataset. The only difference here is that the best number of components is selected based on the overall Balanced Error Rate (BER) using the centroids.dist metric. For more information about this metric, please have a look at the <a href="http://mixomics.org/methods/distance-metrics/">Distance Metrics</a> post on the mixOmics website. <br>
+Again, the "Tune parameters" button in the middle of the page initiates the tuning process. This process functions identically to the one described earlier for sPLS: it calculates the ideal number of components and the optimal number of features per dataset. The only difference here is that the best number of components is selected based on the overall Balanced Error Rate (BER) using the centroids.dist metric. For more information about this metric, please have a look at the <a href="https://mixomics.org/methods/distance-metrics/">Distance Metrics</a> post on the mixOmics website. <br>
 After tuning, the tuned parameters are visualized on the right side of the page. Some general information and the resulting tuned parameters are provided in the boxes above the plots.
 
 (ref:DIABLO) Visualization of the multi-omics page. On the left side, the datasets out of the single-omics analysis are used. On the right side the results of tuned datasets are presented.
