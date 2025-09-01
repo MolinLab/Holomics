@@ -46,14 +46,7 @@ Imports:
     tippy,
     visNetwork,
     mixOmics,
-    BiocParallel,
-    markdown,
-    ggrepel,
-    matrixStats,
-    RSpectra,
-    reshape2,
-    tidyr,
-    uuid
+    BiocParallel
 Suggests:
     bookdown,
     knitr,
@@ -64,4 +57,4 @@ VignetteBuilder:
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.2
