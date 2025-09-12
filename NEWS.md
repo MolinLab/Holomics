@@ -1,4 +1,8 @@
-# Holomics (development version)
+# Holomics 1.2.0
+## Improvements and fixes
+* Fixed errors with mixOmics version 6.32.0
+* Vignette improvements
+* Error handing improvements
 
 # Holomics 1.1.1
 
