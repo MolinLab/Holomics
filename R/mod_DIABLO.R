@@ -316,7 +316,7 @@ tune_diablo_values <- function(dataSelection, classSelection, result, tunedVals,
           } else {
             if (grepl("system is computationally singular", cond$message, fixed = T)){
               getShinyErrorAlert("An error appeared while trying to reduce the dataset. <br> 
-                        Please reduce your number of components or change your design matrix and try again!", html = T)
+                        <b style='font-weight: bold;color: black;'>Please reduce your number of components or change your design matrix and try again!</b>", html = T)
             } else {
               getErrorMessage(cond)
             }

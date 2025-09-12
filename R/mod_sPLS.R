@@ -266,7 +266,7 @@ tune_values <- function(dataSelection, result, tunedVals, input, output){
           if (grepl("system is computationally singular", cond$message, fixed = T) || 
               grepl("Error in solve.default", cond$message, fixed = T)){
             getShinyErrorAlert("An error appeared while trying to reduce the dataset. <br> 
-                                Please reduce your number of components and try again! <br>
+                                <b style='font-weight: bold;color: black;'>Please reduce your number of components and try again!</b> <br>
                                 You can check the console to see the error message and for how many components it worked.",
                                html = T)
           } else if(grepl("For `canonical mode', 'ncomp' needs to be lower than ncol", cond$message, fixed = T))
