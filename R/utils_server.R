@@ -452,7 +452,7 @@ loadingsToTable <- function(result, comp){
     if (all(names(result()$loadings) == c("X", "Y")) || name != "Y") {
       df <- result()$loadings[[name]]
       
-      data_to_write <- data.frame(Name = rownames(df), comp1 = df[, paste0("comp", comp)])
+      data_to_write <- data.frame(Name = rownames(df), comp1 = df[, paste0("comp", comp())])
       
       openxlsx::addWorksheet(wb, sheetName = name)
       openxlsx::writeData(wb, sheet = name, x = data_to_write)

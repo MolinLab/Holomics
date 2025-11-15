@@ -808,7 +808,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Var.download <- getDownloadHandler("DIABLO_CorrelationCircleplot.png", plot.var)
   output$Load.download <- getDownloadHandler("DIABLO_Loadingsplot.png", plot.load, width = 2592, height = 1944)
   output$Load.table.download <- getDownloadHandler("DIABLO_Loadingsplot.xlsx", contentfct = loadingsToTable, 
-                                                   result = result, comp = input$load.comp, type = "wb")
+                                                   result = result, comp = reactive(input$load.comp), type = "wb")
   output$Img.download <- getDownloadHandler("DIABLO_Heatmap.png", plot.img, width = 2592, height = 1944)
   output$Diablo.download <- getDownloadHandler("DIABLO_Diabloplot.png", plot.diablo, width = 2592, height = 1944)
   output$Circos.download <- getDownloadHandler("DIABLO_Circosplot.png", plot.circos, width = 2592, height = 1944)
@@ -823,7 +823,7 @@ generate_diablo_plots <- function(ns, input, output, dataSelection, classSelecti
   output$Var.download.tuned <- getDownloadHandler("DIABLO_tuned_CorrelationCircleplot.png", plot.var.tuned)
   output$Load.download.tuned <- getDownloadHandler("DIABLO_tuned_Loadingsplot.png", plot.load.tuned, width = 2592, height = 1944)
   output$Load.table.download.tuned <- getDownloadHandler("DIABLO_tuned_Loadingsplot.xlsx", contentfct = loadingsToTable, 
-                                                   result = result.tuned, comp = input$load.comp.tuned, type = "wb")
+                                                   result = result.tuned, comp = reactive(input$load.comp.tuned), type = "wb")
   output$Img.download.tuned <- getDownloadHandler("DIABLO_tuned_Heatmap.png", plot.img.tuned, width = 2592, height = 1944)
   output$Diablo.download.tuned <- getDownloadHandler("DIABLO_tuned_Diabloplot.png", plot.diablo.tuned, width = 2592, height = 1944)
   output$Circos.download.tuned <- getDownloadHandler("DIABLO_tuned_Circosplot.png", plot.circos.tuned, width = 2592, height = 1944)
